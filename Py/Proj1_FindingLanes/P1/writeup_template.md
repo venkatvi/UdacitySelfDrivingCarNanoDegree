@@ -30,7 +30,7 @@ The video (used for test) are segmented in to images and for each image the “L
 Iniitially a hard-coded set of vertices as the corner coordinates of the rectangular region were used to create a mask. 
 `[0, height_of_image], [480, 310], [490, 310], [width_of_image, height_of_image]`
 These hard-coded coordinates to find lanes in the masked area worked well for the first two problems. The challenge problem’s image size was different from the other two problems and hence the hard-coded vertices did not work. 
-https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/LKG_ForHomeworkSubmission/Py/Proj1_FindingLanes/P1/writeup_template.md, the vertices were modified to 
+So, the vertices were modified to 
 `[0, height_of_image-20], width_of_image/2 - 10, height_of_image/2 + 40], [width_of_image/2 + 10, height_of_image/2 + 40], [width_of_image, height_of_image -20]`
 The offset of 20 px from height_of image for the bottom vertices was required to remove noisy lines formed at the boundary of the vehicle. 
 In effect, a rectangular area starting approximately at the midpoint of the image, spanning gradually over the image width was appropriate for creating a mask. 
@@ -54,7 +54,10 @@ The left and right lane lines form line segments with positive slope and negativ
 2. __Not immune to shadows or road color changes__: While detecting edges, (especially with challenge.mp4), the pipeline detects edges marked by shadows of the trees and changes in color of road etc. These cause additional noise in detecting lanes
 3. __Average slopes for curvy lanes__: Maintaining one global average positive and negative slope does not work for curvy roads as the curvature of the road needs to be represented by multiple smaller line-segments. 
 
-
 ### 3. Suggest possible improvements to your pipeline
+
+1. __Handle Road Color Changes__: Modifications to the gaussian_blur or parameters to Hough_lines function can greatly aid in providing solution to the general problem of handling change in light / color of road in the images used for lane detection. This will help in handling lane detection between day / night changes as well. 
+2. __Handle curvy lanes __: In case of curved roads, maintaining multiple piece-wise slopes can help in detecting the curved lanes. Additional machine learning algorithms (like k-means clustering) can also be used to cluster the observed slopes in to multiple clusters in order to form the piece-wise slopes
+3. __Varying rectangular mask area__: Based on the nature of the slopes, a second pass through the process_image routine to handle slopes in  a specific cluster can be adopted. In the second pass, the area of image used for hough_transforms can be modified to just fit the lines in the cluster in order  to piece-wise lines. 
 
 
