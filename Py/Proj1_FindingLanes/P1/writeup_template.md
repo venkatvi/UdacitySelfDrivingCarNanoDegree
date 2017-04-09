@@ -30,7 +30,7 @@ The video (used for test) are segmented in to images and for each image the “L
 Iniitially a hard-coded set of vertices as the corner coordinates of the rectangular region were used to create a mask. 
 `[0, height_of_image], [480, 310], [490, 310], [width_of_image, height_of_image]`
 These hard-coded coordinates to find lanes in the masked area worked well for the first two problems. The challenge problem’s image size was different from the other two problems and hence the hard-coded vertices did not work. 
-So, the vertices were modified to 
+https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/LKG_ForHomeworkSubmission/Py/Proj1_FindingLanes/P1/writeup_template.md, the vertices were modified to 
 `[0, height_of_image-20], width_of_image/2 - 10, height_of_image/2 + 40], [width_of_image/2 + 10, height_of_image/2 + 40], [width_of_image, height_of_image -20]`
 The offset of 20 px from height_of image for the bottom vertices was required to remove noisy lines formed at the boundary of the vehicle. 
 In effect, a rectangular area starting approximately at the midpoint of the image, spanning gradually over the image width was appropriate for creating a mask. 
@@ -50,11 +50,11 @@ The left and right lane lines form line segments with positive slope and negativ
 
 
 ### 2. Identify potential shortcomings with your current pipeline
-
+1. __Fixed Rectangular area for mask__: Current pipeline has a fundamental assumption that the rectangular area required to detect lines is fixed. This will not work well on curvy roads where the vertices can be changed to avoid noisy hough lines. 
+2. __Not immune to shadows or road color changes__: While detecting edges, (especially with challenge.mp4), the pipeline detects edges marked by shadows of the trees and changes in color of road etc. These cause additional noise in detecting lanes
+3. __Average slopes for curvy lanes__: Maintaining one global average positive and negative slope does not work for curvy roads as the curvature of the road needs to be represented by multiple smaller line-segments. 
 
 
 ### 3. Suggest possible improvements to your pipeline
 
-A possible improvement would be to ...
 
-Another potential improvement could be to ...
