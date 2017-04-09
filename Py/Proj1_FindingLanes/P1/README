@@ -2,11 +2,14 @@ README - Udacity_SelfDrivingCar_NanoDegree
 
 /* Author = Vaidehi Venkatesan
 *  Year   = 2017
+* Project 1 - Finding lane lines
 */
 
 Course Website: https://classroom.udacity.com/nanodegrees/nd013/syllabus
 
-Folder Structure: 
-All Projects in the Udacity Course Website recommend using Python as language of development. I am also going to use MATLAB to demonstrate examples / project coursework. Hence broadly this git hub repoistory has two folders:
-/Py
-/ML
+Project notebook: ./P1.ipynb
+Project videos  : ./test_videos
+Solution files 
+(with videos + 
+lane lines)     : ./test_videos_output
+Writeup         : ./writeup_template.md
