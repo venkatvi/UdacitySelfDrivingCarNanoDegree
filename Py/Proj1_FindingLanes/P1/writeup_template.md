@@ -27,7 +27,7 @@ The video (used for test) are segmented in to images and for each image the “L
 2. __Computation of gaussian blur of the grayscale image__  - this was done using gaussian_blue helper function. I used a kernel size of 5. 
 3. __Canny edge detection__ - With a threshold range of [40, 120], canny edges in the image were detected - this was done again using canny helper function which used opencv libraries to detect canny edges. 
 4. __Creating a mask for the region of interest where the lanes were meant to be detected__ 
-Iniitially a hard-coded set of vertices as the corner coordinates of the rectangular region were used to create a mask. 
+Initially a hard-coded set of vertices as the corner coordinates of the rectangular region were used to create a mask. 
 `[0, height_of_image], [480, 310], [490, 310], [width_of_image, height_of_image]`
 These hard-coded coordinates to find lanes in the masked area worked well for the first two problems. The challenge problem’s image size was different from the other two problems and hence the hard-coded vertices did not work. 
 So, the vertices were modified to 
@@ -37,6 +37,7 @@ In effect, a rectangular area starting approximately at the midpoint of the imag
 5. __Create hough_lines in the region of interest__ - this was done using hough_lines helper function. In order to connect edges to form lane lines, min_line_length of 100 and max_line_gap was 150 was required to identify lines for the broken white lined lanes. 
 This function also called draw_lines functions which connected the line segments by marking a red line between them. Post drawing the lines, hough_lines returned an image with lines drawn on a mask. 
 6. __Generate Output__ - The last step in the pipeline was to overlay the mask with lines on the original image to get the lines drawn on the lanes - this was done using weighted_img function. 
+The generated output is available in ./test_videos_output folder. 
 
 In order to draw a single line on the left and right lanes, draw_lines() function was modified to maintain information about the following
 1. Number of frames used
@@ -56,7 +57,7 @@ The left and right lane lines form line segments with positive slope and negativ
 
 ### 3. Suggest possible improvements to your pipeline
 
-1. __Handle Road Color Changes__: Modifications to the gaussian_blur or parameters to Hough_lines function can greatly aid in providing solution to the general problem of handling change in light / color of road in the images used for lane detection. This will help in handling lane detection between day / night changes as well. 
+1. __Handle Road Color Changes__: To handle varying road colors, a preprocessing step can be designed to transform the image such that the road color corresponds to a darker color. This can be done by identifying the color that is present in abundance and transform that color to a darker shade. 
 2. __Handle curvy lanes __: In case of curved roads, maintaining multiple piece-wise slopes can help in detecting the curved lanes. Additional machine learning algorithms (like k-means clustering) can also be used to cluster the observed slopes in to multiple clusters in order to form the piece-wise slopes
 3. __Varying rectangular mask area__: Based on the nature of the slopes, a second pass through the process_image routine to handle slopes in  a specific cluster can be adopted. In the second pass, the area of image used for hough_transforms can be modified to just fit the lines in the cluster in order  to piece-wise lines. 
 
