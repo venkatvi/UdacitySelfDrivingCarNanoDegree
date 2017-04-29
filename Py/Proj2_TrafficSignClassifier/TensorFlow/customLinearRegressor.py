@@ -10,7 +10,7 @@ def model(features, labels, mode):
 	# build a linear mode and predict values
 	W = tf.get_variable("W", [features['x'].shape[1]], dtype=tf.float64)
 	b = tf.get_variable("b", [1], dtype=tf.float64)
-	dotProduct = tf.reduce_sum(tf.multiply(W, tf.cast(features['x'], tf.float64)))
+	dotProduct = tf.reduce_sum(tf.multiply(W, features['x']))
 	y = dotProduct + b
 	
 	# Loss sub-graph 
@@ -28,14 +28,9 @@ def model(features, labels, mode):
 if __name__ == "__main__":
 	# Every custom model requires, features, labels and mode ? 
 	estimator  = tf.contrib.learn.Estimator(model_fn=model)
-	x = np.array([[1, 2], [2, 3], [3, 4], [4, 5]])
-	y = np.array([0, -1, -2, -3])
-	input_fn = tf.contrib.learn.io.numpy_input_fn({"x": x}, y, batch_size=4, num_epochs=100)
+	x = np.array([[1.0, 2], [2, 3], [3, 4], [4, 5]])
+	y = np.array([0., -1., -2, -3])
+	input_fn = tf.contrib.learn.io.numpy_input_fn({"x": x}, y, batch_size=1, num_epochs=1000)
 
 	estimator.fit(input_fn=input_fn, steps=1000)
-	print(estimator.evaluate(input_fn=input_fn, steps=10))
-
-	sess = tf.Session();
-	sess.run(estimator);
-
-	file_writer = tf.summary.FileWriter('tblogs', sess.graph)
+	print(estimator.evaluate(input_fn=input_fn, steps=1000))
