@@ -1,7 +1,15 @@
+# Project utils / APIs 
 from CameraCaliberator import *
 from LaneDetectionPipeline import *
+
+# for load /saving cache
 import pickle
+
+# for file APIs
 import os, sys 
+# for video to image utils 
+from moviepy.editor import VideoFileClip
+import imageio
 def undistort_sample_images(camera_caliberator, root_folder, output_folder):
 	# Loop through all images in the root_folders
 	undistorted_output_folder = output_folder
@@ -30,10 +38,20 @@ if __name__ == "__main__":
 	pickle_file_name = "camera_calibration.p"
 	data = pickle.load(open(pickle_file_name, "rb"));
 	cc = data["CameraCalibrator"]
-	
+
+	'''
 	root_folder = "../test_images"
 	output_folder = "../test_images_output"
 	ldp = LaneDetectionPipeline(cc, root_folder, output_folder);
 	ldp.execute()
+	'''
 	
+	imageio.plugins.ffmpeg.download()
+	test_output = '../test_videos_output/project_video.mp4'
+	clip2 = VideoFileClip('../project_video.mp4')
+	
+	output_folder = "../test_videos_output"
+	ldp = LaneDetectionPipeline(cc, ".", output_folder);
+	pclip = clip2.fl_image(ldp.process_image)
+	pclip.write_videofile(test_output, audio=False)
 	

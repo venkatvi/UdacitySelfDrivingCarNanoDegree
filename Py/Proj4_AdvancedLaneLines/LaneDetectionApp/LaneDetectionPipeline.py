@@ -16,7 +16,6 @@ class LaneDetectionPipeline:
 		self.root_folder = root_folder
 		self.output_folder = output_folder
 		self.cameraCalibration = cameraCalibration
-		self.image_in_colorspace = []
 	def execute(self):
 		print ("Starting pipeline for lane detection... ")
 		# Loop through all images in the root_folders
@@ -26,32 +25,169 @@ class LaneDetectionPipeline:
 			# read image
 			image = cv2.imread(self.root_folder+"/"+ file)
 			
-			# Use camera caliberator to undistort image
-			image = self.cameraCalibration.undistort(image);
-			# save image in the output_folder 
-			file_parts  = file.split(".")
-			mpimg.imsave(self.output_folder + "/" + file_parts[0] +"_undistorted.png" , image);
+			output_image  = self.process_image(file, image);
+	def process_image(self, image, file="sample"):
+		# Use camera caliberator to undistort image
+		image = self.cameraCalibration.undistort(image);
+		# save image in the output_folder 
+		file_parts  = file.split(".")
+		mpimg.imsave(self.output_folder + "/" + file_parts[0] +"_undistorted.png" , image);
+		
+		color_binary = self.apply_color_threshold(image)
+		mpimg.imsave(self.output_folder + "/" + file_parts[0] +"_colorbinary.png" , color_binary);
+		
+		mag_sobel_binary, direction_binary = self.apply_gradient_threshold(color_binary)
+		
+		# Combine the two binary thresholds
+		combined_binary = np.zeros_like(color_binary)
+		combined_binary[(mag_sobel_binary == 1) | (direction_binary == 1)] = 1
+		# save image in the output_folder 
+		mpimg.imsave(self.output_folder + "/" + file_parts[0] +"_out.png" , combined_binary, cmap="gray");
+		
+		# Compute perspective matrices
+		M, Minv = self.compute_perspective_matrix(combined_binary);
+		
+		# Compute warped image
+		warped_image = self.apply_perspective(M, combined_binary)
+		# save image in the output_folder 
+		mpimg.imsave(self.output_folder + "/" + file_parts[0] +"_warped.png" , warped_image, cmap="gray");
 			
-			color_binary = self.apply_color_threshold(image)
-			mag_sobel_binary, direction_binary = self.apply_gradient_threshold(self.image_in_colorspace)
-			
-			# Combine the two binary thresholds
-			combined_binary = np.zeros_like(color_binary)
-			combined_binary[(color_binary == 1) | (mag_sobel_binary == 1)] = 1
-			# save image in the output_folder 
-			mpimg.imsave(self.output_folder + "/" + file_parts[0] +"_out.png" , combined_binary, cmap="gray");
-			
-			# Compute perspective matrix
-			M = self.compute_perspective_matrix(combined_binary);
-			
-			# Compute warped image
-			warped_image = self.apply_perspective(M, combined_binary)
-			# save image in the output_folder 
-			mpimg.imsave(self.output_folder + "/" + file_parts[0] +"_warped.png" , warped_image, cmap="gray");
-			
-			histogram = self.find_lanes(warped_image, file_parts[0], 9);
-			
-			#plt.close(fig)
+		left_fitx, right_fitx, ploty = self.find_lanes(warped_image, file_parts[0], 9);
+		
+		output_image = self.generate_output(image, warped_image, Minv, left_fitx, right_fitx, ploty)
+		# save image in the output_folder 
+		mpimg.imsave(self.output_folder + "/" + file_parts[0] +"_final_output.png" , output_image);
+		
+		return output_image
+	
+	def apply_color_threshold(self, image, color_space="HLS", thresh_channel=2, thresh=(70, 255)):
+		image_in_colorspace = [];
+		if color_space == "HLS":
+			image_in_colorspace = cv2.cvtColor(image, cv2.COLOR_RGB2HLS)
+		elif color_space == "HSV":
+			image_in_colorspace = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
+		else:
+			image_in_colorspace = np.copy(image)
+		
+		thresholding_channel = image_in_colorspace[:, :, thresh_channel]
+
+		color_binary = np.zeros_like(thresholding_channel)
+		color_binary[(thresholding_channel >= thresh[0]) & (thresholding_channel <= thresh[1])] = 1
+		self.image_in_colorspace = thresholding_channel
+		return color_binary
+		
+	def apply_gradient_threshold(self, image, abs_thresh=(20, 100), direction_thresh=(0.7, 1.3)):
+		#gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+		scaled_sobel_x = self.get_scaled_sobel(image, orient="x")
+		mag_sobel_binary = np.zeros_like(scaled_sobel_x)
+		mag_sobel_binary[(scaled_sobel_x >= abs_thresh[0]) & (scaled_sobel_x <= abs_thresh[1])] = 1
+		
+		scaled_sobel_y = self.get_scaled_sobel(image, orient="y")
+		direction_gradient = np.arctan2(scaled_sobel_y, scaled_sobel_x)
+		direction_binary = np.zeros_like(direction_gradient)
+		direction_binary[(direction_gradient > direction_thresh[0]) & (direction_gradient <= direction_thresh[1])] = 1
+		return mag_sobel_binary, direction_binary
+		
+	def compute_perspective_matrix(self, image):
+		image_shape = image.shape;
+		w = image_shape[1];
+		h = image_shape[0];
+		offset = 200;
+		src = np.float32([[210, h-20], [w/2 - 40, h/2 + 90 ], [w/2 + 40 , h/2 + 90],[1070, h-20]])
+		dst = np.float32([[210+offset, h-20], [210+offset, 0 ], [1070- offset , 0],[1070-offset, h-20]])
+		M = cv2.getPerspectiveTransform(src, dst)
+		Minv = cv2.getPerspectiveTransform(dst, src)
+		return M, Minv
+		
+	def apply_perspective(self, M, image):
+		img_size = (image.shape[1], image.shape[0])
+		warped_image = cv2.warpPerspective(image, M, img_size, flags=cv2.INTER_LINEAR)
+		return warped_image
+	
+	
+	def find_lanes(self, image, out_file_name, number_sliding_windows=9, margin=100, min_qual_pixels=50):
+		histogram = np.sum(image[image.shape[0]//2:,:], axis=0)
+		#fig = plt.figure(1);
+		#plt.plot(histogram)
+		# save image in the output_folder 
+		#plt.savefig(self.output_folder + "/" + out_file_name +"_histogram.png");
+		
+		# Find the peak of the left and right halves of the histogram
+		# These will be the starting point for the left and right lines
+		midpoint = np.int(histogram.shape[0]/2)
+		leftx_base = np.argmax(histogram[:midpoint])
+		rightx_base = np.argmax(histogram[midpoint:]) + midpoint
+		
+		nwindows = number_sliding_windows
+		window_height = np.int(image.shape[0]/nwindows)
+		
+		# Identify all nonzero pixesl of the image
+		nonzero = image.nonzero()
+		nonzero_y = np.array(nonzero[0])
+		nonzero_x = np.array(nonzero[1])
+		
+		leftx_current = leftx_base
+		rightx_current = rightx_base
+		
+		# Set width of windows +/- margin
+		margin = margin
+		# Set min number of pixels to be found to recenter the window_height
+		minpix = min_qual_pixels
+		
+		# Slide windows over the image from bottom to top to get the line fit
+		out_img, left_lane_inds, right_lane_inds = self.slide_windows(image, nwindows, window_height, nonzero_x, nonzero_y, leftx_current, rightx_current, margin, minpix);
+		
+		# once the candidates of line indices are obtained, fit a polynomial
+		left_fit, right_fit = self.fit_lane_line(left_lane_inds, right_lane_inds, nonzero_x, nonzero_y)
+		
+		# Visualize the fitted lines on the input image
+		ploty = np.linspace(0, image.shape[0]-1, image.shape[0] )
+		left_fitx = left_fit[0]*ploty**2 + left_fit[1]*ploty + left_fit[2]
+		right_fitx = right_fit[0]*ploty**2 + right_fit[1]*ploty + right_fit[2]
+
+		
+		fig = plt.figure(1);
+		out_img[nonzero_y[left_lane_inds], nonzero_x[left_lane_inds]] = [255, 0, 0]
+		out_img[nonzero_y[right_lane_inds], nonzero_x[right_lane_inds]] = [0, 0, 255]
+		plt.imshow(out_img)
+		plt.plot(left_fitx, ploty, color='yellow')
+		plt.plot(right_fitx, ploty, color='yellow')
+		plt.xlim(0, 1280)
+		plt.ylim(720, 0)
+		#plt.show()
+		plt.savefig(self.output_folder + "/" + out_file_name +"_detected_lanes.png");
+		plt.close(fig);
+	
+		return left_fitx, right_fitx, ploty
+	def generate_output(self, original_image, warped_image, Minv, left_fitx, right_fitx, ploty):
+		# Create an image to draw the lines on
+		warp_zero = np.zeros_like(warped_image).astype(np.uint8)
+		color_warp = np.dstack((warp_zero, warp_zero, warp_zero))
+
+		# Recast the x and y points into usable format for cv2.fillPoly()
+		pts_left = np.array([np.transpose(np.vstack([left_fitx, ploty]))])
+		pts_right = np.array([np.flipud(np.transpose(np.vstack([right_fitx, ploty])))])
+		pts = np.hstack((pts_left, pts_right))
+
+		# Draw the lane onto the warped blank image
+		cv2.fillPoly(color_warp, np.int_([pts]), (0,255, 0))
+
+		# Warp the blank back to original image space using inverse perspective matrix (Minv)
+		newwarp = cv2.warpPerspective(color_warp, Minv, (warped_image.shape[1], warped_image.shape[0])) 
+		
+		# Combine the result with the original image
+		result_image = cv2.addWeighted(original_image, 1, newwarp, 0.3, 0)
+		return result_image
+		
+	def get_scaled_sobel(self, image, orient="x"):
+		sobel_val = [];
+		if orient == "x":
+			sobel_val = cv2.Sobel(image, cv2.CV_64F, 1, 0)
+		elif orient == "y":
+			sobel_val = cv2.Sobel(image, cv2.CV_64F, 0, 1)
+		abs_sobel = np.absolute(sobel_val)
+		scaled_sobel = np.uint8(255*abs_sobel/np.max(abs_sobel))
+		return scaled_sobel
 	
 	def compute_margins(self, total_height, window_height, window_id, margin, leftx_current, rightx_current):
 		y_low = total_height - (window_id + 1) * window_height
@@ -104,107 +240,5 @@ class LaneDetectionPipeline:
 		# Fit a second order polynomial to each
 		left_fit = np.polyfit(lefty, leftx, 2)
 		right_fit = np.polyfit(righty, rightx, 2)
-		
 		return left_fit, right_fit
-	def find_lanes(self, image, out_file_name, number_sliding_windows=9, margin=100, min_qual_pixels=50):
-		histogram = np.sum(image[image.shape[0]//2:,:], axis=0)
-		#fig = plt.figure(1);
-		#plt.plot(histogram)
-		# save image in the output_folder 
-		#plt.savefig(self.output_folder + "/" + out_file_name +"_histogram.png");
-		
-		# Find the peak of the left and right halves of the histogram
-		# These will be the starting point for the left and right lines
-		midpoint = np.int(histogram.shape[0]/2)
-		leftx_base = np.argmax(histogram[:midpoint])
-		rightx_base = np.argmax(histogram[midpoint:]) + midpoint
-		
-		nwindows = number_sliding_windows
-		window_height = np.int(image.shape[0]/nwindows)
-		
-		# Identify all nonzero pixesl of the image
-		nonzero = image.nonzero()
-		nonzero_y = np.array(nonzero[0])
-		nonzero_x = np.array(nonzero[1])
-		
-		leftx_current = leftx_base
-		rightx_current = rightx_base
-		
-		# Set width of windows +/- margin
-		margin = margin
-		# Set min number of pixels to be found to recenter the window_height
-		minpix = min_qual_pixels
-		
-		# Slide windows over the image from bottom to top to get the line fit
-		out_img, left_lane_inds, right_lane_inds = self.slide_windows(image, nwindows, window_height, nonzero_x, nonzero_y, leftx_current, rightx_current, margin, minpix);
-		
-		# once the candidates of line indices are obtained, fit a polynomial
-		left_fit, right_fit = self.fit_lane_line(left_lane_inds, right_lane_inds, nonzero_x, nonzero_y)
-		
-		# Visualize the fitted lines on the input image
-		ploty = np.linspace(0, image.shape[0]-1, image.shape[0] )
-		left_fitx = left_fit[0]*ploty**2 + left_fit[1]*ploty + left_fit[2]
-		right_fitx = right_fit[0]*ploty**2 + right_fit[1]*ploty + right_fit[2]
-
-		fig = plt.figure(1);
-		out_img[nonzero_y[left_lane_inds], nonzero_x[left_lane_inds]] = [255, 0, 0]
-		out_img[nonzero_y[right_lane_inds], nonzero_x[right_lane_inds]] = [0, 0, 255]
-		plt.imshow(out_img)
-		plt.plot(left_fitx, ploty, color='yellow')
-		plt.plot(right_fitx, ploty, color='yellow')
-		plt.xlim(0, 1280)
-		plt.ylim(720, 0)
-		#plt.show()
-		plt.savefig(self.output_folder + "/" + out_file_name +"_detected_lanes.png");
-		plt.close(fig);
 	
-	def compute_perspective_matrix(self, image):
-		image_shape = image.shape;
-		w = image_shape[1];
-		h = image_shape[0];
-		offset = 200;
-		src = np.float32([[210, h-20], [w/2 - 40, h/2 + 90 ], [w/2 + 40 , h/2 + 90],[1070, h-20]])
-		dst = np.float32([[210+offset, h-20], [210+offset, 0 ], [1070- offset , 0],[1070-offset, h-20]])
-		M = cv2.getPerspectiveTransform(src, dst)
-		return M
-	def apply_perspective(self, M, image):
-		img_size = (image.shape[1], image.shape[0])
-		warped_image = cv2.warpPerspective(image, M, img_size, flags=cv2.INTER_LINEAR)
-		return warped_image
-		
-	def apply_color_threshold(self, image, color_space="HLS", thresh_channel=2, thresh=(170, 255)):
-		image_in_colorspace = [];
-		if color_space == "HLS":
-			image_in_colorspace = cv2.cvtColor(image, cv2.COLOR_RGB2HLS)
-		elif color_space == "HSV":
-			image_in_colorspace = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
-		else:
-			image_in_colorspace = np.copy(image)
-		
-		thresholding_channel = image_in_colorspace[:, :, thresh_channel]
-
-		color_binary = np.zeros_like(thresholding_channel)
-		color_binary[(thresholding_channel >= thresh[0]) & (thresholding_channel <= thresh[1])] = 1
-		self.image_in_colorspace = thresholding_channel
-		return color_binary
-	def get_scaled_sobel(self, image, orient="x"):
-		sobel_val = [];
-		if orient == "x":
-			sobel_val = cv2.Sobel(image, cv2.CV_64F, 1, 0)
-		elif orient == "y":
-			sobel_val = cv2.Sobel(image, cv2.CV_64F, 1, 0)
-		abs_sobel = np.absolute(sobel_val)
-		scaled_sobel = np.uint8(255*abs_sobel/np.max(abs_sobel))
-		return scaled_sobel
-		
-	def apply_gradient_threshold(self, image, abs_thresh=(20, 100), direction_thresh=(0.7, 1.3)):
-		#gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
-		scaled_sobel_x = self.get_scaled_sobel(image, orient="x")
-		mag_sobel_binary = np.zeros_like(scaled_sobel_x)
-		mag_sobel_binary[(scaled_sobel_x >= abs_thresh[0]) & (scaled_sobel_x <= abs_thresh[1])] = 1
-		
-		scaled_sobel_y = self.get_scaled_sobel(image, orient="y")
-		direction_gradient = np.arctan2(scaled_sobel_y, scaled_sobel_x)
-		direction_binary = np.zeros_like(direction_gradient)
-		direction_binary[(direction_gradient > direction_thresh[0]) & (direction_gradient <= abs_thresh[1])] = 1
-		return mag_sobel_binary, direction_binary
