@@ -72,8 +72,8 @@ class LaneDetectionPipeline:
 			
 			offset, offset_direction = self.compute_lane_offset(left_fitx, right_fitx, image.shape[1]/2)
 			
-			self.add_line_statistics(self.nframes_left_line, left_fit, prev_left_fit, left_fitx, ploty, left_curvature, offset, offset_direction)
-			self.add_line_statistics(self.nframes_right_line, right_fit, prev_right_fit, right_fitx, ploty, right_curvature, offset, offset_direction)
+			self.add_line_statistics(self.nframes_left_line, left_fit, self.prev_left_fit, left_fitx, ploty, left_curvature, offset, offset_direction)
+			self.add_line_statistics(self.nframes_right_line, right_fit, self.prev_right_fit, right_fitx, ploty, right_curvature, offset, offset_direction)
 			
 			
 			self.prev_left_fit = left_fit
@@ -100,26 +100,33 @@ class LaneDetectionPipeline:
 		return offset_in_meters, offset_direction
 	def add_line_statistics(self, line, fit, prev_fit, fitx, ploty, curvature, offset, offset_direction):
 		# was the line detected in the last iteration?
-        line.detected = True
-        # x values of the last n fits of the line
-        line.recent_xfitted = fitx
-        #average x values of the fitted line over the last n iterations
-        line.bestx = np.mean(np.mean(fitx), line.bestx/self.frame_count)     
-        #polynomial coefficients averaged over the last n iterations
-        line.best_fit = np.mean(line.best_fit/self.frame_count, fit)
-        #polynomial coefficients for the most recent fit
-        line.current_fit = fit
-        #radius of curvature of the line in some units
-        line.radius_of_curvature = curvature
-        #distance in meters of vehicle center from the line
-        line.offset = offset
+		line.detected = True
+		# x values of the last n fits of the line
+		line.recent_xfitted = fitx
+		#average x values of the fitted line over the last n iterations
+		if line.bestx is not None:
+			line.bestx = np.mean([np.mean(fitx), line.bestx/self.frame_count])     
+		else:
+			line.bestx = np.mean(fitx)
+		#polynomial coefficients averaged over the last n iterations
+		if line.best_fit is not None:
+			line.best_fit = [np.mean([line.best_fit[0]/self.frame_count, fit[0]]), np.mean([line.best_fit[1]/self.frame_count, fit[1]]), np.mean([line.best_fit[2]/self.frame_count, fit[2]])]
+		else:
+			line.best_fit = fit
+		#polynomial coefficients for the most recent fit
+		line.current_fit = fit
+		#radius of curvature of the line in some units
+		line.radius_of_curvature = curvature
+		#distance in meters of vehicle center from the line
+		line.offset = offset
 		line.offset_direction = offset_direction
-        #difference in fit coefficients between last and new fits
-        line.diffs = prev_fit - fit
-        #x values for detected line pixels
-        line.allx = fitx  
-        #y values for detected line pixels
-        line.ally = ploty
+		#difference in fit coefficients between last and new fits
+		if prev_fit is not None and len(prev_fit) == 3:
+			line.diffs = prev_fit - fit
+		#x values for detected line pixels
+		line.allx = fitx  
+		#y values for detected line pixels
+		line.ally = ploty
 	def apply_color_threshold(self, image, color_space="HLS", thresh_channel=2, thresh=(70, 255)):
 		image_in_colorspace = [];
 		if color_space == "HLS":
@@ -213,9 +220,13 @@ class LaneDetectionPipeline:
 		# Slide windows over the image from bottom to top to get the line fit
 		out_img, left_lane_inds, right_lane_inds = self.slide_windows(image, nwindows, window_height, nonzero_x, nonzero_y, leftx_current, rightx_current, margin, minpix);
 		
-		# once the candidates of line indices are obtained, fit a polynomial
-		left_fit, right_fit = self.fit_lane_line(left_lane_inds, right_lane_inds, nonzero_x, nonzero_y)
-		
+		try:
+			# once the candidates of line indices are obtained, fit a polynomial
+			left_fit, right_fit = self.fit_lane_line(left_lane_inds, right_lane_inds, nonzero_x, nonzero_y)
+		except ValueError:
+			left_fit = self.nframes_left_line.best_fit
+			right_fit = self.nframes_right_line.best_fit
+			
 		# Visualize the fitted lines on the input image
 		ploty = np.linspace(0, image.shape[0]-1, image.shape[0] )
 		left_fitx = left_fit[0]*ploty**2 + left_fit[1]*ploty + left_fit[2]
