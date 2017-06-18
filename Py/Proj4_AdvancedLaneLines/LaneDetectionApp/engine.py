@@ -1,7 +1,8 @@
 from CameraCaliberator import *
+from LaneDetectionPipeline import *
 import pickle
 import os, sys 
-def undistort_images(camera_caliberator, root_folder, output_folder):
+def undistort_sample_images(camera_caliberator, root_folder, output_folder):
 	# Loop through all images in the root_folders
 	undistorted_output_folder = output_folder
 	file_list = os.listdir(root_folder)
@@ -20,11 +21,19 @@ def undistort_images(camera_caliberator, root_folder, output_folder):
 if __name__ == "__main__":
 	#cc = CameraCaliberator("../camera_cal","../camera_cal_output", (9,6))
 	#cc.caliberate();
+	#undistort_sample_images(cc, "../camera_cal", "../camera_cal_undistorted")
 	
 	#data = {'CameraCalibrator': cc};
 	#pickle_file_name = "camera_calibration.p";
 	#pickle.dump(data, open(pickle_file_name, "wb"))
 	
-	undistort_images(cc, "../camera_cal", "../camera_cal_undistorted")
+	pickle_file_name = "camera_calibration.p"
+	data = pickle.load(open(pickle_file_name, "rb"));
+	cc = data["CameraCalibrator"]
+	
+	root_folder = "../test_images"
+	output_folder = "../test_images_output"
+	ldp = LaneDetectionPipeline(cc, root_folder, output_folder);
+	ldp.execute()
 	
 	
