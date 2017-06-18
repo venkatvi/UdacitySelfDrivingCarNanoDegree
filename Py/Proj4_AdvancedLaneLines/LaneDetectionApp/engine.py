@@ -18,13 +18,12 @@ def undistort_images(camera_caliberator, root_folder, output_folder):
 		file_parts  = file.split(".")
 		mpimg.imsave(undistorted_output_folder + "/" + file_parts[0] +"_undistorted.png" , undistorted_image);
 if __name__ == "__main__":
-	cc = CameraCaliberator("../camera_cal","../camera_cal_output", (9,6))
-	cc.caliberate();
-	print(len(cc.CameraMatrix))
+	#cc = CameraCaliberator("../camera_cal","../camera_cal_output", (9,6))
+	#cc.caliberate();
 	
-	data = {'CameraCalibrator': cc};
-	pickle_file_name = "camera_calibration.p";
-	pickle.dump(data, open(pickle_file_name, "wb"))
+	#data = {'CameraCalibrator': cc};
+	#pickle_file_name = "camera_calibration.p";
+	#pickle.dump(data, open(pickle_file_name, "wb"))
 	
 	undistort_images(cc, "../camera_cal", "../camera_cal_undistorted")
 	
