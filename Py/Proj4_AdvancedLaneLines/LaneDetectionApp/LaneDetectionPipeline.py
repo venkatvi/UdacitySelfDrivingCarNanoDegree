@@ -1,3 +1,5 @@
+from Line import *
+
 # cv2
 import cv2
 
@@ -16,6 +18,10 @@ class LaneDetectionPipeline:
 		self.root_folder = root_folder
 		self.output_folder = output_folder
 		self.cameraCalibration = cameraCalibration
+		self.frame_count = 0
+		self.Line = Line()
+		self.prev_left_fit = []
+		self.prev_right_fit = []
 	def execute(self):
 		print ("Starting pipeline for lane detection... ")
 		# Loop through all images in the root_folders
@@ -51,12 +57,21 @@ class LaneDetectionPipeline:
 		warped_image = self.apply_perspective(M, combined_binary)
 		# save image in the output_folder 
 		mpimg.imsave(self.output_folder + "/" + file_parts[0] +"_warped.png" , warped_image, cmap="gray");
-			
-		left_fitx, right_fitx, ploty = self.find_lanes(warped_image, file_parts[0], 9);
+		
+		print(self.frame_count)
+		if self.frame_count == 0:
+			left_fitx, right_fitx, ploty = self.find_lanes(warped_image, file_parts[0], 9);
+		else:
+			left_fitx, right_fitx, ploty = self.find_lanes_without_sliding_windows(warped_image, file_parts[0], self.prev_left_fit, self.prev_right_fit, 9 );
+		
+		self.prev_left_fit = left_fitx
+		self.prev_right_fit = right_fitx		
 		
 		output_image = self.generate_output(image, warped_image, Minv, left_fitx, right_fitx, ploty)
 		# save image in the output_folder 
 		mpimg.imsave(self.output_folder + "/" + file_parts[0] +"_final_output.png" , output_image);
+		
+		self.frame_count+=1
 		
 		return output_image
 	
@@ -137,6 +152,63 @@ class LaneDetectionPipeline:
 		# Slide windows over the image from bottom to top to get the line fit
 		out_img, left_lane_inds, right_lane_inds = self.slide_windows(image, nwindows, window_height, nonzero_x, nonzero_y, leftx_current, rightx_current, margin, minpix);
 		
+		# once the candidates of line indices are obtained, fit a polynomial
+		left_fit, right_fit = self.fit_lane_line(left_lane_inds, right_lane_inds, nonzero_x, nonzero_y)
+		
+		# Visualize the fitted lines on the input image
+		ploty = np.linspace(0, image.shape[0]-1, image.shape[0] )
+		left_fitx = left_fit[0]*ploty**2 + left_fit[1]*ploty + left_fit[2]
+		right_fitx = right_fit[0]*ploty**2 + right_fit[1]*ploty + right_fit[2]
+
+		
+		fig = plt.figure(1);
+		out_img[nonzero_y[left_lane_inds], nonzero_x[left_lane_inds]] = [255, 0, 0]
+		out_img[nonzero_y[right_lane_inds], nonzero_x[right_lane_inds]] = [0, 0, 255]
+		plt.imshow(out_img)
+		plt.plot(left_fitx, ploty, color='yellow')
+		plt.plot(right_fitx, ploty, color='yellow')
+		plt.xlim(0, 1280)
+		plt.ylim(720, 0)
+		#plt.show()
+		plt.savefig(self.output_folder + "/" + out_file_name +"_detected_lanes.png");
+		plt.close(fig);
+	
+		return left_fitx, right_fitx, ploty
+	def find_lanes_without_sliding_windows(self, image, out_file_name,  prev_left_fit, prev_right_fit, number_sliding_windows=9, margin=100, min_qual_pixels=50):
+		histogram = np.sum(image[image.shape[0]//2:,:], axis=0)
+		#fig = plt.figure(1);
+		#plt.plot(histogram)
+		# save image in the output_folder 
+		#plt.savefig(self.output_folder + "/" + out_file_name +"_histogram.png");
+		
+		# Find the peak of the left and right halves of the histogram
+		# These will be the starting point for the left and right lines
+		midpoint = np.int(histogram.shape[0]/2)
+		leftx_base = np.argmax(histogram[:midpoint])
+		rightx_base = np.argmax(histogram[midpoint:]) + midpoint
+		
+		nwindows = number_sliding_windows
+		window_height = np.int(image.shape[0]/nwindows)
+		
+		# Identify all nonzero pixesl of the image
+		nonzero = image.nonzero()
+		nonzero_y = np.array(nonzero[0])
+		nonzero_x = np.array(nonzero[1])
+		
+		leftx_current = leftx_base
+		rightx_current = rightx_base
+		
+		# Set width of windows +/- margin
+		margin = margin
+		# Set min number of pixels to be found to recenter the window_height
+		minpix = min_qual_pixels
+		
+		
+		left_lane_inds = ((nonzero_x > (prev_left_fit[0]*(nonzero_y**2) + prev_left_fit[1]*nonzero_y + prev_left_fit[2] - margin)) & (nonzero_x < (prev_left_fit[0]*(nonzero_y**2) + prev_left_fit[1]*nonzero_y + prev_left_fit[2] + margin))) 
+		right_lane_inds = ((nonzero_x > (prev_right_fit[0]*(nonzero_y**2) + prev_right_fit[1]*nonzero_y + prev_right_fit[2] - margin)) & (nonzero_x < (prev_right_fit[0]*(nonzero_y**2) + prev_right_fit[1]*nonzero_y + prev_right_fit[2] + margin)))  
+
+		print(left_lane_inds)
+		print(right_lane_inds)
 		# once the candidates of line indices are obtained, fit a polynomial
 		left_fit, right_fit = self.fit_lane_line(left_lane_inds, right_lane_inds, nonzero_x, nonzero_y)
 		
