@@ -47,11 +47,11 @@ if __name__ == "__main__":
 	'''
 	
 	imageio.plugins.ffmpeg.download()
-	test_output = '../test_videos_output/project_video.mp4'
-	clip2 = VideoFileClip('../project_video.mp4')
+	test_output = '../harder_challenge_output/harder_challenge_video.mp4'
+	clip2 = VideoFileClip('../harder_challenge_video.mp4')
 	
-	output_folder = "../test_videos_output"
+	output_folder = "../harder_challenge_output"
 	ldp = LaneDetectionPipeline(cc, ".", output_folder);
-	pclip = clip2.fl_image(ldp.process_image)
+	pclip = clip2.fl_image(ldp.process_image).subclip(0, 5)
 	pclip.write_videofile(test_output, audio=False)
 	

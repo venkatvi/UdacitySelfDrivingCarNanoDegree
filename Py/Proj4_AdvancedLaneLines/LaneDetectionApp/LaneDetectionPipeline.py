@@ -60,12 +60,12 @@ class LaneDetectionPipeline:
 		
 		print(self.frame_count)
 		if self.frame_count == 0:
-			left_fitx, right_fitx, ploty = self.find_lanes(warped_image, file_parts[0], 9);
+			left_fit, right_fit, left_fitx, right_fitx, ploty = self.find_lanes(warped_image, file_parts[0], 9);
 		else:
-			left_fitx, right_fitx, ploty = self.find_lanes_without_sliding_windows(warped_image, file_parts[0], self.prev_left_fit, self.prev_right_fit, 9 );
+			left_fit, right_fit, left_fitx, right_fitx, ploty = self.find_lanes_without_sliding_windows(warped_image, file_parts[0], self.prev_left_fit, self.prev_right_fit, 9 );
 		
-		self.prev_left_fit = left_fitx
-		self.prev_right_fit = right_fitx		
+		self.prev_left_fit = left_fit
+		self.prev_right_fit = right_fit
 		
 		output_image = self.generate_output(image, warped_image, Minv, left_fitx, right_fitx, ploty)
 		# save image in the output_folder 
@@ -173,7 +173,7 @@ class LaneDetectionPipeline:
 		plt.savefig(self.output_folder + "/" + out_file_name +"_detected_lanes.png");
 		plt.close(fig);
 	
-		return left_fitx, right_fitx, ploty
+		return left_fit, right_fit, left_fitx, right_fitx, ploty
 	def find_lanes_without_sliding_windows(self, image, out_file_name,  prev_left_fit, prev_right_fit, number_sliding_windows=9, margin=100, min_qual_pixels=50):
 		histogram = np.sum(image[image.shape[0]//2:,:], axis=0)
 		#fig = plt.figure(1);
@@ -207,8 +207,6 @@ class LaneDetectionPipeline:
 		left_lane_inds = ((nonzero_x > (prev_left_fit[0]*(nonzero_y**2) + prev_left_fit[1]*nonzero_y + prev_left_fit[2] - margin)) & (nonzero_x < (prev_left_fit[0]*(nonzero_y**2) + prev_left_fit[1]*nonzero_y + prev_left_fit[2] + margin))) 
 		right_lane_inds = ((nonzero_x > (prev_right_fit[0]*(nonzero_y**2) + prev_right_fit[1]*nonzero_y + prev_right_fit[2] - margin)) & (nonzero_x < (prev_right_fit[0]*(nonzero_y**2) + prev_right_fit[1]*nonzero_y + prev_right_fit[2] + margin)))  
 
-		print(left_lane_inds)
-		print(right_lane_inds)
 		# once the candidates of line indices are obtained, fit a polynomial
 		left_fit, right_fit = self.fit_lane_line(left_lane_inds, right_lane_inds, nonzero_x, nonzero_y)
 		
@@ -217,7 +215,8 @@ class LaneDetectionPipeline:
 		left_fitx = left_fit[0]*ploty**2 + left_fit[1]*ploty + left_fit[2]
 		right_fitx = right_fit[0]*ploty**2 + right_fit[1]*ploty + right_fit[2]
 
-		
+
+		out_img = np.dstack((image, image, image))*255		
 		fig = plt.figure(1);
 		out_img[nonzero_y[left_lane_inds], nonzero_x[left_lane_inds]] = [255, 0, 0]
 		out_img[nonzero_y[right_lane_inds], nonzero_x[right_lane_inds]] = [0, 0, 255]
@@ -230,7 +229,7 @@ class LaneDetectionPipeline:
 		plt.savefig(self.output_folder + "/" + out_file_name +"_detected_lanes.png");
 		plt.close(fig);
 	
-		return left_fitx, right_fitx, ploty
+		return left_fit, right_fit, left_fitx, right_fitx, ploty
 	def generate_output(self, original_image, warped_image, Minv, left_fitx, right_fitx, ploty):
 		# Create an image to draw the lines on
 		warp_zero = np.zeros_like(warped_image).astype(np.uint8)
