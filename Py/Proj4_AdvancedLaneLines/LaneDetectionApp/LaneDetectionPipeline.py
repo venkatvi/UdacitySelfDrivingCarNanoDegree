@@ -88,20 +88,19 @@ class LaneDetectionPipeline:
 		
 		thresholding_channel = image_in_colorspace[:, :, thresh_channel]
 
-		'''
-		yellow_hsv_low  = np.array([ 0, 80, 200])
-		yellow_hsv_high = np.array([ 40, 255, 255])
-		res = apply_color_mask(image_HSV,warped,yellow_hsv_low,yellow_hsv_high)
+		yellow_low_threshold  = np.array([ 0, np.uint8(0.84*255), 255])
+		yellow_high_threshold = np.array([ 56, np.uint8(0.5*255), 255])
+		yellow_binary = self.apply_color_mask(image_in_colorspace, yellow_low_threshold, yellow_high_threshold)
 		
-		white_hsv_low  = np.array([  20,   0,   200])
-		white_hsv_high = np.array([ 255,  80, 255])
-		'''
+		white_low_threshold  = np.array([  0,   np.uint8(0.78*255),   0])
+		white_high_threshold = np.array([ 255,  np.uint8(0.84*255), 255])
+		white_binary = self.apply_color_mask(image_in_colorspace, white_low_threshold, white_high_threshold)
 		
 		color_binary = np.zeros_like(thresholding_channel)
-		color_binary[(thresholding_channel >= thresh[0]) & (thresholding_channel <= thresh[1])] = 1
+		color_binary[(thresholding_channel >= thresh[0]) & (thresholding_channel <= thresh[1]) & (yellow_binary == 1 | white_binary == 1)] = 1
 		self.image_in_colorspace = thresholding_channel
 		return color_binary
-		
+	
 	def apply_gradient_threshold(self, image, abs_thresh=(20, 100), direction_thresh=(0.7, 1.3)):
 		#gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
 		scaled_sobel_x = self.get_scaled_sobel(image, orient="x")
@@ -295,10 +294,21 @@ class LaneDetectionPipeline:
 		font_face = cv2.FONT_HERSHEY_SIMPLEX
 		font_scale = 1
 		font_color = (255, 255, 255)
-		#result_image = cv2.putText(result_image,"Radius of Curvature = " + str(curvature) + " km", (0, 50), font_face, font_scale, font_color)
-		#result_image = cv2.putText(result_image,"Vehicle is " + str(np.absolute(offset_in_meters)) + " m " + offset_direction +  " of center", (0, 100), font_face, font_scale, font_color)
+		result_image = cv2.putText(result_image,"Radius of Curvature = " + str(curvature) + " km", (0, 50), font_face, font_scale, font_color)
+		result_image = cv2.putText(result_image,"Vehicle is " + str(np.absolute(offset_in_meters)) + " m " + offset_direction +  " of center", (0, 100), font_face, font_scale, font_color)
 		return result_image
-		
+	def apply_color_mask(self, image, low_threshold, high_threshold):
+		binaries = [];
+		for idx in range(3):
+			thresholding_channel = image[:, :, idx]
+			binary = np.zeros_like(thresholding_channel)
+			binary[(thresholding_channel >= low_threshold[idx]) & (thresholding_channel <= high_threshold[idx])] = 1
+			binaries.append(binary)
+				
+		# Combine the two binary thresholds
+		combined_mask = np.zeros_like(binaries[0])
+		combined_mask[(binaries[0] == 1) & (binaries[1] == 1) & (binaries[2] == 1)] = 1
+		return combined_mask
 	def get_scaled_sobel(self, image, orient="x"):
 		sobel_val = [];
 		if orient == "x":
