@@ -19,7 +19,8 @@ class LaneDetectionPipeline:
 		self.output_folder = output_folder
 		self.cameraCalibration = cameraCalibration
 		self.frame_count = 0
-		self.Line = Line()
+		self.nframes_left_line = Line()
+		self.nframes_right_line = Line()
 		self.prev_left_fit = []
 		self.prev_right_fit = []
 	def execute(self):
@@ -35,12 +36,13 @@ class LaneDetectionPipeline:
 	def process_image(self, image, file="sample"):
 		# Use camera caliberator to undistort image
 		image = self.cameraCalibration.undistort(image);
+		
 		# save image in the output_folder 
 		file_parts  = file.split(".")
 		mpimg.imsave(self.output_folder + "/" + file_parts[0] +"_undistorted.png" , image);
 		
 		color_binary = self.apply_color_threshold(image)
-		mpimg.imsave(self.output_folder + "/" + file_parts[0] +"_colorbinary.png" , color_binary);
+		mpimg.imsave(self.output_folder + "/" + file_parts[0] +"_colorbinary.png" , color_binary, cmap="gray");
 		
 		mag_sobel_binary, direction_binary = self.apply_gradient_threshold(color_binary)
 		
@@ -63,20 +65,61 @@ class LaneDetectionPipeline:
 		else:
 			left_fit, right_fit, left_fitx, right_fitx, ploty = self.find_lanes_without_sliding_windows(warped_image, file_parts[0], self.prev_left_fit, self.prev_right_fit, 9 );
 		
-		self.prev_left_fit = left_fit
-		self.prev_right_fit = right_fit
 		
-		left_curvature, right_curvature = self.compute_radius_of_curvature(ploty, left_fitx, right_fitx)
-		mean_curvature = np.mean([left_curvature, right_curvature])/1000.0;
-		output_image = self.generate_output(image, warped_image, Minv, left_fitx, right_fitx, ploty, mean_curvature)
-		
-		# save image in the output_folder 
-		mpimg.imsave(self.output_folder + "/" + file_parts[0] +"_final_output.png" , output_image);
+		if left_fit is not None and right_fit is not None:
+			left_curvature, right_curvature = self.compute_radius_of_curvature(ploty, left_fitx, right_fitx)
+			mean_curvature = np.mean([left_curvature, right_curvature])/1000.0;
+			
+			offset, offset_direction = self.compute_lane_offset(left_fitx, right_fitx, image.shape[1]/2)
+			
+			self.add_line_statistics(self.nframes_left_line, left_fit, prev_left_fit, left_fitx, ploty, left_curvature, offset, offset_direction)
+			self.add_line_statistics(self.nframes_right_line, right_fit, prev_right_fit, right_fitx, ploty, right_curvature, offset, offset_direction)
+			
+			
+			self.prev_left_fit = left_fit
+			self.prev_right_fit = right_fit
+			
+			output_image = self.generate_output(image, warped_image, Minv, left_fitx, right_fitx, ploty, mean_curvature, offset, offset_direction)
+			
+			# save image in the output_folder 
+			mpimg.imsave(self.output_folder + "/" + file_parts[0] +"_final_output.png" , output_image);
 		
 		self.frame_count+=1
 		
 		return output_image
-	
+	def compute_lane_offset(self, left_fitx, right_fitx, midpoint):
+		lane_width = np.absolute(left_fitx[0] - right_fitx[0])
+		lane_center = left_fitx[0] + (lane_width/2)
+		offset = lane_center - midpoint
+		xm_per_pix = 3.7/700 # meters per pixel in x dimension
+		offset_in_meters = offset*xm_per_pix
+		
+		offset_direction = "left";
+		if offset < 0:
+			offset_direction = "right"
+		return offset_in_meters, offset_direction
+	def add_line_statistics(self, line, fit, prev_fit, fitx, ploty, curvature, offset, offset_direction):
+		# was the line detected in the last iteration?
+        line.detected = True
+        # x values of the last n fits of the line
+        line.recent_xfitted = fitx
+        #average x values of the fitted line over the last n iterations
+        line.bestx = np.mean(np.mean(fitx), line.bestx/self.frame_count)     
+        #polynomial coefficients averaged over the last n iterations
+        line.best_fit = np.mean(line.best_fit/self.frame_count, fit)
+        #polynomial coefficients for the most recent fit
+        line.current_fit = fit
+        #radius of curvature of the line in some units
+        line.radius_of_curvature = curvature
+        #distance in meters of vehicle center from the line
+        line.offset = offset
+		line.offset_direction = offset_direction
+        #difference in fit coefficients between last and new fits
+        line.diffs = prev_fit - fit
+        #x values for detected line pixels
+        line.allx = fitx  
+        #y values for detected line pixels
+        line.ally = ploty
 	def apply_color_threshold(self, image, color_space="HLS", thresh_channel=2, thresh=(70, 255)):
 		image_in_colorspace = [];
 		if color_space == "HLS":
@@ -88,6 +131,7 @@ class LaneDetectionPipeline:
 		
 		thresholding_channel = image_in_colorspace[:, :, thresh_channel]
 
+		'''
 		yellow_low_threshold  = np.array([ 0, np.uint8(0.84*255), 255])
 		yellow_high_threshold = np.array([ 56, np.uint8(0.5*255), 255])
 		yellow_binary = self.apply_color_mask(image_in_colorspace, yellow_low_threshold, yellow_high_threshold)
@@ -95,9 +139,14 @@ class LaneDetectionPipeline:
 		white_low_threshold  = np.array([  0,   np.uint8(0.78*255),   0])
 		white_high_threshold = np.array([ 255,  np.uint8(0.84*255), 255])
 		white_binary = self.apply_color_mask(image_in_colorspace, white_low_threshold, white_high_threshold)
+		'''
 		
 		color_binary = np.zeros_like(thresholding_channel)
-		color_binary[(thresholding_channel >= thresh[0]) & (thresholding_channel <= thresh[1]) & (yellow_binary == 1 | white_binary == 1)] = 1
+		color_binary[(thresholding_channel >= thresh[0]) & (thresholding_channel <= thresh[1])] = 1
+		
+		#combined_binary = np.zeros_like(thresholding_channel)
+		#combined_binary[(color_binary == 1) &((yellow_binary == 1) | (white_binary == 1))] = 1
+		
 		self.image_in_colorspace = thresholding_channel
 		return color_binary
 	
@@ -261,7 +310,7 @@ class LaneDetectionPipeline:
 		
 		return left_curverad, right_curverad
 
-	def generate_output(self, original_image, warped_image, Minv, left_fitx, right_fitx, ploty, curvature):
+	def generate_output(self, original_image, warped_image, Minv, left_fitx, right_fitx, ploty, curvature, offset, offset_direction):
 		# Create an image to draw the lines on
 		warp_zero = np.zeros_like(warped_image).astype(np.uint8)
 		color_warp = np.dstack((warp_zero, warp_zero, warp_zero))
@@ -280,35 +329,20 @@ class LaneDetectionPipeline:
 		# Combine the result with the original image
 		result_image = cv2.addWeighted(original_image, 1, newwarp, 0.3, 0)
 	
-		lane_width = np.absolute(left_fitx[0] - right_fitx[0])
-		lane_center = left_fitx[0] + (lane_width/2)
-		offset = lane_center - (warped_image.shape[1]/2)
-		xm_per_pix = 3.7/700 # meters per pixel in x dimension
-		offset_in_meters = offset*xm_per_pix
-		
-		offset_direction = "left";
-		if offset < 0:
-			offset_direction = "right"
-		
 		# Write details on radius of curvature and lane center offset
 		font_face = cv2.FONT_HERSHEY_SIMPLEX
 		font_scale = 1
 		font_color = (255, 255, 255)
 		result_image = cv2.putText(result_image,"Radius of Curvature = " + str(curvature) + " km", (0, 50), font_face, font_scale, font_color)
-		result_image = cv2.putText(result_image,"Vehicle is " + str(np.absolute(offset_in_meters)) + " m " + offset_direction +  " of center", (0, 100), font_face, font_scale, font_color)
+		result_image = cv2.putText(result_image,"Vehicle is " + str(np.absolute(offset)) + " m " + offset_direction +  " of center", (0, 100), font_face, font_scale, font_color)
 		return result_image
 	def apply_color_mask(self, image, low_threshold, high_threshold):
 		binaries = [];
-		for idx in range(3):
-			thresholding_channel = image[:, :, idx]
-			binary = np.zeros_like(thresholding_channel)
-			binary[(thresholding_channel >= low_threshold[idx]) & (thresholding_channel <= high_threshold[idx])] = 1
-			binaries.append(binary)
-				
-		# Combine the two binary thresholds
-		combined_mask = np.zeros_like(binaries[0])
-		combined_mask[(binaries[0] == 1) & (binaries[1] == 1) & (binaries[2] == 1)] = 1
-		return combined_mask
+		h,l,s = cv2.split(image)
+		binary = np.zeros_like(h)
+		binary[(h >= low_threshold[0]) & (h <= high_threshold[0]) & (l >= low_threshold[1]) & (l <= high_threshold[1]) & (s >= low_threshold[2]) & (s <= high_threshold[2])] = 1
+		mpimg.imsave(self.output_folder + "/sample_colormask.png" , binary, cmap="gray");
+		return binary
 	def get_scaled_sobel(self, image, orient="x"):
 		sobel_val = [];
 		if orient == "x":
