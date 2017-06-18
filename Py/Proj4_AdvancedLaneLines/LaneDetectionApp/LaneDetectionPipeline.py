@@ -58,7 +58,6 @@ class LaneDetectionPipeline:
 		# save image in the output_folder 
 		mpimg.imsave(self.output_folder + "/" + file_parts[0] +"_warped.png" , warped_image, cmap="gray");
 		
-		print(self.frame_count)
 		if self.frame_count == 0:
 			left_fit, right_fit, left_fitx, right_fitx, ploty = self.find_lanes(warped_image, file_parts[0], 9);
 		else:
@@ -67,7 +66,10 @@ class LaneDetectionPipeline:
 		self.prev_left_fit = left_fit
 		self.prev_right_fit = right_fit
 		
-		output_image = self.generate_output(image, warped_image, Minv, left_fitx, right_fitx, ploty)
+		left_curvature, right_curvature = self.compute_radius_of_curvature(ploty, left_fitx, right_fitx)
+		mean_curvature = np.mean([left_curvature, right_curvature])/1000.0;
+		output_image = self.generate_output(image, warped_image, Minv, left_fitx, right_fitx, ploty, mean_curvature)
+		
 		# save image in the output_folder 
 		mpimg.imsave(self.output_folder + "/" + file_parts[0] +"_final_output.png" , output_image);
 		
@@ -86,6 +88,15 @@ class LaneDetectionPipeline:
 		
 		thresholding_channel = image_in_colorspace[:, :, thresh_channel]
 
+		'''
+		yellow_hsv_low  = np.array([ 0, 80, 200])
+		yellow_hsv_high = np.array([ 40, 255, 255])
+		res = apply_color_mask(image_HSV,warped,yellow_hsv_low,yellow_hsv_high)
+		
+		white_hsv_low  = np.array([  20,   0,   200])
+		white_hsv_high = np.array([ 255,  80, 255])
+		'''
+		
 		color_binary = np.zeros_like(thresholding_channel)
 		color_binary[(thresholding_channel >= thresh[0]) & (thresholding_channel <= thresh[1])] = 1
 		self.image_in_colorspace = thresholding_channel
@@ -108,8 +119,10 @@ class LaneDetectionPipeline:
 		w = image_shape[1];
 		h = image_shape[0];
 		offset = 200;
-		src = np.float32([[210, h-20], [w/2 - 40, h/2 + 90 ], [w/2 + 40 , h/2 + 90],[1070, h-20]])
-		dst = np.float32([[210+offset, h-20], [210+offset, 0 ], [1070- offset , 0],[1070-offset, h-20]])
+		#src = np.float32([[210, h-20], [w/2 - 40, h/2 + 90 ], [w/2 + 40 , h/2 + 90],[1070, h-20]])
+		#dst = np.float32([[210+offset, h-20], [210+offset, 0 ], [1070- offset , 0],[1070-offset, h-20]])
+		src = np.float32([ [200,720],[600,450],[1150,720],[700,450]])
+		dst = np.float32([ [350,720],[350,0],  [1000,720],[1000,0]])
 		M = cv2.getPerspectiveTransform(src, dst)
 		Minv = cv2.getPerspectiveTransform(dst, src)
 		return M, Minv
@@ -230,7 +243,26 @@ class LaneDetectionPipeline:
 		plt.close(fig);
 	
 		return left_fit, right_fit, left_fitx, right_fitx, ploty
-	def generate_output(self, original_image, warped_image, Minv, left_fitx, right_fitx, ploty):
+	def compute_radius_of_curvature(self, ploty, left_fitx, right_fitx):
+		#Define y-value where we want radius of curvature
+		# I'll choose the maximum y-value, corresponding to the bottom of the image
+		y_eval = np.max(ploty)
+		
+		# Define conversions in x and y from pixels space to meters
+		ym_per_pix = 30/720 # meters per pixel in y dimension
+		xm_per_pix = 3.7/700 # meters per pixel in x dimension
+
+		# Fit new polynomials to x,y in world space
+		left_fit_cr = np.polyfit(ploty*ym_per_pix, left_fitx*xm_per_pix, 2)
+		right_fit_cr = np.polyfit(ploty*ym_per_pix, right_fitx*xm_per_pix, 2)
+		
+		# Calculate the new radii of curvature
+		left_curverad = ((1 + (2*left_fit_cr[0]*y_eval*ym_per_pix + left_fit_cr[1])**2)**1.5) / np.absolute(2*left_fit_cr[0])
+		right_curverad = ((1 + (2*right_fit_cr[0]*y_eval*ym_per_pix + right_fit_cr[1])**2)**1.5) / np.absolute(2*right_fit_cr[0])
+		
+		return left_curverad, right_curverad
+
+	def generate_output(self, original_image, warped_image, Minv, left_fitx, right_fitx, ploty, curvature):
 		# Create an image to draw the lines on
 		warp_zero = np.zeros_like(warped_image).astype(np.uint8)
 		color_warp = np.dstack((warp_zero, warp_zero, warp_zero))
@@ -248,6 +280,23 @@ class LaneDetectionPipeline:
 		
 		# Combine the result with the original image
 		result_image = cv2.addWeighted(original_image, 1, newwarp, 0.3, 0)
+	
+		lane_width = np.absolute(left_fitx[0] - right_fitx[0])
+		lane_center = left_fitx[0] + (lane_width/2)
+		offset = lane_center - (warped_image.shape[1]/2)
+		xm_per_pix = 3.7/700 # meters per pixel in x dimension
+		offset_in_meters = offset*xm_per_pix
+		
+		offset_direction = "left";
+		if offset < 0:
+			offset_direction = "right"
+		
+		# Write details on radius of curvature and lane center offset
+		font_face = cv2.FONT_HERSHEY_SIMPLEX
+		font_scale = 1
+		font_color = (255, 255, 255)
+		#result_image = cv2.putText(result_image,"Radius of Curvature = " + str(curvature) + " km", (0, 50), font_face, font_scale, font_color)
+		#result_image = cv2.putText(result_image,"Vehicle is " + str(np.absolute(offset_in_meters)) + " m " + offset_direction +  " of center", (0, 100), font_face, font_scale, font_color)
 		return result_image
 		
 	def get_scaled_sobel(self, image, orient="x"):
