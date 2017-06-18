@@ -19,6 +19,8 @@ class CameraCaliberator:
 		self.image_points = []
 		self.object_points = []
 		self.image_shape = None
+		self.CameraMatrix = []
+		self.DistortionMatrix = []
 	
 	def caliberate(self):
 		# Compute default set of object points 
@@ -43,23 +45,29 @@ class CameraCaliberator:
 			# use gray scale image to find chess board corners 
 			ret, corners = cv2.findChessboardCorners(gray, (self.nx,self.ny), None)
 			
-			# generate corners identified image
-			img_corners = np.copy(image)
-			cv2.drawChessboardCorners(img_corners, (self.nx,self.ny), corners, ret)
-			
-			# save image in the output_folder 
-			file_parts  = file.split(".")
-			mpimg.imsave(self.output_folder + "/" + file_parts[0] +"_corners.png" , img_corners);
-			
 			if corners is not None and corners.shape[0] == object_points.shape[0]:
+				# generate corners identified image
+				img_corners = np.copy(image)
+				img_corners = cv2.drawChessboardCorners(img_corners, (self.nx,self.ny), corners, ret)
+				
+				# save image in the output_folder 
+				file_parts  = file.split(".")
+				mpimg.imsave(self.output_folder + "/" + file_parts[0] +"_corners.png" , img_corners);
+			
 				self.image_points.append(corners)
 				self.object_points.append(object_points)
 		# Calibrate camera using object points and image points
 		ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(self.object_points, self.image_points, self.image_shape, None, None)
+		print(ret)
 		if ret == True:
 			self.CameraMatrix = mtx
 			self.DistortionMatrix = dist
 			self.RadialVectors = rvecs
 			self.TangentialVectors = tvecs
-		
+	def undistort(self, image):
+		undistorted = np.copy(image)
+		if self.CameraMatrix is not None:
+			# convert image to grayscale 
+			undistorted  = cv2.undistort(image, self.CameraMatrix, self.DistortionMatrix, None, self.CameraMatrix)
+		return undistorted
 			
