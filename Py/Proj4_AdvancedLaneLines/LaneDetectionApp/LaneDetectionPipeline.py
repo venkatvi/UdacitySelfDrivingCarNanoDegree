@@ -63,16 +63,16 @@ class LaneDetectionPipeline:
 		return xleft_low, xleft_high, xright_low, xright_high, y_low, y_high
 		
 	def slide_windows(self, image, nwindows, window_height, nonzero_x, nonzero_y, leftx_current, rightx_current, margin, minpix):
-		sliding_window_image = np.copy(image);
+		# Create an output image to draw on and  visualize the result
+		sliding_window_image = np.dstack((image, image, image))*255
 		left_lane_inds = []
 		right_lane_inds = []
 		for window in range(nwindows):
 			# identify window boundaries x, y , right and left 
 			l_low, l_high, r_low, r_high, y_low, y_high = self.compute_margins(image.shape[0], window_height, window, margin, leftx_current, rightx_current);
-			
 			# Draw the windows on the visualization image
-			cv2.rectangle(sliding_window_image,(l_low,y_low),(l_high,y_high),(0,255,0), 2) 
-			cv2.rectangle(sliding_window_image,(r_low,y_low),(r_high,y_high),(0,255,0), 2) 
+			sliding_window_image = cv2.rectangle(sliding_window_image,(l_low,y_low),(l_high,y_high),(0,255,0), 6) 
+			sliding_window_image = cv2.rectangle(sliding_window_image,(r_low,y_low),(r_high,y_high),(0,255,0), 6) 
 			
 			# Identify the nonzero pixels in x and y within the window
 			good_left_inds = ((nonzero_y >= y_low) & (nonzero_y < y_high) & (nonzero_x >= l_low) & (nonzero_x < l_high)).nonzero()[0]
@@ -124,8 +124,8 @@ class LaneDetectionPipeline:
 		
 		# Identify all nonzero pixesl of the image
 		nonzero = image.nonzero()
-		nonzero_x = np.array(nonzero[0])
-		nonzero_y = np.array(nonzero[1])
+		nonzero_y = np.array(nonzero[0])
+		nonzero_x = np.array(nonzero[1])
 		
 		leftx_current = leftx_base
 		rightx_current = rightx_base
@@ -146,13 +146,17 @@ class LaneDetectionPipeline:
 		left_fitx = left_fit[0]*ploty**2 + left_fit[1]*ploty + left_fit[2]
 		right_fitx = right_fit[0]*ploty**2 + right_fit[1]*ploty + right_fit[2]
 
-		out_img[nonzeroy[left_lane_inds], nonzerox[left_lane_inds]] = [255, 0, 0]
-		out_img[nonzeroy[right_lane_inds], nonzerox[right_lane_inds]] = [0, 0, 255]
+		fig = plt.figure(1);
+		out_img[nonzero_y[left_lane_inds], nonzero_x[left_lane_inds]] = [255, 0, 0]
+		out_img[nonzero_y[right_lane_inds], nonzero_x[right_lane_inds]] = [0, 0, 255]
 		plt.imshow(out_img)
 		plt.plot(left_fitx, ploty, color='yellow')
 		plt.plot(right_fitx, ploty, color='yellow')
 		plt.xlim(0, 1280)
 		plt.ylim(720, 0)
+		#plt.show()
+		plt.savefig(self.output_folder + "/" + out_file_name +"_detected_lanes.png");
+		plt.close(fig);
 	
 	def compute_perspective_matrix(self, image):
 		image_shape = image.shape;
