@@ -1,4 +1,4 @@
-
+from CameraCaliberator import *
 from trainSVMFromData import *
 def add_heat(heatmap, windows):
     # Iterate through list of bboxes
@@ -31,13 +31,20 @@ def draw_labeled_bboxes(img, labels):
 		cv2.rectangle(imcopy, bbox[0], bbox[1], (0,0,255), 6)
 	return imcopy
 	
-def draw_boxes(img, bboxes, color=(0,0,1), thick=6):
+def draw_boxes(img, bboxes, color=(0,0,255), thick=6):
 	imcopy = np.copy(img)
 	for bbox in bboxes:
-		cv2.rectangle(imcopy, bbox[0], bbox[1], color, thick)
+		imcopy = cv2.rectangle(imcopy, bbox[0], bbox[1], color, thick)
 	return imcopy
 	
-def detect_vehicle(isImage, file, root_folder):
+def detect_vehicle(isImage, file, root_folder, output_folder):
+	x_start_stop=[700, 1296]
+	y_start_stop = [400, 550]
+	windows_sizes = [32, 64, 128];
+	xy_overlaps = [0.5]
+	box_colors = [(0,0, 1), (0,1,0), (1,0,0), (0, 1, 1), (1, 1, 0),(1,0,1), (0, 0.5, 1)];
+	threshold = 2;
+	
 	featureExtractor = FeatureExtractor(isImage, file, root_folder)
 	copied_image = np.copy(featureExtractor.image)
 	another_copy_image = np.copy(featureExtractor.image)
@@ -71,18 +78,29 @@ def detect_vehicle(isImage, file, root_folder):
 	
 	if isImage == False:
 		file_parts = file.split(".")
-		mpimg.imsave(file_parts[0] +"_boxes.png" , copied_image);
+		mpimg.imsave(output_folder + "/" + file_parts[0] +"_boxes.png" , copied_image);
 		
 		heat = add_heat(heat, all_windows)		
 		heat = apply_threshold(heat, threshold)
+		heatmap_std = heat.std(ddof=1)
+		if heatmap_std != 0.0:
+			heat = (heat-heat.mean())/heatmap_std
+		heat = apply_threshold(heat, np.max([heat.std(), 1]))    
+		
 		heatmap = np.clip(heat, 0, 255)
-		mpimg.imsave(file_parts[0] +"_heatmap.png" , heatmap);
+		mpimg.imsave(output_folder + "/" + file_parts[0] +"_heatmap.png" , heatmap);
 		
 		labels = label(heatmap)
 		another_copy_image = draw_labeled_bboxes(another_copy_image, labels)
 		
-		mpimg.imsave(file_parts[0] +"_final_box.png" , another_copy_image);
+		mpimg.imsave(output_folder + "/" + file_parts[0] +"_final_box.png" , another_copy_image);
 def process_image(image):
+	global frame_count
+	
+	image = cc.undistort(image)
+	mpimg.imsave("image_"+ str(frame_count) + ".png", image);
+	frame_count += 1
+	
 	featureExtractor = FeatureExtractor(True, image, None)
 	copied_image = np.copy(featureExtractor.image)
 	another_copy_image = np.copy(featureExtractor.image)
@@ -92,7 +110,6 @@ def process_image(image):
 	all_windows = []
 	index = 0
 	for window_size in windows_sizes:
-		#print("Window Size: " + str(window_size));
 		windows = [];
 		for overlap in xy_overlaps:
 			tempWindows = SlidingWindowConfigurator.slideWindow(image=copied_image, x_start_stop=x_start_stop, y_start_stop=y_start_stop, 
@@ -110,15 +127,18 @@ def process_image(image):
 				prediction = clf.predict(test_features);
 				if prediction == 1:
 					on_windows.append(window)	
-		copied_image = draw_boxes(copied_image, on_windows, box_colors[index], thick=6)
+		copied_image = draw_boxes(copied_image, on_windows, color=box_colors[index], thick=6)
 		all_windows.extend(on_windows)
-		index=index+1
-	
-	
+		index+=1
 	mpimg.imsave("sample_boxes.png" , copied_image);
 	
 	heat = add_heat(heat, all_windows)		
 	heat = apply_threshold(heat, threshold)
+	heatmap_std = heat.std(ddof=1)
+	if heatmap_std != 0.0:
+		heat = (heat-heat.mean())/heatmap_std
+	heat = apply_threshold(heat, np.max([heat.std(), 1]))    
+	
 	heatmap = np.clip(heat, 0, 255)
 	mpimg.imsave("sample_heatmap.png" , heatmap);
 	
@@ -129,18 +149,24 @@ def process_image(image):
 	return another_copy_image
 if __name__ == "__main__":
 	#pickle_file_name = trainSVMFromData();
-	pickle_file_name = "car_svc.p"
 	import pickle
+	pickle_file_name = "car_svc.p"
 	data = pickle.load(open(pickle_file_name, "rb"));
 	clf = data['Classifier'];
 	scalar = data['Scalar'];
 	
+	pickle_file_name = "camera_calibration.p"
+	data = pickle.load(open(pickle_file_name, "rb"));
+	cc = data["CameraCalibrator"]
+	
 	x_start_stop=[700, 1296]
-	y_start_stop = [400, 500]
-	windows_sizes = [64, 96];
+	y_start_stop = [400, 600]
+	windows_sizes = [64, 128];
 	xy_overlaps = [0.5, 0.8]
-	box_colors = [(0,0, 1), (0,1,0), (0,0,1), (0, 1, 1), (1, 1, 0),(0,0,0), (0, 0.5, 1)];
-	threshold = 20;
+	box_colors = [(0,0, 255), (0,255,0), (255,0,0), (0, 255, 255), (255, 255, 0),(255,0,255), (0, 128, 255)];
+	threshold = 10;
+	frame_count = 0
+	
 	
 	from VDetectApp.FeatureExtractor.FeatureExtractor import FeatureExtractor
 	from VDetectApp.SlidingWindowConfigurator.SlidingWindowConfigurator import SlidingWindowConfigurator
@@ -150,14 +176,15 @@ if __name__ == "__main__":
 	import matplotlib.pyplot as plt
 	from scipy.ndimage.measurements import label
 	
-	
+	''''
 	from moviepy.editor import VideoFileClip
 	import imageio
 	imageio.plugins.ffmpeg.download()
 	test_output = 'test_videos_output/project_video.mp4'
-	clip2 = VideoFileClip('project_video.mp4').subclip(3, 20)
+	clip2 = VideoFileClip('project_video.mp4').subclip(5, 10)
 	pclip = clip2.fl_image(process_image)
 	pclip.write_videofile(test_output, audio=False)
+	'''
 	
 	# output_video_file = 'test_video_detected.mp4'
 	# video_capture = cv2.VideoCapture("test_video.mp4")
@@ -170,9 +197,10 @@ if __name__ == "__main__":
 		# cv2.imwrite("frame%d.jpg" %count, image)
 		# count+=1
 	
-	# root_folder = "test_video_images";
-	# file_list = os.listdir(root_folder)
-	# for file in file_list:
-		# print(file)
-		# detect_vehicle(False, file, root_folder)
+	root_folder = "project_video_images";
+	output_folder = "project_video_images_output"
+	file_list = os.listdir(root_folder)
+	for file in file_list:
+		print(file)
+		detect_vehicle(False, file, root_folder, output_folder)
 	
