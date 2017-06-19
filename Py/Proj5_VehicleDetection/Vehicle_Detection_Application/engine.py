@@ -55,19 +55,19 @@ def detect_vehicle(isImage, file, root_folder, output_folder):
 	for window_size in windows_sizes:
 		print("Window Size: " + str(window_size));
 		windows = [];
-		x_start_stop = [None, None]
-		y_start_stop = [None, None]
+		#x_start_stop = [None, None]
+		#y_start_stop = [None, None]
 		for overlap in xy_overlaps:
 			tempWindows = SlidingWindowConfigurator.slideWindow(image=copied_image, x_start_stop=x_start_stop, y_start_stop=y_start_stop, 
 					xy_window=(window_size, window_size), xy_overlap=(overlap, overlap))
 			windows.extend(tempWindows)
 			
 		on_windows = [];
-		print(windows)
+		#print(windows)
 		for window in windows:
 			mpimg.imsave(output_folder + "/"+ file_parts[0] + "_before_resize.png", featureExtractor.image);
 			test_image = cv2.resize(featureExtractor.image[window[0][1]:window[1][1], window[0][0]:window[1][0]], (64, 64))
-			print(test_image.shape)
+			#print(test_image.shape)
 			mpimg.imsave(output_folder + "/"+ file_parts[0] + "_window.png", test_image);
 			
 			subFeatures = computePerImageFeatures(True, test_image, root_folder=None, y_start=None, y_stop=None, color_space='RGB', scale=1, orientations=9, pixels_per_cell=8, cells_per_block=2, feature_vec=False, concatenate_features=True)
@@ -174,7 +174,7 @@ if __name__ == "__main__":
 	
 	x_start_stop=[700, 1296]
 	y_start_stop = [400, 600]
-	windows_sizes = [64];
+	windows_sizes = [32, 64, 128];
 	xy_overlaps = [0.5]
 	box_colors = [(0,0, 255), (0,255,0), (255,0,0), (0, 255, 255), (255, 255, 0),(255,0,255), (0, 128, 255)];
 	threshold = 4;
