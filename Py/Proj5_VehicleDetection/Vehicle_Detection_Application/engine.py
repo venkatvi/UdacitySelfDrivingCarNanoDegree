@@ -73,8 +73,8 @@ def detect_vehicle(isImage, file, root_folder, output_folder):
 			subFeatures = computePerImageFeatures(True, test_image, root_folder=None, y_start=None, y_stop=None, color_space='RGB', scale=1, orientations=9, pixels_per_cell=8, cells_per_block=2, feature_vec=False, concatenate_features=True)
 		
 			if scalar.mean_.shape[0] == subFeatures.shape[0]:
-				#test_features = scalar.transform(np.array(subFeatures).reshape(1,-1))
-				test_features = subFeatures
+				test_features = scalar.transform(np.array(subFeatures).reshape(1,-1))
+				#test_features = subFeatures
 				prediction = clf.predict(test_features);
 				if prediction == 1:
 					on_windows.append(window)	
