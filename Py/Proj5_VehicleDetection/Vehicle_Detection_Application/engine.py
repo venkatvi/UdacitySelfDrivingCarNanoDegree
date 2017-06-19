@@ -44,29 +44,36 @@ def detect_vehicle(isImage, file, root_folder, output_folder):
 	copied_image = np.copy(featureExtractor.image)
 	another_copy_image = np.copy(featureExtractor.image)
 	heat = np.zeros_like(copied_image[:,:,0]).astype(np.float)
-	
+	print(featureExtractor.image.shape)
 	boxes_image = []
 	all_windows = []
 	index = 0
 	for window_size in windows_sizes:
 		print("Window Size: " + str(window_size));
 		windows = [];
+		x_start_stop = [None, None]
+		y_start_stop = [None, None]
 		for overlap in xy_overlaps:
 			tempWindows = SlidingWindowConfigurator.slideWindow(image=copied_image, x_start_stop=x_start_stop, y_start_stop=y_start_stop, 
 					xy_window=(window_size, window_size), xy_overlap=(overlap, overlap))
 			windows.extend(tempWindows)
 			
 		on_windows = [];
+		print(windows)
 		for window in windows:
 			test_image = cv2.resize(featureExtractor.image[window[0][1]:window[1][1], window[0][0]:window[1][0]], (64, 64))
 			
 			subFeatures = computePerImageFeatures(True, test_image, root_folder=None, y_start=None, y_stop=None, color_space='HSV', scale=1, orientations=9, pixels_per_cell=8, cells_per_block=2, feature_vec=False, concatenate_features=True)
 		
 			if scalar.mean_.shape[0] == subFeatures.shape[0]:
-				test_features = scalar.transform(np.array(subFeatures).reshape(1,-1))
+				#test_features = scalar.transform(np.array(subFeatures).reshape(1,-1))
+				test_features = subFeatures
 				prediction = clf.predict(test_features);
 				if prediction == 1:
 					on_windows.append(window)	
+			else:
+				print(scalar.mean_.shape[0])
+				print(subFeatures.shape[0])
 		copied_image = draw_boxes(copied_image, on_windows, box_colors[index], thick=6)
 		all_windows.extend(on_windows)
 		print(len(all_windows))
@@ -118,7 +125,7 @@ def process_image(image):
 		for window in windows:
 			test_image = cv2.resize(featureExtractor.image[window[0][1]:window[1][1], window[0][0]:window[1][0]], (64, 64))
 			
-			subFeatures = computePerImageFeatures(True, test_image, root_folder=None, y_start=None, y_stop=None, color_space='HSV', scale=1, orientations=9, pixels_per_cell=8, cells_per_block=2, feature_vec=False, concatenate_features=True)
+			subFeatures = computePerImageFeatures(True, test_image, root_folder=None, y_start=None, y_stop=None, color_space='HLS', scale=1, orientations=9, pixels_per_cell=8, cells_per_block=2, feature_vec=False, concatenate_features=True)
 		
 			if scalar.mean_.shape[0] == subFeatures.shape[0]:
 				test_features = scalar.transform(np.array(subFeatures).reshape(1,-1))
