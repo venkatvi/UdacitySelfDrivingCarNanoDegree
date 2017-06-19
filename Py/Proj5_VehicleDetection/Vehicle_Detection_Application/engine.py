@@ -38,9 +38,13 @@ def draw_boxes(img, bboxes, color=(0,0,255), thick=6):
 	return imcopy
 	
 def detect_vehicle(isImage, file, root_folder, output_folder):
-	
+	file_parts = file.split(".")
 	featureExtractor = FeatureExtractor(isImage, file, root_folder)
-	featureExtractor.setImage(cc.undistort(featureExtractor.image))
+	mpimg.imsave(output_folder + "/"+ file_parts[0] + "_original.png", featureExtractor.image);
+	
+	#featureExtractor.setImage(cc.undistort(featureExtractor.image))
+	#mpimg.imsave(output_folder + "/"+ file_parts[0] + "_undistort.png", featureExtractor.image);
+	
 	copied_image = np.copy(featureExtractor.image)
 	another_copy_image = np.copy(featureExtractor.image)
 	heat = np.zeros_like(copied_image[:,:,0]).astype(np.float)
@@ -61,9 +65,12 @@ def detect_vehicle(isImage, file, root_folder, output_folder):
 		on_windows = [];
 		print(windows)
 		for window in windows:
+			mpimg.imsave(output_folder + "/"+ file_parts[0] + "_before_resize.png", featureExtractor.image);
 			test_image = cv2.resize(featureExtractor.image[window[0][1]:window[1][1], window[0][0]:window[1][0]], (64, 64))
+			print(test_image.shape)
+			mpimg.imsave(output_folder + "/"+ file_parts[0] + "_window.png", test_image);
 			
-			subFeatures = computePerImageFeatures(True, test_image, root_folder=None, y_start=None, y_stop=None, color_space='HSV', scale=1, orientations=9, pixels_per_cell=8, cells_per_block=2, feature_vec=False, concatenate_features=True)
+			subFeatures = computePerImageFeatures(True, test_image, root_folder=None, y_start=None, y_stop=None, color_space='RGB', scale=1, orientations=9, pixels_per_cell=8, cells_per_block=2, feature_vec=False, concatenate_features=True)
 		
 			if scalar.mean_.shape[0] == subFeatures.shape[0]:
 				#test_features = scalar.transform(np.array(subFeatures).reshape(1,-1))
@@ -74,6 +81,7 @@ def detect_vehicle(isImage, file, root_folder, output_folder):
 			else:
 				print(scalar.mean_.shape[0])
 				print(subFeatures.shape[0])
+		
 		copied_image = draw_boxes(copied_image, on_windows, box_colors[index], thick=6)
 		all_windows.extend(on_windows)
 		print(len(all_windows))

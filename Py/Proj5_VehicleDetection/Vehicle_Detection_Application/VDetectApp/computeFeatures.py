@@ -1,5 +1,5 @@
 import numpy as np
-def computePerImageFeatures(isImage, file, root_folder=None, y_start=None, y_stop=None, color_space='HLS', scale=1, orientations=9, pixels_per_cell=8, cells_per_block=2, feature_vec=False, concatenate_features=False):
+def computePerImageFeatures(isImage, file, root_folder=None, y_start=None, y_stop=None, color_space='RGB', scale=1, orientations=9, pixels_per_cell=8, cells_per_block=2, feature_vec=False, concatenate_features=False):
 	#print('#.1: Feature Extraction');		
 	from VDetectApp.FeatureExtractor.FeatureExtractor import FeatureExtractor	
 	featureExtractor = FeatureExtractor(isImage, file, root_folder=root_folder);
