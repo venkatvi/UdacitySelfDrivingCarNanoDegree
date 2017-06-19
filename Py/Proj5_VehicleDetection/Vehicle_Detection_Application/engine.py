@@ -38,14 +38,9 @@ def draw_boxes(img, bboxes, color=(0,0,255), thick=6):
 	return imcopy
 	
 def detect_vehicle(isImage, file, root_folder, output_folder):
-	x_start_stop=[700, 1296]
-	y_start_stop = [400, 550]
-	windows_sizes = [32, 64, 128];
-	xy_overlaps = [0.5]
-	box_colors = [(0,0, 1), (0,1,0), (1,0,0), (0, 1, 1), (1, 1, 0),(1,0,1), (0, 0.5, 1)];
-	threshold = 2;
 	
 	featureExtractor = FeatureExtractor(isImage, file, root_folder)
+	featureExtractor.setImage(cc.undistort(featureExtractor.image))
 	copied_image = np.copy(featureExtractor.image)
 	another_copy_image = np.copy(featureExtractor.image)
 	heat = np.zeros_like(copied_image[:,:,0]).astype(np.float)
@@ -74,19 +69,22 @@ def detect_vehicle(isImage, file, root_folder, output_folder):
 					on_windows.append(window)	
 		copied_image = draw_boxes(copied_image, on_windows, box_colors[index], thick=6)
 		all_windows.extend(on_windows)
+		print(len(all_windows))
 		index=index+1
-	
+		plt.imshow(copied_image) 
+		
 	if isImage == False:
 		file_parts = file.split(".")
 		mpimg.imsave(output_folder + "/" + file_parts[0] +"_boxes.png" , copied_image);
 		
 		heat = add_heat(heat, all_windows)		
 		heat = apply_threshold(heat, threshold)
+		''''
 		heatmap_std = heat.std(ddof=1)
 		if heatmap_std != 0.0:
 			heat = (heat-heat.mean())/heatmap_std
 		heat = apply_threshold(heat, np.max([heat.std(), 1]))    
-		
+		'''
 		heatmap = np.clip(heat, 0, 255)
 		mpimg.imsave(output_folder + "/" + file_parts[0] +"_heatmap.png" , heatmap);
 		
@@ -161,10 +159,10 @@ if __name__ == "__main__":
 	
 	x_start_stop=[700, 1296]
 	y_start_stop = [400, 600]
-	windows_sizes = [64, 128];
-	xy_overlaps = [0.5, 0.8]
+	windows_sizes = [64];
+	xy_overlaps = [0.5]
 	box_colors = [(0,0, 255), (0,255,0), (255,0,0), (0, 255, 255), (255, 255, 0),(255,0,255), (0, 128, 255)];
-	threshold = 10;
+	threshold = 4;
 	frame_count = 0
 	
 	
@@ -197,8 +195,9 @@ if __name__ == "__main__":
 		# cv2.imwrite("frame%d.jpg" %count, image)
 		# count+=1
 	
-	root_folder = "project_video_images";
-	output_folder = "project_video_images_output"
+	
+	root_folder = "test_images";
+	output_folder = "test_images_output"
 	file_list = os.listdir(root_folder)
 	for file in file_list:
 		print(file)

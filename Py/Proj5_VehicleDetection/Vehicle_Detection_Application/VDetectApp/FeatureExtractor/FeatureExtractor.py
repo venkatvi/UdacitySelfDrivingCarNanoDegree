@@ -12,7 +12,7 @@ class FeatureExtractor:
 				sequence = (root_folder, image_file)
 				fileFullPath = s.join(sequence)
 				self.image = mpimg.imread(fileFullPath)
-				self.image = self.image.astype(np.float32)/255
+				#self.image = self.image.astype(np.float32)/255.0
 			else:
 				self.image = mpimg.imread(image_file);
 	def setImage(self, image):
@@ -30,6 +30,8 @@ class FeatureExtractor:
 				feature_image = cv2.cvtColor(self.image, cv2.COLOR_RGB2YUV)
 			elif color_space == 'YCrCb':
 				feature_image = cv2.cvtColor(self.image, cv2.COLOR_RGB2YCrCb)
+			elif color_space == 'HLS':
+				feature_image = cv2.cvtColor(self.image, cv2.COLOR_RGB2HLS)
 		self.feature_image = feature_image	
 	def rescaleImage(self, scale=1):
 		self.scaled_feature_image = self.feature_image
