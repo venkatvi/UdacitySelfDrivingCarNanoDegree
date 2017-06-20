@@ -12,6 +12,7 @@ class FeatureExtractor:
 				sequence = (root_folder, image_file)
 				fileFullPath = s.join(sequence)
 				self.image = mpimg.imread(fileFullPath)
+				self.image = self.image[:,:,:3]
 				#self.image = self.image.astype(np.float32)/255.0
 			else:
 				self.image = mpimg.imread(image_file);

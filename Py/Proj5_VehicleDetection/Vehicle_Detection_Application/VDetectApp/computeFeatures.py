@@ -18,7 +18,7 @@ def computePerImageFeatures(isImage, file, root_folder=None, y_start=None, y_sto
 	featureExtractor.extractSpatialFeatures(spatial_size=(32,32))
 	
 	#print('#.5: Histogram Features');
-	#featureExtractor.extractHistogramFeatures(number_of_histogram_bins=32, bins_range=(0,256))	
+	featureExtractor.extractHistogramFeatures(number_of_histogram_bins=32, bins_range=(0,256))	
 	
 	#print('#.6: HOG features');
 	featureExtractor.extractHOGFeatures(hog_channel="ALL", orientations=orientations, pixels_per_cell=pixels_per_cell, cells_per_block=cells_per_block, visualise=False, feature_vec=feature_vec)
@@ -27,6 +27,8 @@ def computePerImageFeatures(isImage, file, root_folder=None, y_start=None, y_sto
 	if concatenate_features == True:
 	#	print('#.7: Concatenate all features');
 		concatenated_features = np.concatenate((featureExtractor.spatial_features, np.ravel(featureExtractor.hog_features)))	
+		print(len(featureExtractor.spatial_features), len(featureExtractor.histogram_features), len(featureExtractor.hog_features))
+		
 	else:
 		concatenated_features={'spatial_features': featureExtractor.spatial_features, 'histogram_features': featureExtractor.histogram_features, 'HOG_features': featureExtractor.hog_features};
 	return concatenated_features

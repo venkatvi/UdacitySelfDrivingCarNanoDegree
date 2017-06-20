@@ -1,5 +1,15 @@
 from CameraCaliberator import *
 from trainSVMFromData import *
+import pickle
+from VDetectApp.FeatureExtractor.FeatureExtractor import FeatureExtractor
+from VDetectApp.SlidingWindowConfigurator.SlidingWindowConfigurator import SlidingWindowConfigurator
+import cv2
+import os, sys
+import matplotlib.image as mpimg
+import matplotlib.pyplot as plt
+from scipy.ndimage.measurements import label
+
+
 def add_heat(heatmap, windows):
     # Iterate through list of bboxes
     for window in windows:
@@ -40,6 +50,7 @@ def draw_boxes(img, bboxes, color=(0,0,255), thick=6):
 def detect_vehicle(isImage, file, root_folder, output_folder):
 	file_parts = file.split(".")
 	featureExtractor = FeatureExtractor(isImage, file, root_folder)
+	featureExtractor.image = featureExtractor.image[:,:,:3]
 	mpimg.imsave(output_folder + "/"+ file_parts[0] + "_original.png", featureExtractor.image);
 	
 	#featureExtractor.setImage(cc.undistort(featureExtractor.image))
@@ -63,12 +74,12 @@ def detect_vehicle(isImage, file, root_folder, output_folder):
 			windows.extend(tempWindows)
 			
 		on_windows = [];
-		#print(windows)
+		count = 0
 		for window in windows:
 			mpimg.imsave(output_folder + "/"+ file_parts[0] + "_before_resize.png", featureExtractor.image);
 			test_image = cv2.resize(featureExtractor.image[window[0][1]:window[1][1], window[0][0]:window[1][0]], (64, 64))
 			#print(test_image.shape)
-			mpimg.imsave(output_folder + "/"+ file_parts[0] + "_window.png", test_image);
+			mpimg.imsave(output_folder + "/"+ file_parts[0] + "_"+ str(index) + ".png", test_image);
 			
 			subFeatures = computePerImageFeatures(True, test_image, root_folder=None, y_start=None, y_stop=None, color_space='RGB', scale=1, orientations=9, pixels_per_cell=8, cells_per_block=2, feature_vec=False, concatenate_features=True)
 		
@@ -78,10 +89,12 @@ def detect_vehicle(isImage, file, root_folder, output_folder):
 				prediction = clf.predict(test_features);
 				if prediction == 1:
 					on_windows.append(window)	
+				print(count, window[0][1], window[1][1], window[0][0], window[1][0], prediction)
 			else:
 				print(scalar.mean_.shape[0])
 				print(subFeatures.shape[0])
-		
+			count+=1
+			
 		copied_image = draw_boxes(copied_image, on_windows, box_colors[index], thick=6)
 		all_windows.extend(on_windows)
 		print(len(all_windows))
@@ -134,6 +147,7 @@ def process_image(image):
 			test_image = cv2.resize(featureExtractor.image[window[0][1]:window[1][1], window[0][0]:window[1][0]], (64, 64))
 			
 			subFeatures = computePerImageFeatures(True, test_image, root_folder=None, y_start=None, y_stop=None, color_space='HLS', scale=1, orientations=9, pixels_per_cell=8, cells_per_block=2, feature_vec=False, concatenate_features=True)
+			subFeatures = subFeatures.astype('float64')
 		
 			if scalar.mean_.shape[0] == subFeatures.shape[0]:
 				test_features = scalar.transform(np.array(subFeatures).reshape(1,-1))
@@ -161,8 +175,14 @@ def process_image(image):
 	mpimg.imsave("sample_final_box.png" , another_copy_image);
 	return another_copy_image
 if __name__ == "__main__":
-	#pickle_file_name = trainSVMFromData();
-	import pickle
+	pickle_file_name = []
+	input_args = sys.argv
+	print(input_args)
+	if input_args[1] == "1": 
+		if input_args[2] == "1":
+			pickle_file_name = trainSVMFromData(True);
+		else:
+			pickle_file_name = trainSVMFromData(False);
 	pickle_file_name = "car_svc.p"
 	data = pickle.load(open(pickle_file_name, "rb"));
 	clf = data['Classifier'];
@@ -174,21 +194,12 @@ if __name__ == "__main__":
 	
 	x_start_stop=[700, 1296]
 	y_start_stop = [400, 600]
-	windows_sizes = [32, 64, 128];
+	windows_sizes = [96];
 	xy_overlaps = [0.5]
 	box_colors = [(0,0, 255), (0,255,0), (255,0,0), (0, 255, 255), (255, 255, 0),(255,0,255), (0, 128, 255)];
 	threshold = 4;
 	frame_count = 0
-	
-	
-	from VDetectApp.FeatureExtractor.FeatureExtractor import FeatureExtractor
-	from VDetectApp.SlidingWindowConfigurator.SlidingWindowConfigurator import SlidingWindowConfigurator
-	import cv2
-	import os, sys
-	import matplotlib.image as mpimg
-	import matplotlib.pyplot as plt
-	from scipy.ndimage.measurements import label
-	
+		
 	''''
 	from moviepy.editor import VideoFileClip
 	import imageio
@@ -215,6 +226,6 @@ if __name__ == "__main__":
 	output_folder = "test_images_output"
 	file_list = os.listdir(root_folder)
 	for file in file_list:
-		print(file)
-		detect_vehicle(False, file, root_folder, output_folder)
+		if file.endswith("3.jpg"):
+			detect_vehicle(False, file, root_folder, output_folder)
 	

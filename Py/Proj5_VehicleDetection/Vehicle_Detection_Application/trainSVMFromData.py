@@ -9,7 +9,23 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.cross_validation import train_test_split
 from sklearn.metrics import accuracy_score
 import pickle
-def trainSVMFromData():
+import cv2
+import os
+def flip_image(full_file_name, isCar):
+	cv_image=cv2.imread(full_file_name)
+	flipped_image=cv_image.copy()	
+	flipped_image=cv2.flip(cv_image, 1)
+	file_parts = os.path.split(full_file_name)
+	file_name_parts = file_parts[1].split(".")
+	if isCar == True:
+		flipped_file_name = file_parts[0] + "/../../flipped_vehicles/" + file_name_parts[0] + "_flipped.png";
+	else:
+		flipped_file_name = file_parts[0] + "/../../flipped_non_vehicles/" + file_name_parts[0] + "_flipped.png";
+	print(flipped_file_name)
+	mpimg.imsave(flipped_file_name, flipped_image)
+	return flipped_file_name
+		
+def trainSVMFromData(generate_flipped_images=False):
 	############################################################
 	print('______________Step 1: Load data______________')
 	# SubModules are not automatically imported from root import 
@@ -30,16 +46,47 @@ def trainSVMFromData():
 	start_t = time.time();
 	car_features = [];
 	for car in car_images:
-		car_features.append(computePerImageFeatures(False, car, concatenate_features=True));
+		features = computePerImageFeatures(False, car, concatenate_features=True);
+		car_features.append(features[:, None])
+		if generate_flipped_images==True:
+			flipped_file_name = flip_image(car, True);
+			features = computePerImageFeatures(False, flipped_file_name, concatenate_features=True);
+			car_features.append(features[:, None])
+	
 		
 	non_car_features=[];
 	for non_car in non_car_images:
-		non_car_features.append(computePerImageFeatures(False, non_car, concatenate_features=True));
+		features = computePerImageFeatures(False, non_car, concatenate_features=True);
+		non_car_features.append(features[:, None]);
+		if generate_flipped_images == True:
+			flipped_file_name = flip_image(non_car, False);
+			features = computePerImageFeatures(False, flipped_file_name, concatenate_features=True);
+			non_car_features.append(features[:, None])
+
 	end_t = time.time();
 	print('Feature Extraction took '+ str(round(end_t-start_t, 2)) + ' seconds');
 	
 	############################################################
 	print('______________Step 3: Set up data for SVM______________')
+	print(len(car_features))
+	print(len(non_car_features))
+	a = car_features[0].shape
+	b = non_car_features[1].shape
+	
+	out_of_shape = [];
+	for idx in range(len(car_features)):
+		c = car_features[idx].shape 
+		if a != c: 
+			out_of_shape.append(idx)
+	
+	out_of_shape_non_car = []
+	for idx in range(len(non_car_features)):
+		c = non_car_features[idx].shape 
+		if b != c: 
+			out_of_shape_non_car.append(idx)
+	
+	print(car_images[out_of_shape[0]])
+	print(car_images[out_of_shape_non_car[0]])
 	X = np.vstack((car_features, non_car_features)).astype('float64')
 	
 	print('Step 3a: Data Preprocessing - Normalization to Standard Scaling')
