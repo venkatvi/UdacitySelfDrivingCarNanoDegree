@@ -21,7 +21,6 @@ def flip_image(full_file_name, isCar):
 		flipped_file_name = file_parts[0] + "/../../flipped_vehicles/" + file_name_parts[0] + "_flipped.png";
 	else:
 		flipped_file_name = file_parts[0] + "/../../flipped_non_vehicles/" + file_name_parts[0] + "_flipped.png";
-	print(flipped_file_name)
 	mpimg.imsave(flipped_file_name, flipped_image)
 	return flipped_file_name
 		
@@ -68,27 +67,8 @@ def trainSVMFromData(generate_flipped_images=False):
 	
 	############################################################
 	print('______________Step 3: Set up data for SVM______________')
-	print(len(car_features))
-	print(len(non_car_features))
-	a = car_features[0].shape
-	b = non_car_features[1].shape
-	
-	out_of_shape = [];
-	for idx in range(len(car_features)):
-		c = car_features[idx].shape 
-		if a != c: 
-			out_of_shape.append(idx)
-	
-	out_of_shape_non_car = []
-	for idx in range(len(non_car_features)):
-		c = non_car_features[idx].shape 
-		if b != c: 
-			out_of_shape_non_car.append(idx)
-	
-	print(car_images[out_of_shape[0]])
-	print(car_images[out_of_shape_non_car[0]])
 	X = np.vstack((car_features, non_car_features)).astype('float64')
-	
+	X = np.reshape(X, (X.shape[0], X.shape[1]))
 	print('Step 3a: Data Preprocessing - Normalization to Standard Scaling')
 	
 	X_scaler = StandardScaler().fit(X)

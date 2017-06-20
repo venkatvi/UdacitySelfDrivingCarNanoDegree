@@ -79,7 +79,7 @@ def detect_vehicle(isImage, file, root_folder, output_folder):
 			mpimg.imsave(output_folder + "/"+ file_parts[0] + "_before_resize.png", featureExtractor.image);
 			test_image = cv2.resize(featureExtractor.image[window[0][1]:window[1][1], window[0][0]:window[1][0]], (64, 64))
 			#print(test_image.shape)
-			mpimg.imsave(output_folder + "/"+ file_parts[0] + "_"+ str(index) + ".png", test_image);
+			#mpimg.imsave(output_folder + "/"+ file_parts[0] + "_"+ str(count) + ".png", test_image);
 			
 			subFeatures = computePerImageFeatures(True, test_image, root_folder=None, y_start=None, y_stop=None, color_space='RGB', scale=1, orientations=9, pixels_per_cell=8, cells_per_block=2, feature_vec=False, concatenate_features=True)
 		
@@ -89,7 +89,7 @@ def detect_vehicle(isImage, file, root_folder, output_folder):
 				prediction = clf.predict(test_features);
 				if prediction == 1:
 					on_windows.append(window)	
-				print(count, window[0][1], window[1][1], window[0][0], window[1][0], prediction)
+				#print(count, window[0][1], window[1][1], window[0][0], window[1][0], prediction)
 			else:
 				print(scalar.mean_.shape[0])
 				print(subFeatures.shape[0])
@@ -97,9 +97,9 @@ def detect_vehicle(isImage, file, root_folder, output_folder):
 			
 		copied_image = draw_boxes(copied_image, on_windows, box_colors[index], thick=6)
 		all_windows.extend(on_windows)
-		print(len(all_windows))
 		index=index+1
-		plt.imshow(copied_image) 
+		
+	print(len(all_windows))
 		
 	if isImage == False:
 		file_parts = file.split(".")
@@ -120,13 +120,19 @@ def detect_vehicle(isImage, file, root_folder, output_folder):
 		another_copy_image = draw_labeled_bboxes(another_copy_image, labels)
 		
 		mpimg.imsave(output_folder + "/" + file_parts[0] +"_final_box.png" , another_copy_image);
+	return another_copy_image
 def process_image(image):
 	global frame_count
 	
-	image = cc.undistort(image)
-	mpimg.imsave("image_"+ str(frame_count) + ".png", image);
-	frame_count += 1
+	#image = cc.undistort(image)
+	file_name = "image_"+ str(frame_count) + ".jpg";
+	mpimg.imsave(file_name, image);
 	
+	frame_count += 1
+	output_folder = "./test_videos_output"
+	output_image = detect_vehicle(False, file_name, ".", output_folder)
+	return output_image
+	''''
 	featureExtractor = FeatureExtractor(True, image, None)
 	copied_image = np.copy(featureExtractor.image)
 	another_copy_image = np.copy(featureExtractor.image)
@@ -174,6 +180,7 @@ def process_image(image):
 	
 	mpimg.imsave("sample_final_box.png" , another_copy_image);
 	return another_copy_image
+	'''
 if __name__ == "__main__":
 	pickle_file_name = []
 	input_args = sys.argv
@@ -194,21 +201,21 @@ if __name__ == "__main__":
 	
 	x_start_stop=[700, 1296]
 	y_start_stop = [400, 600]
-	windows_sizes = [96];
-	xy_overlaps = [0.5]
+	windows_sizes = [128, 96];
+	xy_overlaps = [0.5, 0.8]
 	box_colors = [(0,0, 255), (0,255,0), (255,0,0), (0, 255, 255), (255, 255, 0),(255,0,255), (0, 128, 255)];
 	threshold = 4;
 	frame_count = 0
 		
-	''''
+	
 	from moviepy.editor import VideoFileClip
 	import imageio
 	imageio.plugins.ffmpeg.download()
 	test_output = 'test_videos_output/project_video.mp4'
-	clip2 = VideoFileClip('project_video.mp4').subclip(5, 10)
+	clip2 = VideoFileClip('project_video.mp4')
 	pclip = clip2.fl_image(process_image)
 	pclip.write_videofile(test_output, audio=False)
-	'''
+	
 	
 	# output_video_file = 'test_video_detected.mp4'
 	# video_capture = cv2.VideoCapture("test_video.mp4")
@@ -221,11 +228,11 @@ if __name__ == "__main__":
 		# cv2.imwrite("frame%d.jpg" %count, image)
 		# count+=1
 	
-	
+	'''
 	root_folder = "test_images";
 	output_folder = "test_images_output"
 	file_list = os.listdir(root_folder)
 	for file in file_list:
-		if file.endswith("3.jpg"):
+		if file.endswith("6.jpg"):
 			detect_vehicle(False, file, root_folder, output_folder)
-	
+	'''

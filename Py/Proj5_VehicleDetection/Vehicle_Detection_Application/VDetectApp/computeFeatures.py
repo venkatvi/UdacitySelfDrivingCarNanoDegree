@@ -27,8 +27,6 @@ def computePerImageFeatures(isImage, file, root_folder=None, y_start=None, y_sto
 	if concatenate_features == True:
 	#	print('#.7: Concatenate all features');
 		concatenated_features = np.concatenate((featureExtractor.spatial_features, np.ravel(featureExtractor.hog_features)))	
-		print(len(featureExtractor.spatial_features), len(featureExtractor.histogram_features), len(featureExtractor.hog_features))
-		
 	else:
 		concatenated_features={'spatial_features': featureExtractor.spatial_features, 'histogram_features': featureExtractor.histogram_features, 'HOG_features': featureExtractor.hog_features};
 	return concatenated_features
