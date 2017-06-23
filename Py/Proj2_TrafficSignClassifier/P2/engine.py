@@ -7,7 +7,8 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.contrib.layers import flatten
 
-def getLeNet(x):
+import matplotlib.pyplot as plt
+def getLeNet(x, dropout):
 	mu = 0
 	sigma = 0.1
 	
@@ -34,6 +35,7 @@ def getLeNet(x):
 	fc2_b = tf.Variable(tf.zeros(84))
 	fc2 = tf.matmul(fc1, fc2_W) + fc2_b
 	fc2 = tf.nn.relu(fc2)
+	fc2 = tf.nn.dropout(fc2, dropout)
 	
 	fc3_W = tf.Variable(tf.truncated_normal(shape=(84, 43), mean=mu, stddev=sigma))
 	fc3_b = tf.Variable(tf.zeros(43))
@@ -58,6 +60,21 @@ def loadData():
 	#y_valid = np.resize(y_valid, (X_valid.shape[0], 1))
 	X_test, y_test = test['features'], test['labels']
 	#y_test = np.resize(y_test, (X_test.shape[0], 1))
+	
+	#
+	print("Input data distribution ... ")
+	fig, axes = plt.subplots(1, 2)
+	ax = plt.subplot(1,2,1)
+	ax.set_title("y_train before preprocessing N=" + str(len(y_train)) )
+	
+	plt.hist(y_train, bins=43)
+	ax = plt.subplot(1,2,2)
+	ax.set_title("y_valid before preprocessing N=" + str(len(y_valid)))
+	
+	plt.hist(y_valid, bins=43)
+	plt.show()
+	plt.savefig('ClassDistributionBeforeShuffling.png')
+	
 	data = {'train': (X_train, y_train), 'test': (X_test , y_test), 'valid': (X_valid, y_valid)}
 	return data
 def preprocessData(data):
@@ -72,14 +89,29 @@ def preprocessData(data):
 	X_valid = valid_data[0]
 	y_valid = valid_data[1]
 	X = np.vstack((X_train, X_valid))
-	y = np.vstack((y_train[:,], y_valid[:,]))
+	y = np.concatenate((y_train, y_valid))
 
 	indices = np.arange(X.shape[0])
 	np.random.shuffle(indices)
 	training_samples = int(np.ceil(X.shape[0]*0.8))
 	training_indices, validation_indices = indices[:training_samples], indices[training_samples:]
-	X_train, y_train = X[training_indices, :], y[training_indices, :]
-	X_valid, y_valid = X[validation_indices, :], y[validation_indices, :]
+	
+	X_train, y_train = X[training_indices, :,:,:], y[training_indices]
+	X_valid, y_valid = X[validation_indices, :,:,:], y[validation_indices]
+	
+	# 
+	print("Reshuffled data distribution")
+	fig, axes = plt.subplots(1, 2)
+	ax = plt.subplot(1,2,1)
+	ax.set_title("y_train after preprocessing N=" + str(len(y_train)))
+	plt.hist(y_train, bins=43)
+	
+	ax = plt.subplot(1,2,2)
+	ax.set_title("y_valid after preprocessing N=" + str(len(y_valid)))
+	plt.hist(y_valid, bins=43)
+	plt.show()
+	plt.savefig('ClassDistributionAfterShuffling.png')
+	
 	data["train"] = (X_train, y_train)
 	data["valid"] = (X_valid, y_valid)
 	return data
@@ -90,7 +122,7 @@ def evaluate(X_data, y_data, dropout):
 	for offset in range(0, num_examples, batch_size):
 		end = offset + batch_size
 		batchx, batchy = X_data[offset:end], y_data[offset:end]
-		accuracy = sess.run(accuracy_operation, feed_dict={x:batchx, y:batchy})
+		accuracy = sess.run(accuracy_operation, feed_dict={x:batchx, y:batchy, keep_prob:dropout})
 		#accuracy = 0
 		#one_hot_y_valid = sess.run(one_hot_y,  feed_dict={y:batchy})
 		#print(one_hot_y_valid.shape)
@@ -123,7 +155,7 @@ def train_and_validate(data):
 			for offset in range(0, num_examples, batch_size):
 				end = offset + batch_size
 				batchx, batchy = X_train[offset:end], y_train[offset:end]
-				sess.run(training_operation, feed_dict={x:batchx, y:batchy})
+				sess.run(training_operation, feed_dict={x:batchx, y:batchy, keep_prob:dropout})
 	
 			validation_accuracy = evaluate(X_valid, y_valid, dropout)
 			print("EPOCH {} ...".format(i+1))
@@ -141,8 +173,8 @@ def train_and_validate(data):
 	
 if __name__ == "__main__":
 	data = loadData();
-	#preprocessed_data = preprocessData(data);
-	preprocessed_data = data
+	preprocessed_data = preprocessData(data);
+	#preprocessed_data = data
 	
 	learning_rate=0.001
 	dropout = 0.75
@@ -155,7 +187,7 @@ if __name__ == "__main__":
 	print(one_hot_y.get_shape)
 	keep_prob = tf.placeholder(tf.float32, (None))
 	
-	leNet = getLeNet(x)
+	leNet = getLeNet(x, keep_prob)
 	print(leNet.get_shape)
 	cross_entropy = tf.nn.softmax_cross_entropy_with_logits(logits=leNet, labels=one_hot_y)
 	loss_operation = tf.reduce_mean(cross_entropy)
