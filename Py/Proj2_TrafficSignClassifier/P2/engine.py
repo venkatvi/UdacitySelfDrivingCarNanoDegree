@@ -7,7 +7,7 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.contrib.layers import flatten
 
-def getLeNet(x, dropout):
+def getLeNet(x):
 	mu = 0
 	sigma = 0.1
 	
@@ -53,11 +53,11 @@ def loadData():
 		test = pickle.load(f)
 		
 	X_train, y_train = train['features'], train['labels']
-	y_train = np.resize(y_train, (X_train.shape[0], 1))
+	#y_train = np.resize(y_train, (X_train.shape[0], 1))
 	X_valid, y_valid = valid['features'], valid['labels']
-	y_valid = np.resize(y_valid, (X_valid.shape[0], 1))
+	#y_valid = np.resize(y_valid, (X_valid.shape[0], 1))
 	X_test, y_test = test['features'], test['labels']
-	y_test = np.resize(y_test, (X_test.shape[0], 1))
+	#y_test = np.resize(y_test, (X_test.shape[0], 1))
 	data = {'train': (X_train, y_train), 'test': (X_test , y_test), 'valid': (X_valid, y_valid)}
 	return data
 def preprocessData(data):
@@ -90,9 +90,10 @@ def evaluate(X_data, y_data, dropout):
 	for offset in range(0, num_examples, batch_size):
 		end = offset + batch_size
 		batchx, batchy = X_data[offset:end], y_data[offset:end]
-		print(batchx.shape)
-		print(batchy.shape)
-		accuracy = sess.run(accuracy_operation, feed_dict={x:batchx, y:batchy, keep_prob:dropout})
+		accuracy = sess.run(accuracy_operation, feed_dict={x:batchx, y:batchy})
+		#accuracy = 0
+		#one_hot_y_valid = sess.run(one_hot_y,  feed_dict={y:batchy})
+		#print(one_hot_y_valid.shape)
 		total_accuracy += (accuracy*len(batchx))
 	return total_accuracy/num_examples
 def train_and_validate(data):
@@ -110,6 +111,7 @@ def train_and_validate(data):
 	saver = tf.train.Saver()
 	
 	with tf.Session() as sess:
+		file_writer = tf.summary.FileWriter('.', sess.graph)
 		sess.run(tf.global_variables_initializer())
 		num_examples = len(X_train)
 		
@@ -121,10 +123,8 @@ def train_and_validate(data):
 			for offset in range(0, num_examples, batch_size):
 				end = offset + batch_size
 				batchx, batchy = X_train[offset:end], y_train[offset:end]
-				print(batchx.shape)
-				print(batchy.shape)
-				sess.run(training_operation, feed_dict={x:batchx, y:batchy, keep_prob:dropout})
-			
+				sess.run(training_operation, feed_dict={x:batchx, y:batchy})
+	
 			validation_accuracy = evaluate(X_valid, y_valid, dropout)
 			print("EPOCH {} ...".format(i+1))
 			print("Validation Accuracy = " , validation_accuracy)
@@ -141,7 +141,8 @@ def train_and_validate(data):
 	
 if __name__ == "__main__":
 	data = loadData();
-	preprocessed_data = preprocessData(data);
+	#preprocessed_data = preprocessData(data);
+	preprocessed_data = data
 	
 	learning_rate=0.001
 	dropout = 0.75
@@ -151,10 +152,11 @@ if __name__ == "__main__":
 	x = tf.placeholder(tf.float32, (None, 32,32,3))
 	y = tf.placeholder(tf.int32, (None))
 	one_hot_y = tf.one_hot(y, 43)
+	print(one_hot_y.get_shape)
 	keep_prob = tf.placeholder(tf.float32, (None))
 	
-	leNet = getLeNet(x, keep_prob)
-	
+	leNet = getLeNet(x)
+	print(leNet.get_shape)
 	cross_entropy = tf.nn.softmax_cross_entropy_with_logits(logits=leNet, labels=one_hot_y)
 	loss_operation = tf.reduce_mean(cross_entropy)
 	optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate)
