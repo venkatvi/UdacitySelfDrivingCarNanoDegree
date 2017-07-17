@@ -248,3 +248,8 @@ For the fifth image related pedestrians, the prediction was "Roads narrow toward
 
 ### (Optional) Visualizing the Neural Network (See Step 4 of the Ipython notebook for more details)
 ####1. Discuss the visual output of your trained network's feature maps. What characteristics did the neural network use to make classifications?
+As a test, two signs were used the 20 km/h sign (which is a circular sign) and pedestrians sign (triangular sign). 
+
+Using the helper function to output the 6 feature maps of the first convolutional layer, shows that, the feature spaces are tried to learn the circular and triangular shape of the sign respectively. 
+The second layer of 16 feature maps, are trying to abstract the geometrical representations (circle / triangle in the respective case) into more fundamental representations like set of contiguous darker / brighter pixels. 
+
