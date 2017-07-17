@@ -179,63 +179,53 @@ Model Architecture
 ### Test a Model on New Images
 #### Acquiring New Images
 
-Here are five German traffic signs from the training set provided in original dataset:
+Here are ten German traffic signs from the training set provided in original dataset:
 
 ![Speed 20kmh](https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup/Class0_00006_00028.png) ![Stop Sign](https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup/Class14_00014_00020.png) ![No Vehicles](https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup/Class15_00016_00027.png)
 ![Road Work](https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup/Class25_00038_00009.png) ![Pedestrians](https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup/Class27_00007_00020.png) ![End of no passing by vehicles over 3.5 metric tons](https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup/Class42_00007_00028.png)
+![No Entry](https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup/Class17_00003_0000.png)![End of speed limit (80 km/h)](https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup/Class6_00000_0000.png)
+![No passing for vehicles over 3.5 metric tons](https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup/Class10_00006_00008.png)
+![Keep Left](https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup/Class39_00000_0000.png)
 
-First two images have the signs presented with a small rotation (of about 5-10 degrees). Specifically, sign mapped to Speed 20km/h represents the sign with minimum number of sample data. The other four images have very little clarity on the signs due to the size of the image (small). Hence, these images were chosen to see if the network will do a good job classifying them.
+First two images have the signs presented with a small rotation (of about 5-10 degrees).Specifically, sign mapped to Speed 20km/h represents the sign with minimum number of sample data. 
 
+The other images have very little clarity on the signs due to the size of the image (small). Hence, these images were chosen to see if the network will do a good job classifying them.
+There are also images which mean the opposite of each of (For e.g., No passing for vehicles over 3.5 metric tons and End of no passing sign) which will be an interesting data set to test the model on. 
+
+These images are of different sizes and hence need to processed through the gray scale and histogram equalization pipeline for them to be used for testing. 
+In addition to that, they are also resized to (32,32) size to be input to the model. 
 
 #### Performance on New Images
-Here are the results of the prediction:
-| Image           	|     Prediction            |
-|:-----------------:|:-------------------------:|
-| Speed 20km/h      | Speed 20km/h           	|
-| Stop Sign      	| Stop Sign          		|
-| No Vehicles   	| No Vehicles         		|
-| Road Work       	| Road Work          		|
-| Pedestrians   	| Road narrows on the right |
-| End of no passing | End of no passing         |
 
-The model was able to correctly guess all 5 of the 5 traffic signs, which gives an accuracy of 83.3%. This compares favorably to the accuracy on the test set of 86%. All preprocessing steps applied to training, validation and test sets were also applied to new images.
+The model has a 100% accuracy in the test images. 
+
+Here are the results of the prediction:
+| ClassId |Image           								|     Prediction            					|
+|:-------:|:-------------------------------------------:|:---------------------------------------------:|
+| 0       | Speed 20km/h      							| Speed 20km/h           						|
+| 6       | End of speed limit (80 km/h)				| End of speed limit (80km/h)					|
+| 10      | No passing for vehicles over 3.5 metric tons| No passing for vehicles over 3.5 metric tons 	|
+| 14      | Stop Sign      								| Stop Sign          							|
+| 15      | No Vehicles   								| No Vehicles         							|
+| 17      | No Entry       								| No Entry	         							|
+| 25      | Road Work      								| Road Work          							|
+| 27      | Pedestrians   								| Road narrows on the right 					|
+| 39      | Keep left 									| Keep left										|
+| 42      | End of no passing 							| End of no passing         					|
+
+The model was able to correctly guess all 10 of the traffic signs, which gives an accuracy of 100%. This compares favorably to the accuracy on the test set of 94%. All preprocessing steps applied to training, validation and test sets were also applied to new images.
 
 #### Model Certainty - Softmax Probabilities
 
 The code for making predictions on my final model is located under "Predict the sign for each test image and analyze performance" section.
 
-The top six probabilities and classes of predictions for the test images can be found below:
+The top six probabilities and classes of predictions for the test images are visually represented. 
+For e.g. For the first sign, the top 6 prediction probabilities are:
 
-TopKV2(values=array([[  1.00000000e+00,   6.32379782e-12,   4.62945984e-15,
-         2.84407660e-15,   1.26943398e-15,   8.31134404e-17],
-      [  1.00000000e+00,   7.95384266e-13,   6.04641662e-14,
-         2.18792845e-15,   2.01380029e-15,   3.14437185e-16],
-      [  9.99185264e-01,   7.76304572e-04,   3.27605630e-05,
-         1.57451632e-06,   1.32207140e-06,   1.14814918e-06],
-      [  9.97973263e-01,   1.68242468e-03,   1.43554178e-04,
-         7.74274085e-05,   7.29794410e-05,   3.19579740e-05],
-      [  9.08886433e-01,   8.73697102e-02,   3.59696266e-03,
-         1.36190778e-04,   6.89168701e-06,   2.09370546e-06],
-      [  9.99776542e-01,   2.22432034e-04,   5.61477634e-07,
-         3.82995296e-07,   3.09572883e-08,   3.22151017e-09]], dtype=float32), indices=array([[ 0,  1,  4, 38, 40,  8],
-      [14, 12, 38, 37, 33,  1],
-      [15, 38, 34,  3, 10, 39],
-      [25, 22, 38, 26, 28, 31],
-      [24, 27, 26, 28, 30, 29],
-      [42, 10,  6, 41, 12,  9]]))
+![Prediction for Speed 20Km/Hr Sign](https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup/Prediction_20KmPerHr.png)
 
-As seen from the prediction, the top probability is pretty high compared to the second best or third best prediction when softmax layer is applied to leNet layer for all six images.
+As seen from the prediction, the top probability is pretty high compared to the second best or third best prediction when softmax layer is applied to leNet layer for all images.
 
-For the fifth image related pedestrians, the prediction was "Roads narrow towards right". The top six probabilities were
-
-| Image           		|     Prediction             |
-|:---------------------:|:---------------------------------------------:|
-|9.09E-01    |Roads narrows on the right      |
-|8.74E-02    |Pedestrians         |
-|3.60E-03    |Traffic Signals        |
-|1.36E-04    |Children crossing        |
-|6.89E-06    |Beware of ice/snow        |
-|2.09E-06    |Bicycles crossing        |
 ---
 
 ### (Optional) Visualizing the Neural Network
