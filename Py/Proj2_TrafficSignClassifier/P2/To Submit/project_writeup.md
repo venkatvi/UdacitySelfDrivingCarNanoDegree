@@ -9,8 +9,7 @@ The goals / steps of this project are the following:
 * Summarize the results with a written report
 ---
 ## Rubric Points
-##### Please find below the answers to the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and a description of how each point is addressed
-in the implementation
+##### Please find below the answers to the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and a description of how each point is addressed in the implementation
 ---
 ### Files Submitted
 * Jupyter notebook (Traffic_sign_classifier.ipynb)
@@ -183,7 +182,6 @@ LeNet architecture was used with minor modifications.
 LeNet is a popular convolutional neural network model used in the domain of image classification. Using this with traffic signs was experimental in understanding if the network can be retrained with a new dataset to perform a classification job.
 
 **How does the final model's accuracy on the training, validation and test set provide evidence that the model is working well?**
-
 A high training and validation accuracy along with a reasonably high testing accuracy proves that the LeNet has performed well with an entirely new dataset
 Model Architecture
 ---
