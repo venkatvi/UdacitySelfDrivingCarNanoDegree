@@ -256,7 +256,7 @@ As a test, two signs were used the 20 km/h sign (which is a circular sign) and p
 Using the helper function to output the 6 feature maps of the first convolutional layer, shows that, the feature spaces are tried to learn the circular and triangular shape of the sign respectively. 
 The second layer of 16 feature maps, are trying to abstract the geometrical representations (circle / triangle in the respective case) into more fundamental representations like set of contiguous darker / brighter pixels. 
 
-![CNN Layer 1 Output][https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup//VisualOutput_Layer1.PNG]
+![CNN Layer 1 Output](https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup//VisualOutput_Layer1.PNG)
 
 
-![CNN Layer 2 Output][https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup//VisualOutput_Layer2.PNG]
+![CNN Layer 2 Output](https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup//VisualOutput_Layer2.PNG)
