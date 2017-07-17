@@ -16,18 +16,6 @@ The goals / steps of this project are the following:
 * Analyze the softmax probabilities of the new images
 * Summarize the results with a written report
 
-
-[//]: # (Image References)
-
-[image1]: ./examples/visualization.jpg "Visualization"
-[image2]: ./examples/grayscale.jpg "Grayscaling"
-[image3]: ./examples/random_noise.jpg "Random Noise"
-[image4]: ./examples/placeholder.png "Traffic Sign 1"
-[image5]: ./examples/placeholder.png "Traffic Sign 2"
-[image6]: ./examples/placeholder.png "Traffic Sign 3"
-[image7]: ./examples/placeholder.png "Traffic Sign 4"
-[image8]: ./examples/placeholder.png "Traffic Sign 5"
-
 ## Rubric Points
 ###Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
 
@@ -54,7 +42,7 @@ signs data set:
 
 Here is an exploratory visualization of the data set. The image below presents the sample distrubtion for the 43 classes across training, test and validation datasets
 
-![Sample Distribution](//SampleDistribution.png)
+![Sample Distribution]({{site.baseurl}}//SampleDistribution.png)
 
 Further, an exploration on which traffic signals have minimum sample vs maximum sample yeilded the following results:
 
