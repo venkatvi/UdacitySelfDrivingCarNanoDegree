@@ -54,7 +54,7 @@ signs data set:
 
 Here is an exploratory visualization of the data set. The image below presents the sample distrubtion for the 43 classes across training, test and validation datasets
 
-![Sample Distribution]({{site.baseurl}}//SampleDistribution.png)
+![Sample Distribution](//SampleDistribution.png)
 
 Further, an exploration on which traffic signals have minimum sample vs maximum sample yeilded the following results:
 
