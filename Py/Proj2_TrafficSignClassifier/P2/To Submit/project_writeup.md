@@ -189,7 +189,8 @@ Model Architecture
 ### Test a Model on New Images
 #### Acquiring New Images
 
-Here are five German traffic signs from the training set provided in original dataset
+Here are five German traffic signs from the training set provided in original dataset:
+
 ![Speed 20kmh](https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup/Class0_00006_00028.png) ![Stop Sign](https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup/Class14_00014_00020.png) ![No Vehicles](https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup/Class15_00016_00027.png) 
 ![Road Work](https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup/Class25_00038_00009.png) ![Pedestrians](https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup/Class27_00007_00020.png) ![End of no passing by vehicles over 3.5 metric tons] (https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup/Class42_00007_00028.png)
 
