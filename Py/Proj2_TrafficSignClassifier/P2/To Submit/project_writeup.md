@@ -79,7 +79,7 @@ Applying this algorithm, a total of 26939 images are added to the original datas
 After new images are added to the dataset, the images are again split to train-test-validation datasets with original ratios of 67.1%-24.5%-8.5% respectively. 
 
 The dataset now contains 78208 images. The new sample distribution looks like the image below:
- ![Sample distribution post augmentation](https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup/New_Sample_Distribtuion.png)
+![Sample distribution post augmentation](https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup/New_Sample_Distribution.png)
 
 ##### Grayscale Conversion 
 The entire model was training originally with (32,32,3) images without any dropout layer first. Although the training-validation accuracy were high, testing accuracy on images from web were very low (1 out of 6 classifications were correct). 
@@ -92,12 +92,14 @@ Also, since the images were not cropped around their ROI (region of interest tri
 In order to remove the bias, the images were converted to gray scale which helps in learning the gradients of shapes of signs by the model.  
 
 Here is an example of a traffic sign image before and after grayscaling.
+
 ![Before and After Gray Scaling](https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup/GrayScale2.png)
 
 **_Histogram Equalization_**
 In order to remove the biases due to lighting and augment fuzzy data images, histogram equalization technique was used. 
 
 Here is an example of an original image and an augmented image:
+
 ![Histogram Equalized Images](https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup//HistogramEqualization.PNG)
 
 ##### Training-Validation split 
@@ -152,25 +154,25 @@ At the end of 20 epochs of training,
 **Test** set accuracy = **93.94%**
 
 * What was the first architecture that was tried and why was it chosen?
-** The initial architecture used 32x32x3 images.
-** Both with and without dropout layers were experimented on the training and validation datasets
-** The dataset was not reshuffled / augmented. 
-** 10 epochs were used to train
-** Smaller learning rate of 0.00001 was also tried
++ The initial architecture used 32x32x3 images.
++ Both with and without dropout layers were experimented on the training and validation datasets
++ The dataset was not reshuffled / augmented. 
++ 10 epochs were used to train
++ Smaller learning rate of 0.00001 was also tried
 
 * What were some problems with the initial architecture?
-** 32x32x3 images without changing the given sample distribution for training and validation sets resulted in very high validation accuracy 98.6% while the test accuracy was very poor ~ 48%
-** Addition of dropout layer worsened the performance of the model on the validation set 
-** Smaller learning rate also worserned the validation accuracy as only 10 epochs were used to train. 
++ 32x32x3 images without changing the given sample distribution for training and validation sets resulted in very high validation accuracy 98.6% while the test accuracy was very poor ~ 48%
++ Addition of dropout layer worsened the performance of the model on the validation set 
++ Smaller learning rate also worserned the validation accuracy as only 10 epochs were used to train. 
 
 * How was the architecture adjusted and why was it adjusted? * Which parameters were tuned? How were they adjusted and why? * What are some of the important design choices and why were they chosen? For example, why might a convolution layer work well with this problem? How might a dropout layer help with creating a successful model?
-** In order to boost the testing accuracy, couple of changes were introduced
-*** 1. Dataset was augmented with additional images in order to boost the sample size of each class
-*** 2. Reshuffling of training and validation datasets to redrawn samples from the shuffle dataset.  This change caused the test accuracy to go up to 80% from 48%
-*** 3. Introduction of a small dropout layer to avoid bias / overfitting in the training phas. Although inclusion of dropout layer caused a drop in training and validation accuracy, it improved test accuracy to 83%
-*** 4. Gray scaling images and sharpening them using histogram equalization - this changed the model architecture to use 32x32x1 images instead of 32x32x3 feature spaces. Test accuracy improved to 86%
-*** 5. Keeping the training epochs to 10 caused the validation accuracy to stop at 90% only. Increasing the epochs to 20 owing to large dataset further improved the accuracy. 
-*** 5. Larger learning rate of 0.001 - this enhanced the training and validation accuracy under 20 epochs. Test accuracy improved to 94%
++ In order to boost the testing accuracy, couple of changes were introduced
+1. Dataset was augmented with additional images in order to boost the sample size of each class
+2. Reshuffling of training and validation datasets to redrawn samples from the shuffle dataset.  This change caused the test accuracy to go up to 80% from 48%
+3. Introduction of a small dropout layer to avoid bias / overfitting in the training phas. Although inclusion of dropout layer caused a drop in training and validation accuracy, it improved test accuracy to 83%
+4. Gray scaling images and sharpening them using histogram equalization - this changed the model architecture to use 32x32x1 images instead of 32x32x3 feature spaces. Test accuracy improved to 86%
+5. Keeping the training epochs to 10 caused the validation accuracy to stop at 90% only. Increasing the epochs to 20 owing to large dataset further improved the accuracy. 
+6. Larger learning rate of 0.001 - this enhanced the training and validation accuracy under 20 epochs. Test accuracy improved to 94%
 
 * What architecture was chosen?
 LetNet architecture was used with minor modifications. 
