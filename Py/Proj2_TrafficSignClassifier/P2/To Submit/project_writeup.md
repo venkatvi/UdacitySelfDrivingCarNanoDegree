@@ -153,19 +153,21 @@ At the end of 20 epochs of training,
 **Validation** set accuracy = **94.25%**
 **Test** set accuracy = **93.94%**
 
-* What was the first architecture that was tried and why was it chosen?
+**What was the first architecture that was tried and why was it chosen?**
 + The initial architecture used 32x32x3 images.
 + Both with and without dropout layers were experimented on the training and validation datasets
 + The dataset was not reshuffled / augmented. 
 + 10 epochs were used to train
 + Smaller learning rate of 0.00001 was also tried
 
-* What were some problems with the initial architecture?
+**What were some problems with the initial architecture?**
 + 32x32x3 images without changing the given sample distribution for training and validation sets resulted in very high validation accuracy 98.6% while the test accuracy was very poor ~ 48%
 + Addition of dropout layer worsened the performance of the model on the validation set 
 + Smaller learning rate also worserned the validation accuracy as only 10 epochs were used to train. 
 
-* How was the architecture adjusted and why was it adjusted? * Which parameters were tuned? How were they adjusted and why? * What are some of the important design choices and why were they chosen? For example, why might a convolution layer work well with this problem? How might a dropout layer help with creating a successful model?
+**How was the architecture adjusted and why was it adjusted?** 
+**Which parameters were tuned? How were they adjusted and why?**
+**What are some of the important design choices and why were they chosen? For example, why might a convolution layer work well with this problem? How might a dropout layer help with creating a successful model?**
 + In order to boost the testing accuracy, couple of changes were introduced
 1. Dataset was augmented with additional images in order to boost the sample size of each class
 2. Reshuffling of training and validation datasets to redrawn samples from the shuffle dataset.  This change caused the test accuracy to go up to 80% from 48%
@@ -174,13 +176,13 @@ At the end of 20 epochs of training,
 5. Keeping the training epochs to 10 caused the validation accuracy to stop at 90% only. Increasing the epochs to 20 owing to large dataset further improved the accuracy. 
 6. Larger learning rate of 0.001 - this enhanced the training and validation accuracy under 20 epochs. Test accuracy improved to 94%
 
-* What architecture was chosen?
+** What architecture was chosen?**
 LetNet architecture was used with minor modifications. 
 
-* Why did you believe it would be relevant to the traffic sign application?
+**Why did you believe it would be relevant to the traffic sign application?**
 LeNet is a popular convolutional neural network model used in the domain of image classification. Using this with traffic signs was experimental in understanding if the network can be retrained with a new dataset to perform a classification job.
 
-* How does the final model's accuracy on the training, validation and test set provide evidence that the model is working well?
+**How does the final model's accuracy on the training, validation and test set provide evidence that the model is working well?**
 A high training and validation accuracy along with a reasonably high testing accuracy proves that the LeNet has performed well with an entirely new dataset
 Model Architecture
 ---
@@ -188,8 +190,8 @@ Model Architecture
 #### Acquiring New Images
 
 Here are five German traffic signs from the training set provided in original dataset
-![Speed 20kmh][https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup//Class0_00006_00028.png] ![Stop Sign][https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup//Class14_00014_00020.png] ![No Vehicles][https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup//Class15_00016_00027.png] 
-![Road Work][https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup//Class25_00038_00009.png] ![Pedestrians][https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup//Class27_00007_00020.png] ![End of no passing by vehicles over 3.5 metric tons] [https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup//Class42_00007_00028.png]
+![Speed 20kmh][https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup/Class0_00006_00028.png] ![Stop Sign][https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup/Class14_00014_00020.png] ![No Vehicles][https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup/Class15_00016_00027.png] 
+![Road Work][https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup/Class25_00038_00009.png] ![Pedestrians][https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup/Class27_00007_00020.png] ![End of no passing by vehicles over 3.5 metric tons] [https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup/Class42_00007_00028.png]
 
 First two images have the signs presented with a small rotation (of about 5-10 degrees). Specifically, sign mapped to Speed 20km/h represents the sign with minimum number of sample data. The other four images have very little clarity on the signs due to the size of the image (small). Hence, these images were chosen to see if the network will do a good job classifying them.
 
