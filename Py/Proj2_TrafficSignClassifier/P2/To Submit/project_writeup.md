@@ -18,6 +18,9 @@ in the implementation
 * project_writeup.md (This file)
 * test_images (Folder that contains test images from the web along with metadata information)
 * images_for_writeup (Folder that contains the images required in this write up documents)
+
+* All images referenced in writeup are linked with the relative path to the github repository where these files can also be found
+* Link to github directory: https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/tree/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit
 ---
 ### Dataset Exploration
 
@@ -166,7 +169,7 @@ At the end of 20 epochs of training,
 6. Larger learning rate of 0.001 - this enhanced the training and validation accuracy under 20 epochs. Test accuracy improved to 94%
 
 ** What architecture was chosen?**
-LetNet architecture was used with minor modifications.
+LeNet architecture was used with minor modifications.
 
 
 **Why did you believe it would be relevant to the traffic sign application?**
@@ -200,18 +203,18 @@ In addition to that, they are also resized to (32,32) size to be input to the mo
 The model has a 100% accuracy in the test images. 
 
 Here are the results of the prediction:
-| ClassId |Image           								|     Prediction            					|
-|:-------:|:-------------------------------------------:|:---------------------------------------------:|
-| 0       | Speed 20km/h      							| Speed 20km/h           						|
-| 6       | End of speed limit (80 km/h)				| End of speed limit (80km/h)					|
-| 10      | No passing for vehicles over 3.5 metric tons| No passing for vehicles over 3.5 metric tons 	|
-| 14      | Stop Sign      								| Stop Sign          							|
-| 15      | No Vehicles   								| No Vehicles         							|
-| 17      | No Entry       								| No Entry	         							|
-| 25      | Road Work      								| Road Work          							|
-| 27      | Pedestrians   								| Road narrows on the right 					|
-| 39      | Keep left 									| Keep left										|
-| 42      | End of no passing 							| End of no passing         					|
+| ClassId  |Image           								|     Prediction            					|
+|:--------:|:-------------------------------------------:|:---------------------------------------------:|
+| 0        | Speed 20km/h      							| Speed 20km/h           						|
+| 6        | End of speed limit (80 km/h)				| End of speed limit (80km/h)					|
+| 10       | No passing for vehicles over 3.5 metric tons| No passing for vehicles over 3.5 metric tons 	|
+| 14       | Stop Sign      								| Stop Sign          							|
+| 15       | No Vehicles   								| No Vehicles         							|
+| 17       | No Entry       								| No Entry	         							|
+| 25       | Road Work      								| Road Work          							|
+| 27       | Pedestrians   								| Road narrows on the right 					|
+| 39       | Keep left 									| Keep left										|
+| 42       | End of no passing 							| End of no passing         					|
 
 The model was able to correctly guess all 10 of the traffic signs, which gives an accuracy of 100%. This compares favorably to the accuracy on the test set of 94%. All preprocessing steps applied to training, validation and test sets were also applied to new images.
 
