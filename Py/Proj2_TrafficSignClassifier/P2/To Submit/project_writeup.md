@@ -98,7 +98,7 @@ Here is an example of a traffic sign image before and after grayscaling.
 In order to remove the biases due to lighting and augment fuzzy data images, histogram equalization technique was used. 
 
 Here is an example of an original image and an augmented image:
-![Histogram Equalized Images](https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup//HistogramEqualization.png)
+![Histogram Equalized Images](https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup//HistogramEqualization.PNG)
 
 ##### Training-Validation split 
 As observed from the initial statistics of the given data, the training data forms around 89% of the (training + validation) mixture which could lead to overfitting while training the neural network. Further, the sample distribution of classes in training and validation datasets require to similar for us to guarantee a high validation accuracy. 
@@ -251,7 +251,7 @@ As a test, two signs were used the 20 km/h sign (which is a circular sign) and p
 Using the helper function to output the 6 feature maps of the first convolutional layer, shows that, the feature spaces are tried to learn the circular and triangular shape of the sign respectively. 
 The second layer of 16 feature maps, are trying to abstract the geometrical representations (circle / triangle in the respective case) into more fundamental representations like set of contiguous darker / brighter pixels. 
 
-![CNN Layer 1 Output][https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup//VisualOutput_Layer1.png]
+![CNN Layer 1 Output][https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup//VisualOutput_Layer1.PNG]
 
 
-![CNN Layer 2 Output][https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup//VisualOutput_Layer2.png]
+![CNN Layer 2 Output][https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup//VisualOutput_Layer2.PNG]
