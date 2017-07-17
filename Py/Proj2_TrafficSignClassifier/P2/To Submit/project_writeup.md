@@ -94,6 +94,7 @@ Also, since the images were not cropped around their ROI (region of interest tri
 In order to remove the bias, the images were converted to gray scale which helps in learning the gradients of shapes of signs by the model. 
 
 Here is an example of a traffic sign image before and after grayscaling.
+
 ![Before and After Gray Scaling](https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/blob/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit/images_for_writeup/GrayScale2.png)
 
 
@@ -178,9 +179,11 @@ LeNet architecture was used with minor modifications.
 
 
 **Why did you believe it would be relevant to the traffic sign application?**
+
 LeNet is a popular convolutional neural network model used in the domain of image classification. Using this with traffic signs was experimental in understanding if the network can be retrained with a new dataset to perform a classification job.
 
 **How does the final model's accuracy on the training, validation and test set provide evidence that the model is working well?**
+
 A high training and validation accuracy along with a reasonably high testing accuracy proves that the LeNet has performed well with an entirely new dataset
 Model Architecture
 ---
@@ -209,17 +212,17 @@ The model has a 100% accuracy in the test images.
 
 Here are the results of the prediction:
 | ClassId  |Image           								|     Prediction            					|
-|:--------:|:-------------------------------------------:|:---------------------------------------------:|
-| 0        | Speed 20km/h      							| Speed 20km/h           						|
-| 6        | End of speed limit (80 km/h)				| End of speed limit (80km/h)					|
-| 10       | No passing for vehicles over 3.5 metric tons| No passing for vehicles over 3.5 metric tons 	|
+|:--------:|:----------------------------------------------:|:---------------------------------------------:|
+| 0        | Speed 20km/h      							    | Speed 20km/h           						|
+| 6        | End of speed limit (80 km/h)			     	| End of speed limit (80km/h)					|
+| 10       | No passing for vehicles over 3.5 metric tons   | No passing for vehicles over 3.5 metric tons 	|
 | 14       | Stop Sign      								| Stop Sign          							|
-| 15       | No Vehicles   								| No Vehicles         							|
+| 15       | No Vehicles   								    | No Vehicles         							|
 | 17       | No Entry       								| No Entry	         							|
 | 25       | Road Work      								| Road Work          							|
-| 27       | Pedestrians   								| Road narrows on the right 					|
-| 39       | Keep left 									| Keep left										|
-| 42       | End of no passing 							| End of no passing         					|
+| 27       | Pedestrians   									| Road narrows on the right 					|
+| 39       | Keep left 										| Keep left										|
+| 42       | End of no passing 								| End of no passing         					|
 
 The model was able to correctly guess all 10 of the traffic signs, which gives an accuracy of 100%. This compares favorably to the accuracy on the test set of 94%. All preprocessing steps applied to training, validation and test sets were also applied to new images.
 
