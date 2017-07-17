@@ -19,6 +19,11 @@ in the implementation
 * test_images (Folder that contains test images from the web along with metadata information)
 * images_for_writeup (Folder that contains the images required in this write up documents)
 
+* As per instructions the following files have **not** been included in the submission
+* _pickle_ file which includes the training, validation and test datasets (originally present in the zip file)
+* _signnames.csv_ which contains the names of signs vs class ids. 
+
+
 * All images referenced in writeup are linked with the relative path to the github repository where these files can also be found
 * Link to github directory: https://github.com/venkatvi/UdacitySelfDrivingCarNanoDegree/tree/master/Py/Proj2_TrafficSignClassifier/P2/To%20Submit
 ---
