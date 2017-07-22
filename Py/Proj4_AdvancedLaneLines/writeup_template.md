@@ -123,10 +123,10 @@ This project had multiple challenges
 * **Perspective transforms** This is purely a hueristic based algorithm, where one needs to eyeball the image to come up with src and dest points used for constructing perspective matrix. Comparison across three videos given shows that src and dest points are significantly different.
 * **Sliding Windows** This phase had a lot of challenges in terms of using the core algorithm across image frames. Main issues faced are 
 1. Missing lanes in image frames - at times due to change in lighting, the pipeline parameters donot detect lanes. In these situations, the following solutions were tried
-1.1 fits from the previous image frame are retained. However, these did not yeild good results. 
-1.2 fits and plotys were cached away to be used. These gives the same x pizels as the previous image and hence does not work for frames where the real-world lanes are curving. 
-1.3 Hence, the information obtained from sliding windows were used to recreate the x,y pixels where the potential lane lines  can be found. In order to do this and an "averaging effect" across frames, nonzero_x and y found in the sliding windows algorithm were stored across n frames such that the last 2000 points are maintained. 
-1.4 In case of missing lanes (where one lane is found in sliding window algorithm while the other one is missing), the xy pixel values are used to recreate parallel lanes in the warped image. 
+a. fits from the previous image frame are retained. However, these did not yeild good results. 
+b. fits and plotys were cached away to be used. These gives the same x pizels as the previous image and hence does not work for frames where the real-world lanes are curving. 
+c. Hence, the information obtained from sliding windows were used to recreate the x,y pixels where the potential lane lines  can be found. In order to do this and an "averaging effect" across frames, nonzero_x and y found in the sliding windows algorithm were stored across n frames such that the last 2000 points are maintained. 
+d. In case of missing lanes (where one lane is found in sliding window algorithm while the other one is missing), the xy pixel values are used to recreate parallel lanes in the warped image. 
 
 Despite all these changes, pipeline is sensitive to quick change of curvature in roads, different light conditions and curbs that are too close to lane situations. 
 
