@@ -23,9 +23,9 @@ The goals / steps of this project are the following:
 [image5]: ./test_images_output/test1_ColorTransform.png "Color transform"
 [image6]: ./test_images_output/test1_Gradients.png "Sobel gradients "
 [image7]: ./test_images_output/test1_PerspectiveTransform.png "Perspective Transform"
-[image8]: ./test_images_output/test1_Histogram.png" "Histogram"
-[image9]: ./test_images_output/test1_SlidingWindows.png" "Sliding Windows"
-[image10]: ./test_images_output/test1_Output.png" "Output"
+[image8]: ./test_images_output/test1_Histogram.png "Histogram"
+[image9]: ./test_images_output/test1_SlidingWindows.png "Sliding Windows"
+[image10]: ./test_images_output/test1_Output.png "Output"
 [video1]: ./test_videos_output/project_video.mp4 "Video"
 
 ## [Rubric](https://review.udacity.com/#!/rubrics/571/view) Points
