@@ -1,4 +1,4 @@
-## Writeup 
+## Writeup ## Writeup 
 ---
 
 **Advanced Lane Finding Project**
@@ -18,14 +18,14 @@ The goals / steps of this project are the following:
 
 [image1]: ./examples/chessboard_corners.png "Chessboard Corners"
 [image2]: ./examples/undistort_output.png "Undistorted"
-[image3]: ./test_images/test1.jpg "Sample Image"
-[image4]: ./test_images_output/test1_Undistorted.png "Undistorted image"
-[image5]: ./test_images_output/test1_ColorTransform.png "Color transform"
-[image6]: ./test_images_output/test1_Gradients.png "Sobel gradients "
-[image7]: ./test_images_output/test1_PerspectiveTransform.png "Perspective Transform"
-[image8]: ./test_images_output/test1_Histogram.png "Histogram"
-[image9]: ./test_images_output/test1_SlidingWindows.png "Sliding Windows"
-[image10]: ./test_images_output/test1_Output.png "Output"
+[image3]: ./examples/test1.jpg "Sample Image"
+[image4]: ./examples/test1_Undistorted.png "Undistorted image"
+[image5]: ./examples/test1_ColorTransform.png "Color transform"
+[image6]: ./examples/test1_Gradients.png "Sobel gradients "
+[image7]: ./examples/test1_PerspectiveTransform.png "Perspective Transform"
+[image8]: ./examples/test1_Histogram.png "Histogram"
+[image9]: ./examples/test1_SlidingWindows.png "Sliding Windows"
+[image10]: ./examples/test1_Output.png "Output"
 [video1]: ./test_videos_output/project_video.mp4 "Video"
 
 ## [Rubric](https://review.udacity.com/#!/rubrics/571/view) Points
@@ -125,7 +125,7 @@ This project had multiple challenges
 1. Missing lanes in image frames - at times due to change in lighting, the pipeline parameters donot detect lanes. In these situations, the following solutions were tried
 2. fits from the previous image frame are retained. However, these did not yeild good results. 
 3. fits and plotys were cached away to be used. These gives the same x pizels as the previous image and hence does not work for frames where the real-world lanes are curving. 
-4. Hence, the information obtained from sliding windows were used to recreate the x,y pixels where the potential lane lines  can be found. In order to do this and an "averaging effect" across frames, nonzero_x and y found in the sliding windows algorithm were stored across n frames such that the last 2000 points are maintained. 
+4. Hence, the information obtained from sliding windows were used to recreate the x,y pixels where the potential lane lines  can be found. In order to do this and an "averaging effect" across frames, nonzero_x and y found in the sliding windows algorithm were stored across n frames such that the last k points are maintained. In this example project, k = 2000. 
 5. In case of missing lanes (where one lane is found in sliding window algorithm while the other one is missing), the xy pixel values are used to recreate parallel lanes in the warped image. 
 
 Despite all these changes, pipeline is sensitive to quick change of curvature in roads, different light conditions and curbs that are too close to lane situations. 
