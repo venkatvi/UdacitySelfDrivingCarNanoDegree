@@ -134,3 +134,5 @@ Researching on this topic for other research material shows that this still a fa
 1. Computer vision techniques to get a live feedback on lanes
 2. Statistical caliberation of steering wheel wrt to a relative point ahead - (another car in front or in side) to detect lanes. 
 
+As seen from the solutions provided for challenge videos, the lane detection algorithm corrects itself after a certain frames, however due to difference in the trapezoidal mask required and the change in trailing set of points in order to smoothen lanes affects the results. 
+
