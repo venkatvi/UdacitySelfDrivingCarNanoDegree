@@ -58,9 +58,12 @@ I tried different parameter choices for HOG feature
 However, the classification accuracy was best when I resolved to the configurations suggested in the lectures
 
 **Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).**
+
 In order to train the classifier, the featureExtractorPipeline is run through each image in the dataset. After all features are collected for all cars and non-cars, a dataset of 19168 samples with 8364 feature dimensions were collected. The algorithm is described under "Extract Features" section. 
+
 ---
 ### Learning via SVMs
+
 The algorithm used in this step is described under "Train SVM" section. It had two main phases:
 0. **Data Augmentation** - As a pre-preprocessing step, all the images in vehicles and non-vehicles category were flipped and the original dataset of ~8000 images were doubled. 
 1. **Preprocessing** - Data is normalized across each dimension using sklearn.preprocessing.StandardScaler APIs. 
@@ -70,7 +73,9 @@ The algorithm used in this step is described under "Train SVM" section. It had t
 
 **Cache away classifier**
 In order to save time from re-training classifier from the dataset, the classifier, the scaled dataset and original dataset are cached away as a pickle file "CarSVC.p"
+
 ---
+
 ### Sliding Window Search
 **Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?**
 The core algorithm used for detecting vehicles again has a master pipeline which includes the feature extractor pipeline. This is described by **SlidingWindowsPipeline** class. This class implements the following steps:
