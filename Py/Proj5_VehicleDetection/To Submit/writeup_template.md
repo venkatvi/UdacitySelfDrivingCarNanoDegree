@@ -145,3 +145,6 @@ Similarly, while thresholding number of boxes for heatmaps, the candidates are t
 More importantly these parameters were drastically different for images vs video frames which needed additional work. 
 
 In order to remove false positives (dark roads detected as cars), i augmented the dataset with additional non-car images, However, that pipeline did not do very well on images. 
+
+
+Overall, it would be helpful to know if there any robust algorithms /standardized (guaranteed) techniques that help in feature extraction or at the sliding window phase. 
