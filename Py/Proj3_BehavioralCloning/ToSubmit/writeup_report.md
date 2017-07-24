@@ -1,12 +1,7 @@
-#**Behavioral Cloning** 
-
-##Writeup Template
-
-###You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
-
+# **Behavioral Cloning** 
 ---
 
-# Behavioral Cloning Project
+## Behavioral Cloning Project
 
 The goals / steps of this project are the following:
 * Use the simulator to collect data of good driving behavior
@@ -31,7 +26,6 @@ The goals / steps of this project are the following:
 Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.
 
 ### Files Submitted & Code Quality
-
 #### 1. Following files have been included in the submission. 
 - model.py : This file contains the python code to read the images to generate the training data, augment the training data, build a training model, and save it in model.h5
 - drive.py : This file is used for driving the car in autonomous mode in the simulator. This is provided [Udacity](https://github.com/udacity/CarND-Behavioral-Cloning-P3/blob/master/drive.py). I did not need to make any changes
