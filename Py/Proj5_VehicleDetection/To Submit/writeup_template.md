@@ -19,7 +19,7 @@ The goals / steps of this project are the following:
 [image4]: ./examples/test6_candidate_windows.png "Candidate Windows"
 [image5]: ./examples/bboxes_and_heat.png "Bounding boxes and heatmap"
 [image6]: ./examples/output.png "Output"
-[video1]: ./project_video.mp4
+[video1]: ./test_videos_output/project_video.mp4
 
 ## [Rubric](https://review.udacity.com/#!/rubrics/513/view) Points
 ---
@@ -115,7 +115,7 @@ A sample output of the entire pipeline is shown below
 ### Video Implementation
 
 **Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (somewhat wobbly or unstable bounding boxes are ok as long as you are identifying the vehicles most of the time with minimal false positives.)**
-Here's a [link to my video result](./project_video.mp4)
+Here's a [link to my video result](./test_videos_output/project_video.mp4)
 
 
 **Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.**
@@ -124,12 +124,12 @@ I recorded the positions of positive detections in each frame of the video.  Fro
 
 Here's an example result showing the heatmap from a series of frames of video, the result of `scipy.ndimage.measurements.label()` and the bounding boxes then overlaid on the last frame of video:
 
-### Here are six frames and their corresponding heatmaps:
+* Here are six frames and their corresponding heatmaps:
 
-### Here is the output of `scipy.ndimage.measurements.label()` on the integrated heatmap from all six frames:
+* Here is the output of `scipy.ndimage.measurements.label()` on the integrated heatmap from all six frames:
 ![alt text][image7]
 
-### Here the resulting bounding boxes are drawn onto the last frame in the series:
+* Here the resulting bounding boxes are drawn onto the last frame in the series:
 ![alt text][image8]
 
 
@@ -138,3 +138,14 @@ Here's an example result showing the heatmap from a series of frames of video, t
 
 ### Discussion
 **Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?**
+This project was largely heuristic based and was very diffcult to implement and get the right results working. There are a number of parameters to be taken in to account in order to get the final output right. 
+
+As dicussed earlier, feature extractor pipeline is one of the two central piece of the algorithm. In this pipeline, the colorspace and choice of using only HOG features were explored. I did try HSV and HSL color spaces. I did not get good results. 
+
+The other central piece is the sliding window pipeline where there are a number of variables to be tuned based on the position of car in the image frame. For example, for cars at a farther distance, window size > 96 might not be helpful. 
+
+Similarly, while thresholding number of boxes for heatmaps, the candidates are to be present across frames to be chosen.
+
+More importantly these parameters were drastically different for images vs video frames which needed additional work. 
+
+In order to remove false positives (dark roads detected as cars), i augmented the dataset with additional non-car images, However, that pipeline did not do very well on images. 
