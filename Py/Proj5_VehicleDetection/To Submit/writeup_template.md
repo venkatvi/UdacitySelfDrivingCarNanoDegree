@@ -36,7 +36,7 @@ The dataset consists of distinct vehicle vs non-vehicle images. A sample car and
 
 For each image, a feature extraction pipeline was built in order to extract feature spaces to be used for classifier. This pipeline is implemented using **FeatureExtractor** class. This class implements ths following steps in order to extract features.
 
-1. **Color space transformation**: This is implemented via applyColorSpace method which converts the image to any specific color space. I explored multiple colorspaces (YCrCb, HSV, HSL), however, (RGB) worked best for my algorithm.
+1. **Color space transformation**: This is implemented via applyColorSpace method which converts the image to any specific color space. I explored multiple colorspaces (YCrCb, HSV, HSL).  Initially, (RGB) worked best for my algorithm with a high test accuracy on the dataset. Although the vehicle detection works reasonably well in test images, the video had a lot of false positives. Hence for **this version of project (resubmission)**, I chose **YCrCb** colorspace over LUV and RGB as it yeilded better results.
 2. **Rescale image**: rescaleImage() method scales images to desired scale as images in differnt categories of the dataset are of different sizes. 
 3. **Spatial feature extraction**: extractSpatialFeatures() method resizes the input image to (32,32) size. All features of the image are then used as a 1-D vector
 4. **Histogram feature extraction**: extractHistogramFeatures() method extracts histogram of all values in each individual channel. Then all the histogram bin values across all channels are combined together. 
@@ -50,7 +50,7 @@ A sample of this feature space is illustrated by the figure below
 
 ![alt text][image2]
 
-6. A collection of all these features are put together and output 
+6. A collection of all these features were put together and output. 
 
 **Explain how you settled on your final choice of HOG parameters.**
 I tried different parameter choices for HOG feature
@@ -82,7 +82,7 @@ In order to save time from re-training classifier from the dataset, the classifi
 **Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?**
 The core algorithm used for detecting vehicles again has a master pipeline which includes the feature extractor pipeline. This is described by **SlidingWindowsPipeline** class. This class implements the following steps:
 1. **Detect vehicle windows** - detect_vehicle() API is used to detect all candidate windows where vehicles are likely to be present. This API has a set of parameters which is used to create sliding windows in an image
-* Window Sizes - square windows of size 96px and 128px are used. Other alternative configurations considered are 36px, 48px and 64px. 
+* Window Sizes - square windows of size 64px and 128px are used. Other alternative configurations considered are 36px, 48px and 94px. 
 * XYOverlaps - 0.5, 0.8 overlaps are tried to determine the overlap between any two consecutive windows. 
 * y_start_stop - parameter is restricted to [400, 600] pixels of the image. 
 * x_start_stop - parameter is also restricted to the right side of the image in order to not detect vehicles on the opposite lane 
@@ -101,6 +101,7 @@ A sample image with candidate windows is shown below:
 
 2. **Create heatmap** - Create a heatmap indicating the number of overlapping windows
 For all candidate windows, heat map is created where all the pixels within the candidate window are kept a score of 1 per window. Hence if a pixel is a part of multiple windows (for example 5 windows), the pixel value in the heat map would be 5. 
+
 3. **Find bounding box** - Create labelling technique to find the bounding box
 For identified regions with certain threshold of pixel values, a bounding box is created. 
 
@@ -123,20 +124,34 @@ Here's a [link to my video result](./test_videos_output/project_video.mp4)
 
 I recorded the positions of positive detections in each frame of the video.  From the positive detections I created a heatmap and then thresholded that map to identify vehicle positions.  I then used `scipy.ndimage.measurements.label()` to identify individual blobs in the heatmap.  I then assumed each blob corresponded to a vehicle.  I constructed bounding boxes to cover the area of each blob detected.  
 
+This approach initially yeilded reasonble results with quite a number of false positives. In order to remove false positives, three major changes were done in the pipeline:
+
+* **Change of Colorspace** - RGB to YCrCb
+* **Choice of features** - Using only HOG in YCrCb color space
+Although the mentioned choice of features yeilded very good results for test dataset, it performed badly for the project video. Further investigation yielded two directions for change:
+6.1 Images presented in Vehicle Database had different darkeness / contrast and representative colors for cars used in the project video
+6.2 The images used in the non-car database did not adequately represent the different colors of the road (under different lighting and texture). 
+In order to well represent these two cases, I added image segments from the test images for car and non-car manually to train the classifier. While using all features (spatial, histogram and HOG), the classifier did very poorly in the test video detecting no windows. 
+Further exploration and debugging with multiple combinatorial parameter options, the following feature space and datasets worked very well for the project.
+* Using only HOG feature space
+* Use YCrCb channel to compute HOG 
+* Augment existing vehicle database with images of non-cars only (specifically the roads) - Hard Negative Mining technique 
+These choice of parameters not only drastically reduced the false positives in the output video, it also helped in higher accuracy on the classifier. 
+
+* **Approximation of Bounding Boxes** - instead of averaging over heatmaps of last n frames, the final bounding boxes in each frame is compared against the last k compliant frames and the largest bounding box is chosen in order to smoothen the transition of bounding boxes from frame to frame
+
 Here's an example result showing the heatmap from a series of frames of video, the result of `scipy.ndimage.measurements.label()` and the bounding boxes then overlaid on the last frame of video:
 
 * Here are three example frames and their corresponding heatmaps, bounding boxes and the final output annotated box
 ![alt text][image7]
 
-
-
 ---
 
 ### Discussion
 **Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?**
-This project was largely heuristic based and was very diffcult to implement and get the right results working. There are a number of parameters to be taken in to account in order to get the final output right. 
+This project was largely heuristic based and was very diffcult to implement and get the right results working. There are a number of parameters to be taken in to account in order to get the final output right i.e. Color space, the choice of features, data curation, sliding window configurations, choice of thresholds for heatmaps. 
 
-As dicussed earlier, feature extractor pipeline is one of the two central piece of the algorithm. In this pipeline, the colorspace and choice of using only HOG features were explored. I did try HSV and HSL color spaces. I did not get good results. 
+As dicussed earlier, feature extractor pipeline is one of the two central piece of the algorithm. In this pipeline, the colorspace and choice of using only HOG features were explored. I did try HSV and HSL color spaces. I did not get good results. Although RGB gave good results it introduced a lot of false positives in the test video. Since it is the first step in the pipeline, it was so hard to detect this step as the key reason of false positives and required a lot of debugging (backwards). 
 
 The other central piece is the sliding window pipeline where there are a number of variables to be tuned based on the position of car in the image frame. For example, for cars at a farther distance, window size > 96 might not be helpful. 
 
@@ -144,7 +159,4 @@ Similarly, while thresholding number of boxes for heatmaps, the candidates are t
 
 More importantly these parameters were drastically different for images vs video frames which needed additional work. 
 
-In order to remove false positives (dark roads detected as cars), i augmented the dataset with additional non-car images, However, that pipeline did not do very well on images. 
-
-
-Overall, it would be helpful to know if there any robust algorithms /standardized (guaranteed) techniques that help in feature extraction or at the sliding window phase. 
+In order to remove false positives (dark roads detected as cars), i augmented the dataset with additional non-car images. This helped when choosing the right color space and training the classifier. 
