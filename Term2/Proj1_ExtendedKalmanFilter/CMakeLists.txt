@@ -13,7 +13,21 @@ set(CMAKE_CXX_FLAGS, "${CXX_FLAGS}")
 
 #set(sources src/main.cpp src/tools.cpp src/FusionEKF.cpp src/kalman_filter.cpp src/tools.h src/FusionEKF.h #src/kalman_filter.h)
 
-set(sources src/main.cpp src/DataParser.h src/DataAdapter.h src/DataAdapter.cpp src/ExtendedKalmanFilter.cpp src/ExtendedKalmanFilter.h src/KalmanFilter.cpp src/KalmanFilter.h src/LaserMeasurement.cpp src/LaserMeasurement.h src/LaserStateAdapterStrategy.h src/Measurement.h src/RadarMeasurement.cpp src/RadarMeasurement.h src/RadarStateAdapterStrategy.h src/SensorFusionApplication.cpp src/SensorFusionApplication.h src/State.cpp src/State.h src/StateAdapterStrategy.h src/StateAdapterStrategyFactory.h src/Utils.cpp src/Utils.h) 
+set(sources src/main.cpp 
+src/DataUtils/InputParser.h src/DataUtils/InputParser.cpp src/DataUtils/DataTypes.h 
+src/DataUtils/DataReaderFactory.h src/DataUtils/DataReaderFactory.cpp
+src/DataUtils/DataReader.h src/DataUtils/DataReader.cpp 
+src/DataUtils/WebClientReader.h src/DataUtils/WebClientReader.cpp src/DataUtils/FileReader.h src/DataUtils/FileReader.cpp src/DataUtils/DataAdapter.h src/DataUtils/DataAdapter.cpp src/ExtendedKalmanFilter.cpp src/ExtendedKalmanFilter.h src/KalmanFilter.cpp src/KalmanFilter.h 
+src/SensorFusionApplication.cpp src/SensorFusionApplication.h 
+src/Data/Measurement.h 
+src/Data/LaserMeasurement.cpp src/Data/LaserMeasurement.h src/Data/LaserStateAdapterStrategy.h 
+src/Data/LaserStateAdapterStrategy.cpp 
+src/Data/RadarMeasurement.cpp src/Data/RadarMeasurement.h src/Data/RadarStateAdapterStrategy.h 
+src/Data/RadarStateAdapterStrategy.cpp 
+src/Data/State.cpp src/Data/State.h 
+src/Data/StateAdapterStrategy.h 
+src/Data/StateAdapterStrategyFactory.h src/Data/StateAdapterStrategyFactory.cpp 
+src/DataUtils/Utils.cpp src/DataUtils/Utils.h) 
 
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin") 

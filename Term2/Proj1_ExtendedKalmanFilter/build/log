@@ -1,0 +1,551 @@
+Listening to port 4567
+Connected!!!
+Parsed message #5524: 
+Telemetry
+Parsed message #5526: 
+Telemetry
+H_ 0.473808 0.880628        0        0
+ -1.3363 0.718973        0        0
+       0        0 0.473808 0.880628
+Parsed message #5528: 
+Telemetry
+Parsed message #5530: 
+Telemetry
+H_  0.954518  0.298154         0         0
+-0.166304  0.532411         0         0
+ 0.513214  -1.64302  0.954518  0.298154
+Parsed message #5532: 
+Telemetry
+Parsed message #5536: 
+Telemetry
+H_  0.892147  0.451746         0         0
+-0.250711  0.495125         0         0
+0.0699647 -0.138172  0.892147  0.451746
+Parsed message #5538: 
+Telemetry
+Parsed message #5540: 
+Telemetry
+H_  0.951593   0.30736         0         0
+ -0.12659  0.391926         0         0
+ 0.100664 -0.311659  0.951593   0.30736
+Parsed message #5542: 
+Telemetry
+Parsed message #5544: 
+Telemetry
+H_   0.966102   0.258159          0          0
+-0.0880188   0.329391          0          0
+ 0.0665285  -0.248968   0.966102   0.258159
+Parsed message #5546: 
+Telemetry
+Parsed message #5548: 
+Telemetry
+H_   0.976875    0.21381          0          0
+-0.0621293   0.283862          0          0
+ 0.0470973  -0.215183   0.976875    0.21381
+Parsed message #5550: 
+Telemetry
+Parsed message #5552: 
+Telemetry
+H_   0.990066   0.140604          0          0
+-0.0349881    0.24637          0          0
+ 0.0359252  -0.252968   0.990066   0.140604
+Parsed message #5562: 
+Telemetry
+Parsed message #5576: 
+Telemetry
+H_  0.992092  0.125514         0         0
+-0.027393  0.216521         0         0
+0.0235833 -0.186408  0.992092  0.125514
+Parsed message #5578: 
+Telemetry
+Parsed message #5580: 
+Telemetry
+H_  0.990666  0.136309         0         0
+-0.027139   0.19724         0         0
+ 0.014084 -0.102359  0.990666  0.136309
+Parsed message #5582: 
+Telemetry
+Parsed message #5584: 
+Telemetry
+H_   0.992727   0.120388          0          0
+-0.0216225   0.178301          0          0
+ 0.0116066 -0.0957087   0.992727   0.120388
+Parsed message #5586: 
+Telemetry
+Parsed message #5588: 
+Telemetry
+H_   0.993702   0.112054          0          0
+-0.0182558   0.161893          0          0
+0.00891132 -0.0790259   0.993702   0.112054
+Parsed message #5590: 
+Telemetry
+Parsed message #5592: 
+Telemetry
+H_   0.993987     0.1095          0          0
+-0.0165355   0.150101          0          0
+0.00606156  -0.055024   0.993987     0.1095
+Parsed message #5594: 
+Telemetry
+Parsed message #5596: 
+Telemetry
+H_   0.994353   0.106123          0          0
+-0.0149139   0.139741          0          0
+0.00482385 -0.0451987   0.994353   0.106123
+Parsed message #5598: 
+Telemetry
+Parsed message #5612: 
+Telemetry
+H_   0.994023   0.109171          0          0
+-0.0144354   0.131437          0          0
+0.00267624 -0.0243676   0.994023   0.109171
+Parsed message #5614: 
+Telemetry
+Parsed message #5616: 
+Telemetry
+H_   0.994986   0.100019          0          0
+-0.0123011   0.122371          0          0
+0.00343537 -0.0341749   0.994986   0.100019
+Parsed message #5618: 
+Telemetry
+Parsed message #5620: 
+Telemetry
+H_   0.995136   0.098508          0          0
+-0.0114476   0.115645          0          0
+0.00269697  -0.027245   0.995136   0.098508
+Parsed message #5622: 
+Telemetry
+Parsed message #5624: 
+Telemetry
+H_     0.993821     0.110991            0            0
+  -0.0121315     0.108627            0            0
+-0.000254163   0.00227579     0.993821     0.110991
+Parsed message #5626: 
+Telemetry
+Parsed message #5628: 
+Telemetry
+H_      0.99369     0.112164            0            0
+  -0.0115784     0.102576            0            0
+-0.000422556   0.00374353      0.99369     0.112164
+Parsed message #5630: 
+Telemetry
+Parsed message #5632: 
+Telemetry
+H_    0.991807    0.127747           0           0
+  -0.012433   0.0965276           0           0
+-0.00408981   0.0317525    0.991807    0.127747
+Parsed message #5634: 
+Telemetry
+Parsed message #5636: 
+Telemetry
+H_    0.990451    0.137864           0           0
+ -0.0128319   0.0921883           0           0
+-0.00583565    0.041925    0.990451    0.137864
+Parsed message #5638: 
+Telemetry
+Parsed message #5640: 
+Telemetry
+H_    0.990063    0.140624           0           0
+ -0.0125703   0.0885013           0           0
+-0.00504173   0.0354963    0.990063    0.140624
+Parsed message #5642: 
+Telemetry
+Parsed message #5644: 
+Telemetry
+H_    0.989992    0.141121           0           0
+ -0.0119996   0.0841795           0           0
+-0.00384229   0.0269545    0.989992    0.141121
+Parsed message #5646: 
+Telemetry
+Parsed message #5648: 
+Telemetry
+H_    0.989444    0.144914           0           0
+ -0.0118553   0.0809455           0           0
+-0.00402618   0.0274899    0.989444    0.144914
+Parsed message #5650: 
+Telemetry
+Parsed message #5652: 
+Telemetry
+H_   0.988983   0.148032          0          0
+-0.0116115  0.0775752          0          0
+-0.0038383  0.0256432   0.988983   0.148032
+Parsed message #5654: 
+Telemetry
+Parsed message #5656: 
+Telemetry
+H_    0.987316    0.158765           0           0
+ -0.0119951    0.074594           0           0
+-0.00652388   0.0405702    0.987316    0.158765
+Parsed message #5658: 
+Telemetry
+Parsed message #5660: 
+Telemetry
+H_   0.984911   0.173059          0          0
+ -0.012581  0.0716008          0          0
+-0.0101463  0.0577441   0.984911   0.173059
+Parsed message #5662: 
+Telemetry
+Parsed message #5664: 
+Telemetry
+H_   0.982537   0.186067          0          0
+ -0.013103  0.0691911          0          0
+-0.0128536  0.0678745   0.982537   0.186067
+Parsed message #5666: 
+Telemetry
+Parsed message #5668: 
+Telemetry
+H_    0.98006   0.198703          0          0
+-0.0135259  0.0667136          0          0
+-0.0153384  0.0756533    0.98006   0.198703
+Parsed message #5670: 
+Telemetry
+Parsed message #5672: 
+Telemetry
+H_   0.979053   0.203603          0          0
+-0.0134089  0.0644785          0          0
+ -0.013694  0.0658493   0.979053   0.203603
+Parsed message #5674: 
+Telemetry
+Parsed message #5676: 
+Telemetry
+H_   0.975264   0.221044          0          0
+-0.0140797  0.0621206          0          0
+-0.0188966  0.0833733   0.975264   0.221044
+Parsed message #5678: 
+Telemetry
+Parsed message #5680: 
+Telemetry
+H_   0.971579   0.236717          0          0
+-0.0146245  0.0600248          0          0
+ -0.022725  0.0932724   0.971579   0.236717
+Parsed message #5682: 
+Telemetry
+Parsed message #5684: 
+Telemetry
+H_    0.96938   0.245567          0          0
+-0.0147313   0.058152          0          0
+-0.0221942  0.0876116    0.96938   0.245567
+Parsed message #5686: 
+Telemetry
+Parsed message #5688: 
+Telemetry
+H_   0.965689   0.259703          0          0
+-0.0151641  0.0563866          0          0
+-0.0253637  0.0943134   0.965689   0.259703
+Parsed message #5690: 
+Telemetry
+Parsed message #5702: 
+Telemetry
+H_   0.962382   0.271701          0          0
+-0.0154477  0.0547167          0          0
+  -0.02683  0.0950333   0.962382   0.271701
+Parsed message #5714: 
+Telemetry
+Parsed message #5716: 
+Telemetry
+H_   0.957429   0.288668          0          0
+-0.0160517   0.053239          0          0
+-0.0320426   0.106276   0.957429   0.288668
+Parsed message #5718: 
+Telemetry
+Parsed message #5726: 
+Telemetry
+H_   0.953693    0.30078          0          0
+-0.0163518   0.051847          0          0
+-0.0331424   0.105086   0.953693    0.30078
+Parsed message #5730: 
+Telemetry
+Parsed message #5732: 
+Telemetry
+H_   0.951418   0.307903          0          0
+-0.0163722    0.05059          0          0
+-0.0303908  0.0939075   0.951418   0.307903
+Parsed message #5734: 
+Telemetry
+Parsed message #5736: 
+Telemetry
+H_   0.946852    0.32167          0          0
+-0.0167323  0.0492524          0          0
+-0.0337002  0.0991983   0.946852    0.32167
+Parsed message #5738: 
+Telemetry
+Parsed message #5740: 
+Telemetry
+H_    0.94058   0.339572          0          0
+-0.0172954  0.0479065          0          0
+-0.0403707   0.111823    0.94058   0.339572
+Parsed message #5742: 
+Telemetry
+Parsed message #5744: 
+Telemetry
+H_   0.936858   0.349711          0          0
+-0.0174777  0.0468217          0          0
+-0.0392518   0.105153   0.936858   0.349711
+Parsed message #5746: 
+Telemetry
+Parsed message #5748: 
+Telemetry
+H_   0.933484   0.358618          0          0
+ -0.017521  0.0456074          0          0
+-0.0374208  0.0974065   0.933484   0.358618
+Parsed message #5759: 
+Telemetry
+Parsed message #5763: 
+Telemetry
+H_   0.926296   0.376797          0          0
+-0.0181243  0.0445557          0          0
+-0.0455116   0.111883   0.926296   0.376797
+Parsed message #5765: 
+Telemetry
+Parsed message #5767: 
+Telemetry
+H_   0.920205   0.391438          0          0
+-0.0185199  0.0435372          0          0
+-0.0490715   0.115359   0.920205   0.391438
+Parsed message #5777: 
+Telemetry
+Parsed message #5781: 
+Telemetry
+H_   0.915787   0.401665          0          0
+-0.0187249  0.0426923          0          0
+-0.0476589   0.108661   0.915787   0.401665
+Parsed message #5783: 
+Telemetry
+Parsed message #5785: 
+Telemetry
+H_   0.911355   0.411622          0          0
+-0.0188509   0.041737          0          0
+-0.0465327   0.103026   0.911355   0.411622
+Parsed message #5787: 
+Telemetry
+Parsed message #5789: 
+Telemetry
+H_   0.904818   0.425798          0          0
+-0.0191756   0.040748          0          0
+-0.0506895   0.107715   0.904818   0.425798
+Parsed message #5791: 
+Telemetry
+Parsed message #5793: 
+Telemetry
+H_   0.897423   0.441171          0          0
+-0.0195973  0.0398645          0          0
+ -0.056112   0.114142   0.897423   0.441171
+Parsed message #5879: 
+Telemetry
+H_   0.818741   0.574163          0          0
+-0.0208617  0.0297483          0          0
+-0.0509632  0.0726722   0.818741   0.574163
+Parsed message #5881: 
+Telemetry
+Parsed message #6037: 
+Telemetry
+Parsed message #6095: 
+Telemetry
+Parsed message #6113: 
+Telemetry
+Parsed message #6133: 
+Telemetry
+Parsed message #6257: 
+Telemetry
+Parsed message #6321: 
+Telemetry
+H_  -0.685282  -0.728278          0          0
+  0.069097 -0.0650176          0          0
+  0.190121  -0.178897  -0.685282  -0.728278
+Parsed message #6323: 
+Telemetry
+Parsed message #6367: 
+Telemetry
+H_  -0.843099  -0.537759          0          0
+ 0.0419133 -0.0657117          0          0
+ 0.0114928 -0.0180184  -0.843099  -0.537759
+Parsed message #6369: 
+Telemetry
+Parsed message #6387: 
+Telemetry
+H_  -0.816981  -0.576664          0          0
+ 0.0367656 -0.0520873          0          0
+ 0.0294146 -0.0416728  -0.816981  -0.576664
+Parsed message #6389: 
+Telemetry
+Parsed message #6569: 
+Telemetry
+H_   -0.868929   -0.494937           0           0
+  0.0140066  -0.0245906           0           0
+-0.00314017  0.00551299   -0.868929   -0.494937
+Parsed message #6571: 
+Telemetry
+Parsed message #6605: 
+Telemetry
+Parsed message #6619: 
+Telemetry
+H_   -0.96389   0.266301          0          0
+-0.0112705 -0.0407943          0          0
+ 0.0633404   0.229264   -0.96389   0.266301
+Parsed message #6621: 
+Telemetry
+Parsed message #6693: 
+Telemetry
+Parsed message #7093: 
+Telemetry
+H_   -0.993094   -0.117323           0           0
+0.000797193 -0.00674792           0           0
+-0.00042305  0.00358095   -0.993094   -0.117323
+Parsed message #7097: 
+Telemetry
+H_    -0.121009     0.992651            0            0
+ -0.00237427 -0.000289436            0            0
+  -0.0100107  -0.00122035    -0.121009     0.992651
+Parsed message #7099: 
+Telemetry
+Parsed message #7131: 
+Telemetry
+Parsed message #7259: 
+Telemetry
+Parsed message #7261: 
+Telemetry
+H_   0.948496   0.316789          0          0
+-0.0179622  0.0537805          0          0
+ -0.161149   0.482494   0.948496   0.316789
+Parsed message #7263: 
+Telemetry
+Parsed message #7353: 
+Telemetry
+H_   0.617415   0.786638          0          0
+-0.0263342  0.0206692          0          0
+ -0.128327   0.100721   0.617415   0.786638
+Parsed message #7355: 
+Telemetry
+Parsed message #7377: 
+Telemetry
+Parsed message #7733: 
+Telemetry
+Parsed message #7761: 
+Telemetry
+H_   0.143949   0.989585          0          0
+ -0.047171 0.00686167          0          0
+ -0.376664  0.0547909   0.143949   0.989585
+Parsed message #7763: 
+Telemetry
+Parsed message #7765: 
+Telemetry
+H_   0.251452    0.96787          0          0
+-0.0485698  0.0126184          0          0
+  -0.09761  0.0253591   0.251452    0.96787
+Parsed message #7767: 
+Telemetry
+Parsed message #8129: 
+Telemetry
+H_  -0.0897666    0.995963           0           0
+ -0.0770241 -0.00694222           0           0
+   -0.22604  -0.0203731  -0.0897666    0.995963
+Parsed message #8131: 
+Telemetry
+Parsed message #8175: 
+Telemetry
+Parsed message #8205: 
+Telemetry
+H_    -0.99993   0.0118485           0           0
+-0.00252235    -0.21287           0           0
+ -0.0134527    -1.13532    -0.99993   0.0118485
+Parsed message #8207: 
+Telemetry
+Parsed message #8407: 
+Telemetry
+Parsed message #8409: 
+Telemetry
+H_  -0.958682  -0.284481          0          0
+ 0.0112566 -0.0379339          0          0
+-0.0342099   0.115285  -0.958682  -0.284481
+Parsed message #8411: 
+Telemetry
+Parsed message #8431: 
+Telemetry
+H_  -0.981931  -0.189237          0          0
+0.00707894 -0.0367319          0          0
+-0.0304782   0.158148  -0.981931  -0.189237
+Parsed message #8433: 
+Telemetry
+Parsed message #8491: 
+Telemetry
+Parsed message #8613: 
+Telemetry
+Parsed message #8623: 
+Telemetry
+H_   -0.84665   0.532151          0          0
+-0.0284289 -0.0452303          0          0
+ 0.0981349   0.156132   -0.84665   0.532151
+Parsed message #8625: 
+Telemetry
+Parsed message #8663: 
+Telemetry
+H_  -0.711219    0.70297          0          0
+-0.0446511 -0.0451751          0          0
+   0.18541   0.187586  -0.711219    0.70297
+Parsed message #8665: 
+Telemetry
+Parsed message #9335: 
+Telemetry
+H_    -0.993869     0.110561            0            0
+-0.000785135  -0.00705784            0            0
+ 0.000328554   0.00295348    -0.993869     0.110561
+Parsed message #9337: 
+Telemetry
+Parsed message #9347: 
+Telemetry
+H_   0.849976   0.526821          0          0
+-0.0932464   0.150444          0          0
+ -0.427471   0.689685   0.849976   0.526821
+Parsed message #9349: 
+Telemetry
+Parsed message #9403: 
+Telemetry
+H_   0.989894    0.14181          0          0
+-0.0067244   0.046939          0          0
+0.00569288 -0.0397386   0.989894    0.14181
+Parsed message #9405: 
+Telemetry
+Parsed message #9465: 
+Telemetry
+H_   0.917972   0.396645          0          0
+-0.0165109  0.0382119          0          0
+-0.0253315  0.0586258   0.917972   0.396645
+Parsed message #9467: 
+Telemetry
+Parsed message #9511: 
+Telemetry
+H_   0.793369   0.608741          0          0
+-0.0228582   0.029791          0          0
+-0.0789972   0.102957   0.793369   0.608741
+Parsed message #9513: 
+Telemetry
+Parsed message #9595: 
+Telemetry
+H_   0.539986   0.841674          0          0
+-0.0291307  0.0186891          0          0
+ -0.116103   0.074487   0.539986   0.841674
+Parsed message #9597: 
+Telemetry
+Parsed message #9627: 
+Telemetry
+H_   0.328834   0.944388          0          0
+-0.0414445  0.0144309          0          0
+ -0.231777  0.0807043   0.328834   0.944388
+Parsed message #9629: 
+Telemetry
+Parsed message #9641: 
+Telemetry
+Parsed message #9933: 
+Telemetry
+Parsed message #9959: 
+Telemetry
+H_  -0.685758  -0.727829          0          0
+ 0.0436571 -0.0411335          0          0
+  0.188684  -0.177777  -0.685758  -0.727829
+Parsed message #9961: 
+Telemetry
+Parsed message #10093: 
+Telemetry
+Parsed message #10129: 
+Telemetry
+Parsed message #10199: 
+Telemetry
