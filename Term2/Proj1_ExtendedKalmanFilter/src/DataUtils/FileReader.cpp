@@ -1,42 +1,28 @@
-#include "./FileReader.h"
+#include "DataUtils/FileReader.h"
+
 #include <iostream>
 #include <fstream>
-/** run method  uses mFileReader_ to read data from
-* mFileName_ . It process data using processData() 
-* method. When a predicted state is available, it uses 
-* SensorFusionApplication to calculateRMSE 
-* It finally writes the results to output file.
-*/
-void DataUtils::FileReader::run(){
- // Read data
- mFileReader_.open(mFileName_, std::ifstream::in);
+void DataUtils::FileReader::Run() {
+  m_file_reader_.open(m_file_name_, std::ifstream::in);
 
- std::string line;
- while(!mFileReader_.eof()){
-  //read line 
-  line.clear();
-  getline(mFileReader_, line);
+  std::string line;
+  while (!m_file_reader_.eof()) {
+    line.clear();
+    getline(m_file_reader_, line);
 
-  // if line starts with "L" or "R"
-  if(line[0] == 'L' || line[0] == 'R'){
-   // process data 
-   auto predictedState = processData(line);
+    // if line starts with "L" or "R"
+    if (line[0] == 'L' || line[0] == 'R') {
+      auto predictedState = ProcessData(line);
+      if (predictedState) {
+        auto RMSE = mApplication_->CalculateRMSE();
 
-   // If a predicted state is available, calculate
-   //RMSE
-   if(predictedState){
-    auto RMSE = mApplication_->calculateRMSE();
-
-    //Output: "L/R"  'px_est','py_est','vx_est','vy_est',
-    // 'px_meas','py_meas',
-    // 'px_gt','py_gt','vx_gt','vy_gt'
-    writeResultsToFile(predictedState);
-    
-    // Output RMSE in commmand line  
-    std::cout << "RMSE: " << RMSE << std::endl;
-   }
+        //Output: "L/R"  'px_est','py_est','vx_est','vy_est',
+        // 'px_meas','py_meas',
+        // 'px_gt','py_gt','vx_gt','vy_gt'
+        WriteResultsToFile(predictedState);
+        std::cout << "RMSE: " << RMSE << std::endl;
+      }
+    }
   }
- }
- // close the file
- mFileReader_.close();
+  m_file_reader_.close();
 }

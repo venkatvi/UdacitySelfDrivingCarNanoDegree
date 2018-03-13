@@ -1,86 +1,82 @@
 #ifndef MEASUREMENT_H_
 #define MEASUREMENT_H_
-#include "./State.h"
-#include "./StateAdapterStrategy.h"
 #include <iostream>
-/** Measurement class provides a base class  
-* framework for polymorphic implementation 
-* of laser and radar measurements 
+#include <memory>
+
+#include "Data/State.h"
+#include "Data/StateAdapterStrategy.h"
+/** Measurement class provides a base class framework for polymorphic
+* implementation of laser and radar measurements
 */
-class Measurement{
-	public:
-  /** Destructor 
-  */
-		virtual ~Measurement() {};
+namespace Data {
+class Measurement {
+public:
+  virtual ~Measurement() {};
 
-  /** getTimestamp member function 
-  * returns mTimestamp_  
-  */
-		long long getTimestamp() const {
-			return mTimestamp_;
-		}
+  long long GetTimestamp() const {
+    return m_timestamp_;
+  }
 
-  /** getStateData is a pure virtual member
-  * function implemented by derived classes
-  */ 
-		virtual State getStateData() const = 0;
+  virtual State GetStateData() const = 0;
 
-  /** setStateAdapterStrategy member function sets the 
-  * StateAdapterStrategy for the given measurement 
+  /** setStateAdapterStrategy member function sets the StateAdapterStrategy for
+  * the given measurement
   * @param pStrategy pointer to StateAdapterStrategy
-  * The StateAdapterStrategy polymorphic hierarchy 
-  * is used in an abstract factory pattern with Measurement
-  * class hierarchy
+  * The StateAdapterStrategy polymorphic hierarchy is used in an abstract factory 
+  * pattern with Measurement class hierarchy
   */
-		void setStateAdapterStrategy(
-           StateAdapterStrategy* pStrategy){
-			mStateAdapterStrategy_ = pStrategy;
-		}
+  void SetStateAdapterStrategy(
+    StateAdapterStrategy* pStrategy) {
+    m_state_adapter_strategy_.reset(pStrategy);
+  }
 
-  /** getStateAdapterStrategy member function returns the 
-  * member mStateAdapterStrategy_ as a non-const pointer
+  /** getStateAdapterStrategy member function returns the member
+  * m_state_adapter_strategy_ as a non-const pointer
   * This method is used by the application to further modify
-  * measurement covariance matrices*/
-		StateAdapterStrategy* getStateAdapterStrategy() {
-			return mStateAdapterStrategy_;
-		}
+  * measurement covariance matrices. The ownership of the member is still 
+  * retained by Measurement class.
+  */
+  StateAdapterStrategy* GetStateAdapterStrategy() {
+    return m_state_adapter_strategy_.get();
+  }
 
   /** getVectorizedData is a pure virtual member function
-  * implemented by concrete derived classes 
+  * implemented by concrete derived classes
   */
-		virtual const Eigen::VectorXd getVectorizedData() const = 0;
+  virtual const Eigen::VectorXd GetVectorizedData() const = 0;
 
-  /** getMeasurementType is a pure virtual member function 
-  * implemented by concrete derived classes 
+  /** getMeasurementType is a pure virtual member function
+  * implemented by concrete derived classes
   */
-		virtual const std::string getMeasurementType() const = 0;
-	
- protected:
+  virtual const std::string GetMeasurementType() const = 0;
+
+protected:
   /** Constructor
-  * protecteed constructor
+  * protected constructor
   */
-		Measurement(long long pTimestamp):mTimestamp_(pTimestamp){}
+  Measurement(long long pTimestamp): m_timestamp_(pTimestamp) {}
 
-  /** print method is a pure virtual function 
+  /** print method is a pure virtual function
   * that is used to print the details of measurement
   * class to the ostream
-  * @param pStream ostream used to print the details of 
+  * @param pStream ostream used to print the details of
   * measurement class
   */
-		virtual void print(std::ostream& pStream) const = 0;
-		
-  /** operator << overload as a friend function to 
-  * direct output to ostream 
+  virtual void Print(std::ostream& pStream) const = 0;
+
+  /** operator << overload as a friend function to
+  * direct output to ostream
   */
-		friend std::ostream &operator<<(std::ostream& pStream, 
-                      const Measurement& pMeasurement){
-			pMeasurement.print(pStream);
-			return pStream;
-		}
-		
-	private:
-		long long mTimestamp_;
-		StateAdapterStrategy* mStateAdapterStrategy_;
+  friend std::ostream &operator<<(std::ostream& pStream,
+                                  const Measurement& pMeasurement) {
+    pMeasurement.Print(pStream);
+    return pStream;
+  }
+
+private:
+  long long m_timestamp_;
+  std::unique_ptr<StateAdapterStrategy>* m_state_adapter_strategy_;
 
 };
-#endif 
+}
+#endif

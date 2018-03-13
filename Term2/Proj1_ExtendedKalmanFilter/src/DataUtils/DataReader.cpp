@@ -1,53 +1,28 @@
-#include "./DataReader.h"
-/** writeResultsToFile method writes pState 
-* to output file 
-* @param pState contains a pointer to 
-* const State
-* This method writes current Measurement, ground truth 
-* and the predicted state to the output file
-*/
-void DataUtils::DataReader::writeResultsToFile(
- const State* pState){
- // get measurement and ground truth from DataAdapter
- auto currentMeasurement = mDataAdapter_->getMeasurement();
- auto currentGroundTruth = mDataAdapter_->getGroundTruth();
+#include "DataUtils/DataReader.h"
+void DataUtils::DataReader::WriteResultsToFile(
+    const Data::State* pState) {
+	auto currentMeasurement = m_data_adapter_->GetMeasurement();
+	auto currentGroundTruth = m_data_adapter_->GetGroundTruth();
 
- // Output measurement type "L" or "R" 
- mOutputDataStream_ << currentMeasurement->getMeasurementType() << ", ";
-
- // Output predicted state
- mOutputDataStream_ << *pState;
-
- // Output current measurement
- mOutputDataStream_ << *currentMeasurement;
-
- // Output current ground truth
- mOutputDataStream_ << *currentGroundTruth; 
- mOutputDataStream_ << std::endl;
+	// Output measurement type "L" or "R"
+	m_output_data_stream_ << currentMeasurement->GetMeasurementType() << ", ";
+	m_output_data_stream_ << *pState;
+	m_output_data_stream_ << *currentMeasurement;
+	m_output_data_stream_ << *currentGroundTruth;
+	m_output_data_stream_ << std::endl;
 }
-/** processData method takes in a string and processes data to
-* parse measurement and ground truth information. 
-* The method uses the measurement and ground truth with 
-* SensorFusionApplication to get the predicted state.
-* @param pData string containing client data
-* returns a pointer to const State
-*/
-const State* DataUtils::DataReader::processData(
- const std::string& pData){
- // Set Data and parse data with DataAdapter
- mDataAdapter_->setData(pData);
- mDataAdapter_->parseData();
+const Data::State* DataUtils::DataReader::ProcessData(
+    const std::string& pData) {
+	m_data_adapter_->SetData(pData);
+	m_data_adapter_->ParseData();
 
- // Get current measurement and ground truth 
- auto currentMeasurement = mDataAdapter_->getMeasurement();
- auto currentGroundTruth = mDataAdapter_->getGroundTruth();
+	auto currentMeasurement = m_data_adapter_->GetMeasurement();
+	auto currentGroundTruth = m_data_adapter_->GetGroundTruth();
 
- // If DataAdapter has current measurement and ground truth parsed
- if (currentMeasurement && currentGroundTruth){
-  // Run KalmanFilter using SensorFusionApplication
-  auto predictedState = mApplication_->run(currentMeasurement, 
-           currentGroundTruth);
-  return predictedState;
- }
- return nullptr; 
+	if (currentMeasurement && currentGroundTruth) {
+		auto predictedState = m_application_->Run(currentMeasurement,
+		                      currentGroundTruth);
+		return predictedState;
+	}
+	return nullptr;
 }

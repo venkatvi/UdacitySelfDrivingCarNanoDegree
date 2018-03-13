@@ -1,83 +1,58 @@
 #ifndef INPUTPARSER_H
 #define INPUTPARSER_H
 #include <string>
-/** InputParser class reads in command-line inputs
-* and stores the information. 
+/** InputParser class reads in command-line inputs and stores the information
 *  It is used by main.cpp to feed data to DataReader
 */
-namespace DataUtils{
-	class InputParser{
-		public:
-			/** Constructor
-			* @param defaultSource  uses to set mSource_
-			* @param defaultOutput uses to set mOutput_
-			*/
-			InputParser(const std::string& defaultSource, 
-				const std::string& defaultOutput):
-				mSource_(defaultSource), 
-				mOutput_(defaultOutput){}
+namespace DataUtils {
+class InputParser {
+public:
+	/** Constructor
+	* @param defaultSource  uses to set m_source_
+	* @param defaultOutput uses to set m_output_
+	*/
+	InputParser(const std::string& defaultSource,
+	            const std::string& defaultOutput):
+		m_source_(defaultSource),
+		m_output_(defaultOutput) {}
+	~InputParser() {}
 
-			/** Destructor
-			*
-			*/
-			~InputParser(){}
+	/* parseArgs method takes in argc, argv an processes command line
+	* parameters
+	* @param argc argument count
+	* @param argv pointer to array of argument options and values
+	*/
+	void ParseArgs(int argc, char** argv);
 
-			/* parseArgs method takes in argc, argv
-			* an processes command line parameters
-			* @param argc argument count
-			* @param argv pointer to array of argument
-			* options and values 
-			*/
-			void parseArgs(int argc, char** argv);
+	const std::string& GetSource() const {
+		return m_source_;
+	}
+	const std::string& GetOutput() const {
+		return m_output_;
+	}
+	const std::string& GetDataType() const {
+		return m_data_type_;
+	}
+	bool IsParseSuccessful() const {
+		return m_is_parse_successful_;
+	}
+private:
 
-			/** getSource member method which returns
-			* data source as const reference
-			*/
-			const std::string& getSource() const {
-				return mSource_;
-			}
+	/** showUsage method is help function which outputs man information
+	*  of using this application
+	*/
+	void ShowUsage(const std::string& name);
 
-			/** getOutput member method which returns 
-			* output file name as const reference
-			*/
-			const std::string& getOutput() const {
-				return mOutput_;
-			}
-			
-			/** getDatatype member method which returns
-			* type of data to be parsed (laser / radar)
-			* as const reference
-			*/
-			const std::string& getDataType() const{
-				return mDataType_;
-			}
+	// data source
+	std::string m_source_;
 
-			/** isParseSuccessful member method returns a
-			* bool indicating if parsing of information
-			* was successful
-			*/
-			bool isParseSuccessful() const{
-				return mIsParseSuccessful_;
-			}
-		private:
+	// output file name
+	std::string m_output_;
 
-			/** showUsage method is help function
-			* which outputs man information of 
-			* using this application
-			*/
-			void showUsage(const std::string& name);
+	// laser / radar data type
+	std::string m_data_type_;
 
-			// data source 
-			std::string mSource_;
-
-			// output file name 
-			std::string mOutput_;
-
-			// laser / radar data type 
-			std::string mDataType_;
-
-			
-			bool mIsParseSuccessful_;
-	};
+	bool m_is_parse_successful_;
+};
 }
 #endif

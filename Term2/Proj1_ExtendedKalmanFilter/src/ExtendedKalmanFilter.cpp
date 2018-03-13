@@ -1,131 +1,102 @@
 #include "ExtendedKalmanFilter.h"
-#include "./Data/LaserMeasurement.h"
-#include "./Data/RadarMeasurement.h"
+
 #include <iostream>
 
-using namespace std;
-/** Constructor
-*/
+#include "Data/LaserMeasurement.h"
+#include "Data/RadarMeasurement.h"
 ExtendedKalmanFilter::ExtendedKalmanFilter():
-  mIsInitialized_(false),
-  mPreviousTimestamp_(0)
- {
-  // Initialize State matrices 
-  const size_t dim_state = State::getInputDimensions();
+  m_is_initialized_(false),
+  m_previous_timestamp_(0) {
+  // Get dimensions of a state
+  const size_t dim_state = State::GetInputDimensions();
 
-  // State Covariance matrix 
+  // Initialize State Covariance matrix
   P_ = Eigen::MatrixXd(dim_state, dim_state);
   P_ << 1, 0, 0, 0,
-        0, 1, 0, 0,
-        0, 0, 1000, 0,
-        0, 0, 0, 1000;
+  0, 1, 0, 0,
+  0, 0, 1000, 0,
+  0, 0, 0, 1000;
 
-  // Motion function
+  // Initialize Motion function / State Transition Function
   F_ = Eigen::MatrixXd(dim_state, dim_state);
   F_ << 1, 0, 1, 0,
-             0, 1, 0, 1,
-             0, 0, 1, 0,
-             0, 0, 0, 1;
-  
-  // State Noise         
+  0, 1, 0, 1,
+  0, 0, 1, 0,
+  0, 0, 0, 1;
+
+  // Initialize State Noise / Process Covariance Matrix
   Q_ = Eigen::MatrixXd(dim_state, dim_state);
-} 
-
-/** processMeasurement method processes input 
-* measurement and updates Kalman Filter to get 
-* the predicted state 
-* @param pMeasurement current measurement pointer
-* Due to a polymorphic implementation of Measurement
-* class, this method does not have laser / radar 
-* specific high coupling implementation.
-*/
-void ExtendedKalmanFilter::processMeasurement(Measurement* pMeasurement) {
-  if (!mIsInitialized_) {
-    // for first measurement, set states of Kalman Filter
-    // get input dimensions of the state 
-    const size_t dim_state = State::getInputDimensions();
-
-    // Initialize state with input dimensions
-    mKalmanFilter_.initializeState(dim_state);
-
-    // Initialize P, F, Q
-    mKalmanFilter_.init(P_, F_, Q_);
-
-    // Set initial state with current measurement
-    mKalmanFilter_.setState(pMeasurement->getStateData());
-
-
-    mIsInitialized_ = true;
-    
-    // Set previous timestamp
-    mPreviousTimestamp_ = pMeasurement->getTimestamp();
+}
+void ExtendedKalmanFilter::ProcessMeasurement(Measurement* pMeasurement) {
+  if (!pMeasurement) {
     return;
   }
-  if (pMeasurement){
-    // compute delta ta
-    float dt = computeDeltaT(pMeasurement->getTimestamp());
+  if (!m_is_initialized_) {
+    // get input dimensions of the state
+    const size_t dim_state = State::GetInputDimensions();
 
-    // set previous timestamp
-    mPreviousTimestamp_ = pMeasurement->getTimestamp();
-    
-    // Update motion function method with dt
-    mKalmanFilter_.updateF(dt);
-    
-    // Update Q with noise_ax and noise_ay
-    float noise_ax = 9;
-    float noise_ay = 9;
-    mKalmanFilter_.updateQ(dt, noise_ax, noise_ay);
-    
-    // Call predict function
-    mKalmanFilter_.predict();
-  
-    /* Call update method
-    Here the polymorphic StateAdapterStrategy class is used to get the 
-    respective measurement covariance matrices and measurement function.
-    */
+    // For first measurement, initialize state with input dimensions
+    m_kalman_filter_.InitializeState(dim_state);
 
-    // get the StateAdapterStrategy
-    auto strategy = pMeasurement->getStateAdapterStrategy();
+    // Initialize state matrices P, F, Q
+    m_kalman_filter_.Init(P_, F_, Q_);
 
-    // get Measurement function
-    Eigen::MatrixXd H_ = 
-          strategy->getMeasurementFunction(mKalmanFilter_.getState());
-    
-    // compute estimated position x and position y
-    Eigen::MatrixXd Hx_ = 
-          strategy->computeEstimatedState(mKalmanFilter_.getState());
-    
-    // compute Measurement Covariance matrix
-    Eigen::MatrixXd R_ = strategy->getMeasurementCovariance();
+    // Set initial state with current measurement
+    m_kalman_filter_.SetState(pMeasurement->getStateData());
 
-    // compute the vectorized data of measurement
-    Eigen::VectorXd z_ = pMeasurement->getVectorizedData();
 
-    // call update function with measurement function, estimated state 
-    // and measurement covariance matrix
-    mKalmanFilter_.update(z_, H_, Hx_, R_);
-    
+    m_is_initialized_ = true;
+    m_previous_timestamp_ = pMeasurement->GetTimestamp();
+    return;
   }
-}
+  // compute delta t to be used in F and Q matrices
+  float dt = ComputeDeltaT(pMeasurement->GetTimestamp());
 
-/* getPredictedState method returns the current 
-* predicted state by Kalman Filter 
-*/
-State ExtendedKalmanFilter::getPredictedState() const {
-  auto predictedState = mKalmanFilter_.getState();
-  State pState(predictedState(0), 
-               predictedState(1), 
-               predictedState(2), 
+  m_previous_timestamp_ = pMeasurement->GetTimestamp();
+
+  // Update motion function method with dt
+  m_kalman_filter_.UpdateF(dt);
+
+  // Update Q with noise_ax and noise_ay
+  float noise_ax = 9;
+  float noise_ay = 9;
+  m_kalman_filter_.UpdateQ(dt, noise_ax, noise_ay);
+
+  // Call predict function
+  m_kalman_filter_.Predict();
+
+  /* Call update method
+  Here the polymorphic StateAdapterStrategy class is used to get the
+  respective measurement covariance matrices and measurement function.
+  */
+
+  // get the StateAdapterStrategy
+  auto strategy = pMeasurement->GetStateAdapterStrategy();
+
+  // get Measurement function using estimated state
+  Eigen::MatrixXd H_ =
+    strategy->GetMeasurementFunction(m_kalman_filter_.GetState());
+
+  // compute estimated position x and position y using estimated state
+  Eigen::MatrixXd Hx_ =
+    strategy->ComputeEstimatedState(m_kalman_filter_.GetState());
+
+  Eigen::MatrixXd R_ = strategy->GetMeasurementCovariance();
+  Eigen::VectorXd z_ = pMeasurement->GetVectorizedData();
+
+  // call update function with measurement function, estimated state
+  // and measurement covariance matrix
+  m_kalman_filter_.Update(z_, H_, Hx_, R_);
+
+}
+State ExtendedKalmanFilter::GetPredictedState() const {
+  auto predictedState = m_kalman_filter_.GetState();
+  State pState(predictedState(0),
+               predictedState(1),
+               predictedState(2),
                predictedState(3));
   return pState;
 }
-
-/* computeDeltaT is a private member function 
-* which computes the difference from the last 
-* timestamp
-* @param pTimestamp 
-*/
-float ExtendedKalmanFilter::computeDeltaT(long long pTimestamp){
-  // find diff between timestamps
-  return (pTimestamp - mPreviousTimestamp_) / 1000000.0; //dt - expressed in seconds 
+float ExtendedKalmanFilter::ComputeDeltaT(long long pTimestamp) {
+  return (pTimestamp - m_previous_timestamp_) / 1000000.0; //dt - expressed in seconds
 }

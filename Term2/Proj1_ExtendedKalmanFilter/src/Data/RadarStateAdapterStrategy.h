@@ -1,60 +1,59 @@
 
 #ifndef RADARSTATEADAPTERSTRATEGY_H
 #define RADARSTATEADAPTERSTRATEGY_H
-#include "./StateAdapterStrategy.h"
-/** RadarStateAdapterStrategy class inherits 
-* from StateAdapterStrategy and implements 
-* strategy for Radar measurements
+#include "Data/StateAdapterStrategy.h"
+/** RadarStateAdapterStrategy class inherits from StateAdapterStrategy and
+* implements strategy for Radar measurements
 */
-class RadarStateAdapterStrategy: public StateAdapterStrategy{
-	public:
+namespace Data {
+class RadarStateAdapterStrategy: public StateAdapterStrategy {
+public:
     /** Constructor
-    * @param pMeasurementDimensions indicating dimensions of radar 
+    * @param pMeasurementDimensions indicating dimensions of radar
     * measurements
-    * Constructor passes the dimensions to base class and uses 
+    * Constructor passes the dimensions to base class and uses
     * the dimensions to initialize covariance matrix;
     */
-		RadarStateAdapterStrategy(const std::size_t pMeasurementDimensions);
-			
-    /** Destructor
-    */ 
-		virtual ~RadarStateAdapterStrategy() {}
+    RadarStateAdapterStrategy(const std::size_t pMeasurementDimensions);
 
-    /** computeEstimatedState method uses input estimated state and 
-    * computes approximate measurement using measurement function 
+    virtual ~RadarStateAdapterStrategy() {}
+
+    /** computeEstimatedState method uses input estimated state and
+    * computes approximate measurement using measurement function
     * @param pState const Eigen::VectorXd containing input state
     * returns the approximate estimate of position x and y
     * @param pState const Eigen::VectorXd containing state estimate
     */
-		virtual Eigen::VectorXd computeEstimatedState(const Eigen::VectorXd& pState);
+    virtual Eigen::VectorXd ComputeEstimatedState(const Eigen::VectorXd& pState);
 
     /** getMeasurementFunction method returns the h(x) function
-    * for LaserStateAdapter 
-    * @param pState const Eigen::VectorXd containing current 
+    * for LaserStateAdapter
+    * @param pState const Eigen::VectorXd containing current
     * state estimate of dim nx1 rows
     * returns the Eigen::MatriXd of (measurement dims x n) size
     */
-  	virtual Eigen::MatrixXd getMeasurementFunction(const Eigen::VectorXd& pState);
+    virtual Eigen::MatrixXd GetMeasurementFunction(const Eigen::VectorXd& pState);
 
-	private:
-    /** calculateJacobian method calculates linear approximation of 
-    * radar measurement function using its first order derivative 
+private:
+    /** calculateJacobian method calculates linear approximation of
+    * radar measurement function using its first order derivative
     * (Jacobian) in the taylor series expansion
     * @param pState const Eigen::VectorXd indicating current state
     */
-  	void calculateJacobian(const Eigen::VectorXd& pState);
-    
+    void CalculateJacobian(const Eigen::VectorXd& pState);
+
     /** getMeasurementCovariance method returns the covariance matrix
-    * for laser measurements 
+    * for laser measurements
     * returns const Eigen::MatrixXd of (n x n) dims
     */
-  	virtual const Eigen::MatrixXd getMeasurementCovariance() const; 
+    virtual const Eigen::MatrixXd GetMeasurementCovariance() const;
 
-    /** calculateJacobian method calculates linear approximation of 
-    * radar measurement function using its first order derivative 
+    /** calculateJacobian method calculates linear approximation of
+    * radar measurement function using its first order derivative
     * (Jacobian) in the taylor series expansion
     * @param pState const Eigen::VectorXd indicating current state
     */
-    Eigen::VectorXd convertCartesianToPolarCoordinates(const Eigen::VectorXd& pState);
+    Eigen::VectorXd ConvertCartesianToPolarCoordinates(const Eigen::VectorXd& pState);
 };
+}
 #endif

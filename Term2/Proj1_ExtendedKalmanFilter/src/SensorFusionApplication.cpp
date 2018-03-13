@@ -1,61 +1,39 @@
 #include "SensorFusionApplication.h"
-#include "./DataUtils/DataAdapter.h" 
+
 #include <memory>
-/** run method computes predicted state given the 
-* current measurement and ground truth
-* @param pCurrentMeasurement pointer to Measurement
-* @param pGroundTruth point to ground truth
-* returns the predicted state by Kalman Filter
-*/
+
+#include "DataUtils/DataAdapter.h"
 const State* SensorFusionApplication::run(
-          Measurement* pCurrentMeasurement, 
-          const State* pGroundTruth){
-  // add ground truth to vector of ground truths
-  mGroundTruth_.push_back(*pGroundTruth);
-
-  // invoke Extended Kalman Filter (EKF) to process 
-  // measurement
-  mExtendedKalmanFilter_.processMeasurement(pCurrentMeasurement);
-
-  // compute predicted state from EKF
-  State predictedState = mExtendedKalmanFilter_.getPredictedState();
-
-  // add predicted state to vector of estimations
-  mEstimations_.push_back(predictedState);
-
-  // return the last predicted state
-  return &mEstimations_[mEstimations_.size()-1];
+  Measurement* pCurrentMeasurement,
+  const State* pGroundTruth) {
+  m_ground_truth_.push_back(*pGroundTruth);
+  m_extended_kalman_filter_.processMeasurement(pCurrentMeasurement);
+  State predictedState = m_extended_kalman_filter_.getPredictedState();
+  m_estimations_.push_back(predictedState);
+  return &m_estimations_[m_estimations_.size() - 1];
 }
-
-/** calculateRMSE method returns the RMSE given 
-* estimations and ground truth
-* This method returns Eigen::VectorXd of rmse values
-*/
-Eigen::VectorXd SensorFusionApplication::calculateRMSE(){
-  // initalize rmse
+Eigen::VectorXd SensorFusionApplication::CalculateRMSE() {
   Eigen::VectorXd rmse(4);
-  rmse << 0,0,0,0;
+  rmse << 0, 0, 0, 0;
 
   // check the validity of the following inputs:
   //  * the estimation vector size should not be zero
   //  * the estimation vector size should equal ground truth vector size
-  if(mEstimations_.size() != mGroundTruth_.size()
-      || mEstimations_.size() == 0){
+  if (m_estimations_.size() != m_ground_truth_.size()
+      || m_estimations_.size() == 0) {
     return rmse;
   }
 
   //accumulate squared residuals
-  for(unsigned int i=0; i < mEstimations_.size(); ++i){
-
-    Eigen::VectorXd residual = mEstimations_[i].diff(mGroundTruth_[i]);
-
+  for (unsigned int i = 0; i < m_estimations_.size(); ++i) {
+    Eigen::VectorXd residual = m_estimations_[i].diff(m_ground_truth_[i]);
     //coefficient-wise multiplication
-    residual = residual.array()*residual.array();
+    residual = residual.array() * residual.array();
     rmse += residual;
   }
 
   //calculate the mean
-  rmse = rmse/mEstimations_.size();
+  rmse = rmse / m_estimations_.size();
 
   //calculate the squared root
   rmse = rmse.array().sqrt();

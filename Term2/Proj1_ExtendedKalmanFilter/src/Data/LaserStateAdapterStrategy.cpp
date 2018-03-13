@@ -1,11 +1,11 @@
-#include "./LaserStateAdapterStrategy.h"
+#include "Data/LaserStateAdapterStrategy.h"
 /** Constructor 
 * @param pMeasurementDimensions indicates dimensions of measurements 
 * for laser
 * This method passes on the dimensions to base class. This class also 
 * initialized the measurement covariance matrix 
 */
-LaserStateAdapterStrategy::LaserStateAdapterStrategy(
+Data::LaserStateAdapterStrategy::LaserStateAdapterStrategy(
           const std::size_t pMeasurementDimensions):
 	         StateAdapterStrategy(pMeasurementDimensions) {
 	mR_ = Eigen::MatrixXd(pMeasurementDimensions, pMeasurementDimensions);
@@ -19,7 +19,7 @@ LaserStateAdapterStrategy::LaserStateAdapterStrategy(
 * @param pState the current predicted state
 * returns approximated position x, y using measurement function
 */
-Eigen::VectorXd LaserStateAdapterStrategy::computeEstimatedState(
+Eigen::VectorXd Data::LaserStateAdapterStrategy::computeEstimatedState(
                                   const Eigen::VectorXd& pState){
 	Eigen::VectorXd Hx = mH_ * pState;
 	return Hx;
@@ -30,7 +30,7 @@ Eigen::VectorXd LaserStateAdapterStrategy::computeEstimatedState(
 * returns Eigen::MatrixXd of dims m x n where m is dimensions of 
 * measurement
 */
-Eigen::MatrixXd LaserStateAdapterStrategy::getMeasurementFunction(
+Eigen::MatrixXd Data::LaserStateAdapterStrategy::getMeasurementFunction(
                                    const Eigen::VectorXd& pState){
 	mH_ = Eigen::MatrixXd(mMeasurementDimensions_, pState.rows());
 	for(size_t i=0;i < mMeasurementDimensions_ ;i++){
@@ -47,6 +47,6 @@ Eigen::MatrixXd LaserStateAdapterStrategy::getMeasurementFunction(
 /** getMeasurementCovariance returns the measurement covariance matrix
 * returns Eigen::MatrixXd of dims m x m where m is dimensions of measurement
 */
-const Eigen::MatrixXd LaserStateAdapterStrategy::getMeasurementCovariance() const {
+const Eigen::MatrixXd Data::LaserStateAdapterStrategy::getMeasurementCovariance() const {
 	return mR_;
 }

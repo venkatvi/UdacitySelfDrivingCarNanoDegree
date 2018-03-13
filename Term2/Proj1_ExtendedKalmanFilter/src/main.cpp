@@ -1,67 +1,52 @@
-/* Abstract Factory to get polymorphic DataReader based on the input source type*/
-#include "./DataUtils/DataReaderFactory.h" 
-
-/*//Parser to parse command line input choices of
-source of data - simulator / file, output file name and 
-data type (laser/ radar/ both)*/
-#include "./DataUtils/InputParser.h"  
-
-
 #include <memory> //std::unique_ptr
 
-// Typedef unique ptrs 
+#include "DataUtils/DataReaderFactory.h"
+#include "DataUtils/InputParser.h"
+
+// Typedef unique ptrs
 typedef std::unique_ptr<DataUtils::DataAdapter> DataAdapterUPtr;
 typedef std::unique_ptr<SensorFusionApplication> SensorFusionUPtr;
 typedef std::unique_ptr<DataUtils::DataReader> DataReaderUPtr;
 
-int main(int argc, char** argv) 
-{   
- // Default values for input source file and 
- // output data file
- std::string source = "./input.txt";   
- std::string output = "./output.txt";
- 
- // Initialize parser with default source file 
- // and output file locations
- DataUtils::InputParser pParser(source, output);
+int main(int argc, char** argv)
+{
+  std::string source = "./input.txt";
+  std::string output = "./output.txt";
 
- // Call parseArgs with command line arguments
- pParser.parseArgs(argc, argv); 
+  // Initialize parser with default source file
+  // and output file locations
+  DataUtils::InputParser pParser(source, output);
 
- // When parsing of command line arguments is 
- // successful
- if (pParser.isParseSuccessful()){
+  // Call parseArgs with command line arguments
+  pParser.ParseArgs(argc, argv);
 
-   // Create a DataAdapter unique pointer
-   DataAdapterUPtr pDataAdapterPtr(
-     new DataUtils::DataAdapter(
-           pParser.getDataType()));
+  if (pParser.IsParseSuccessful()) {
+    // Create a DataAdapter unique pointer using 
+    // command line inputs for data types to be parsed
+    DataAdapterUPtr pDataAdapterPtr(
+      new DataUtils::DataAdapter(
+        pParser.GetDataType()));
 
-   // Create a SensorFusionApplication unique pointer
-   SensorFusionUPtr pApplicationPtr(
-     new SensorFusionApplication());
+    SensorFusionUPtr pApplicationPtr(
+      new SensorFusionApplication());
 
-   // Initialize a DataReaderFactory with the source of 
-   // data from the command line arguments     
-   DataUtils::DataReaderFactory pDataReaderFactory;
-   pDataReaderFactory.setSource(source);     
+    // Initialize a DataReaderFactory with the source of data 
+    DataUtils::DataReaderFactory pDataReaderFactory;
+    pDataReaderFactory.SetSource(source);
 
-   // Get the polymorphic instance of DataReader based 
-   // on the data source
-   auto pDataReader =
-   pDataReaderFactory.getDataReader(
-               std::move(pDataAdapterPtr),
-               std::move(pApplicationPtr));     
+    // Get the polymorphic instance of DataReader based on the data source
+    auto pDataReader =
+      pDataReaderFactory.GetDataReader(
+        std::move(pDataAdapterPtr),
+        std::move(pApplicationPtr));
 
-   // Create a Unique Pointer to DataReader 
-   DataReaderUPtr pDataReaderPtr(pDataReader);
+    // Create a Unique Pointer to DataReader
+    DataReaderUPtr pDataReaderPtr(pDataReader);
 
-   // Set output file location in DataReader
-   pDataReaderPtr->setOutputFile(
-             std::string(pParser.getOutput()));
+    // Set output file location in DataReader
+    pDataReaderPtr->SetOutputFile(
+      std::string(pParser.GetOutput()));
 
-   // Run the DataReader to get data for running 
-   // the SensorFusion Application
-   pDataReaderPtr->run();   
- } 
+    pDataReaderPtr->Run();
+  }
 }
