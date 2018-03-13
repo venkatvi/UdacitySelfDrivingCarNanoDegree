@@ -1,17 +1,17 @@
-#include "DataUtils/DataAdapter.h"
+#include "../DataUtils/DataAdapter.h"
 
 #include <iostream>
 #include <algorithm> //toupper
 
 // Concrete derived measurement classes
-#include "Data/LaserMeasurement.h"
-#include "Data/RadarMeasurement.h"
+#include "../Data/LaserMeasurement.h"
+#include "../Data/RadarMeasurement.h"
 // StateAdapterStrategyFactory class to provide
 // with a polymorphic measurement function classes
 // for each measurement class
-#include "Data/StateAdapterStrategyFactory.h"
+#include "../Data/StateAdapterStrategyFactory.h"
 // enum of types of data to be processed
-#include "DataUtils/DataTypes.h"
+#include "../DataUtils/DataTypes.h"
 DataUtils::DataAdapter::DataAdapter(
   const std::string& pDataType) {
   // convert input param to upper case for
@@ -35,8 +35,8 @@ DataUtils::DataAdapter::DataAdapter(
 void DataUtils::DataAdapter::ParseData() {
   // set the stream to m_data_
   m_data_stream_.str(m_data_);
-  parseMeasurementData();
-  parseGroundTruthData();
+  ParseMeasurementData();
+  ParseGroundTruthData();
 }
 void DataUtils::DataAdapter::ParseMeasurementData() {
   Data::Measurement* pMeasurementPtr;
@@ -71,7 +71,7 @@ void DataUtils::DataAdapter::ParseMeasurementData() {
   m_data_stream_ >> sensorType;
 
   // Create a StateAdapterStrategyFactory instance based on sensor type
-  StateAdapterStrategyFactory pStateAdapterStrategyFactory;
+  Data::StateAdapterStrategyFactory pStateAdapterStrategyFactory;
   pStateAdapterStrategyFactory.SetSensorType(sensorType);
 
   std: size_t measurementDimensions = 0;
@@ -110,8 +110,8 @@ void DataUtils::DataAdapter::ParseMeasurementData() {
         measurementDimensions));
 
     // Create a unique instance of the Measurement pointer using move semantics
-    std::unique_ptr<Measurement> pMeasurementUPtr(pMeasurementPtr);
-    mMeasurement_ =  std::move(pMeasurementUPtr);
+    std::unique_ptr<Data::Measurement> pMeasurementUPtr(pMeasurementPtr);
+    m_measurement_ =  std::move(pMeasurementUPtr);
   } else if (sensorType.compare("R") == 0 && ProcessRadarData()) {
     // if data is a radar measurement, and command line input
     // requires radar data to be included for Kalman Filter computation,
@@ -153,18 +153,18 @@ void DataUtils::DataAdapter::ParseMeasurementData() {
         measurementDimensions));
 
     // Create a unique instance of the Measurement pointer using move semantics
-    std::unique_ptr<Measurement> pMeasurementUPtr(pMeasurementPtr);
-    mMeasurement_ =  std::move(pMeasurementUPtr);
+    std::unique_ptr<Data::Measurement> pMeasurementUPtr(pMeasurementPtr);
+    m_measurement_ =  std::move(pMeasurementUPtr);
   } else {
     // If a command line argument does not require reading either laser / radar data
     // Set measurement to NULL.
-    mMeasurement_.reset(nullptr);
+    m_measurement_.reset(nullptr);
   }
 }
 void DataUtils::DataAdapter::ParseGroundTruthData() {
 // Read Ground Truth data only when Measurement is already
 // computed.
-  if (mMeasurement_) {
+  if (m_measurement_) {
     // Read gt_x, gt_y, gt_vx, gt_vy from m_data_stream_
     float pX;
     float pY;
@@ -177,7 +177,7 @@ void DataUtils::DataAdapter::ParseGroundTruthData() {
 
     // Create a unique_ptr to State using move semantics
     // and store it as a member variable m_state_
-    m_state_ = std::move(std::make_unique<State>(pX, pY, vX, vY));
+    m_state_ = std::move(std::make_unique<Data::State>(pX, pY, vX, vY));
   }
 
 }

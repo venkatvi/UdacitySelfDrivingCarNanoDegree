@@ -2,8 +2,8 @@
 #define LASER_MEASUREMENT_H
 #include <iostream>
 
-#include "Data/Measurement.h"
-#include "Data/State.h"
+#include "../Data/Measurement.h"
+#include "../Data/State.h"
 /** LaserMeasurement class stores laser sensor information
 */
 namespace Data{

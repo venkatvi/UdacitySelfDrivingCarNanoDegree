@@ -1,9 +1,9 @@
-#include "Data/RadarStateAdapterStrategy.h"
+#include "../Data/RadarStateAdapterStrategy.h"
 
 #include <iostream>
 Data::RadarStateAdapterStrategy::RadarStateAdapterStrategy(
   const std::size_t pMeasurementDimensions):
-  StateAdapterStrategy(pMeasurementDimensions) {
+  Data::StateAdapterStrategy(pMeasurementDimensions) {
   mR_ = Eigen::MatrixXd(pMeasurementDimensions, pMeasurementDimensions);
   mR_ << 0.09, 0, 0,
       0, 0.0009, 0,
@@ -16,8 +16,8 @@ Eigen::VectorXd Data::RadarStateAdapterStrategy::ComputeEstimatedState(
 }
 Eigen::MatrixXd Data::RadarStateAdapterStrategy::GetMeasurementFunction(
   const Eigen::VectorXd& pState) {
-  mH_ = Eigen::MatrixXd(mMeasurementDimensions_, pState.rows());
-  calculateJacobian(pState);
+  mH_ = Eigen::MatrixXd(m_measurement_dimensions_, pState.rows());
+  CalculateJacobian(pState);
   return mH_;
 }
 void Data::RadarStateAdapterStrategy::CalculateJacobian(
@@ -54,7 +54,7 @@ Eigen::VectorXd Data::RadarStateAdapterStrategy::ConvertCartesianToPolarCoordina
   double THRESH = 0.0001;
 
   // Convert state to polar coordinates
-  Eigen::VectorXd polarCoordinates = Eigen::VectorXd(mMeasurementDimensions_);
+  Eigen::VectorXd polarCoordinates = Eigen::VectorXd(m_measurement_dimensions_);
   double px = pState(0);
   double py = pState(1);
   double vx = pState(2);

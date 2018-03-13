@@ -1,9 +1,9 @@
-#include "DataUtils/DataReaderFactory.h"
-DataUtils::DataReader* DataUtils::DataReaderFactory::getDataReader(
+#include "../DataUtils/DataReaderFactory.h"
+DataUtils::DataReader* DataUtils::DataReaderFactory::GetDataReader(
     std::unique_ptr<DataAdapter> pDataAdapterPtr,
     std::unique_ptr<SensorFusionApplication> pApplicationPtr) const
 {
-	DataReader* pDataReader;
+	DataUtils::DataReader* pDataReader;
 	// if source of the data is from "Simulator"
 	// initialize a WebClientReader
 	if (m_data_source_.compare("Simulator") == 0) {

@@ -1,4 +1,4 @@
-#include "DataUtils/InputParser.h"
+#include "../DataUtils/InputParser.h"
 
 #include <iostream>
 void DataUtils::InputParser::ParseArgs(int argc, char** argv) {

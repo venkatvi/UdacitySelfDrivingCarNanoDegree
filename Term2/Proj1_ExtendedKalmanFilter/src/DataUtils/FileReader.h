@@ -3,7 +3,7 @@
 #include <string>
 #include <fstream> //ifstream
 
-#include "DataUtils/DataReader.h"
+#include "../DataUtils/DataReader.h"
 // FileReader class inherits from DataReader and implements data from a file
 namespace DataUtils {
 class FileReader : public DataReader {

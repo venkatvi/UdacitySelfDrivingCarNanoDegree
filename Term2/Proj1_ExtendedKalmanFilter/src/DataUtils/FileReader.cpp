@@ -1,4 +1,4 @@
-#include "DataUtils/FileReader.h"
+#include "../DataUtils/FileReader.h"
 
 #include <iostream>
 #include <fstream>
@@ -14,7 +14,7 @@ void DataUtils::FileReader::Run() {
     if (line[0] == 'L' || line[0] == 'R') {
       auto predictedState = ProcessData(line);
       if (predictedState) {
-        auto RMSE = mApplication_->CalculateRMSE();
+        auto RMSE = m_application_->CalculateRMSE();
 
         //Output: "L/R"  'px_est','py_est','vx_est','vy_est',
         // 'px_meas','py_meas',

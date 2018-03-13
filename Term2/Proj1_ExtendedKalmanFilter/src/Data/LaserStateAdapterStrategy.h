@@ -1,6 +1,6 @@
 #ifndef LASERSTATEADAPTERSTRATEGY_H
 #define LASERSTATEADAPTERSTRATEGY_H
-#include "Data/StateAdapterStrategy.h"
+#include "../Data/StateAdapterStrategy.h"
 /** LaserStateAdapterStrategy class inherits from StateAdapterStrategy.
 * This class initializes the measurement covariance matrices and defines the
 * measurement function.
@@ -20,7 +20,7 @@ public:
   * @param pState const Eigen::VectorXd containing input state
   * returns the approximate estimate of position x and y
   */
-  virtual Eigen::VectorXd computeEstimatedState(const Eigen::VectorXd& pState);
+  virtual Eigen::VectorXd ComputeEstimatedState(const Eigen::VectorXd& pState);
 
   /** getMeasurementFunction method returns the h(x) function
   * for LaserStateAdapter
@@ -28,13 +28,13 @@ public:
   * state estimate of dim nx1 rows
   * returns the Eigen::MatriXd of (measurement dims x n) size
   */
-  virtual Eigen::MatrixXd getMeasurementFunction(const Eigen::VectorXd& pState);
+  virtual Eigen::MatrixXd GetMeasurementFunction(const Eigen::VectorXd& pState);
 
   /** getMeasurementCovariance method returns the covariance matrix
   * for laser measurements
   * returns const Eigen::MatrixXd of (n x n) dims
   */
-  virtual const Eigen::MatrixXd getMeasurementCovariance() const;
+  virtual const Eigen::MatrixXd GetMeasurementCovariance() const;
 };
 }
 #endif

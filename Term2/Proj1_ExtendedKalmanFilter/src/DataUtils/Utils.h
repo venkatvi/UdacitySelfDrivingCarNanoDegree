@@ -15,10 +15,10 @@ public:
   Utils(const std::string& pStartDelimiter,
         const std::string& pEndDelimiter,
         const std::string& pEOFDelimiter):
-    mDataStartDelimiter_(pStartDelimiter),
-    mDataEndDelimiter_(pEndDelimiter),
-    mEOFDelimiter_(pEOFDelimiter),
-    mDefaultString_("") {}
+    m_start_delim_(pStartDelimiter),
+    m_end_delim_(pEndDelimiter),
+    m_EOF_delim_(pEOFDelimiter),
+    m_default_string_("") {}
 
   ~Utils() {};
 
@@ -29,11 +29,6 @@ public:
   * contains sensor measurement data based on the prefix and suffix characters
   */
   bool HasData(const char* pData, const size_t pLength);
-
-  // getDefaultString member function returns an empty string
-  const std::string& GetDefaultString() ßconst {
-    return mDefaultString_;
-  }
 
 private:
   // starting delimiter string in a data line
@@ -46,7 +41,7 @@ private:
   std::string m_EOF_delim_;
 
   //empty default string
-  const std::string mDefaultString_;
+  const std::string m_default_string_;
 };
 }
 #endif

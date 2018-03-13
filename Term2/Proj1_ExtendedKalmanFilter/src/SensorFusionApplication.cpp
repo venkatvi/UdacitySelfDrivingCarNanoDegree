@@ -3,12 +3,12 @@
 #include <memory>
 
 #include "DataUtils/DataAdapter.h"
-const State* SensorFusionApplication::run(
-  Measurement* pCurrentMeasurement,
-  const State* pGroundTruth) {
+const Data::State* SensorFusionApplication::Run(
+  Data::Measurement* pCurrentMeasurement,
+  const Data::State* pGroundTruth) {
   m_ground_truth_.push_back(*pGroundTruth);
-  m_extended_kalman_filter_.processMeasurement(pCurrentMeasurement);
-  State predictedState = m_extended_kalman_filter_.getPredictedState();
+  m_extended_kalman_filter_.ProcessMeasurement(pCurrentMeasurement);
+  Data::State predictedState = m_extended_kalman_filter_.GetPredictedState();
   m_estimations_.push_back(predictedState);
   return &m_estimations_[m_estimations_.size() - 1];
 }
@@ -26,7 +26,7 @@ Eigen::VectorXd SensorFusionApplication::CalculateRMSE() {
 
   //accumulate squared residuals
   for (unsigned int i = 0; i < m_estimations_.size(); ++i) {
-    Eigen::VectorXd residual = m_estimations_[i].diff(m_ground_truth_[i]);
+    Eigen::VectorXd residual = m_estimations_[i].Diff(m_ground_truth_[i]);
     //coefficient-wise multiplication
     residual = residual.array() * residual.array();
     rmse += residual;
@@ -39,6 +39,6 @@ Eigen::VectorXd SensorFusionApplication::CalculateRMSE() {
   rmse = rmse.array().sqrt();
 
   //return the result
-  mCurrentRMSE_ = rmse;
+  m_current_RMSE_ = rmse;
   return rmse;
 }

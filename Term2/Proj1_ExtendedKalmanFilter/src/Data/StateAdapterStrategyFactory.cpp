@@ -1,5 +1,5 @@
-#include "Data/StateAdapterStrategyFactory.h"
-StateAdapterStrategy* Data::StateAdapterStrategyFactory::GetStateAdapterStrategy(
+#include "../Data/StateAdapterStrategyFactory.h"
+Data::StateAdapterStrategy* Data::StateAdapterStrategyFactory::GetStateAdapterStrategy(
     const std::size_t pMeasurementDimensions) {
 	if (m_sensor_type_.compare("L") == 0) {
 		if (!m_laser_strategy_) {

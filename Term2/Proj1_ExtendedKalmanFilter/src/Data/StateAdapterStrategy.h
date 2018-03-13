@@ -1,6 +1,6 @@
 #ifndef STATEADAPTERSTRATEGY_H
 #define STATEADAPTERSTRATEGY_H
-#include "Eigen/Dense"
+#include "../Eigen/Dense"
 /** StateAdapterStrategy class is a base class
 * of a polymorphic hierarchy for providing strategies
 * of converting states to approximate estimate x and y
@@ -14,7 +14,7 @@ public:
 	* @param pMeasurementDimensions measurement dimensions
 	*/
 	StateAdapterStrategy(const std::size_t pMeasurementDimensions):
-		mMeasurementDimensions_(pMeasurementDimensions) {}
+		m_measurement_dimensions_(pMeasurementDimensions) {}
 	virtual ~StateAdapterStrategy() {}
 
 	/* computeEstimatedState is a pure virtual function which uses input
@@ -41,7 +41,7 @@ public:
 	virtual const Eigen::MatrixXd GetMeasurementCovariance() const = 0;
 protected:
 	// input measurement dimensions
-	std::size_t mMeasurementDimensions_;
+	std::size_t m_measurement_dimensions_;
 
 	// measurement function matrix
 	Eigen::MatrixXd mH_;

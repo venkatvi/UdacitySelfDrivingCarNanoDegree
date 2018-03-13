@@ -19,10 +19,10 @@ src/DataUtils/DataReaderFactory.h src/DataUtils/DataReaderFactory.cpp
 src/DataUtils/DataReader.h src/DataUtils/DataReader.cpp 
 src/DataUtils/WebClientReader.h src/DataUtils/WebClientReader.cpp src/DataUtils/FileReader.h src/DataUtils/FileReader.cpp src/DataUtils/DataAdapter.h src/DataUtils/DataAdapter.cpp src/ExtendedKalmanFilter.cpp src/ExtendedKalmanFilter.h src/KalmanFilter.cpp src/KalmanFilter.h 
 src/SensorFusionApplication.cpp src/SensorFusionApplication.h 
-src/Data/Measurement.h 
-src/Data/LaserMeasurement.cpp src/Data/LaserMeasurement.h src/Data/LaserStateAdapterStrategy.h 
+src/Data/Measurement.h src/Data/LaserMeasurement.h  src/Data/RadarMeasurement.h 
+src/Data/LaserStateAdapterStrategy.h 
 src/Data/LaserStateAdapterStrategy.cpp 
-src/Data/RadarMeasurement.cpp src/Data/RadarMeasurement.h src/Data/RadarStateAdapterStrategy.h 
+src/Data/RadarStateAdapterStrategy.h 
 src/Data/RadarStateAdapterStrategy.cpp 
 src/Data/State.cpp src/Data/State.h 
 src/Data/StateAdapterStrategy.h 

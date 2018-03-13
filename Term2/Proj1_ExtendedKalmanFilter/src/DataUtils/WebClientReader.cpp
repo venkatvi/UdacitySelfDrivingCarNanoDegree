@@ -1,5 +1,5 @@
-#include "DataUtils/WebClientReader.h"
-#include "DataUtils/Utils.h"
+#include "../DataUtils/WebClientReader.h"
+#include "../DataUtils/Utils.h"
 #include <uWS/uWS.h>
 /** run method implements the logic of reading
 * data from web socket and processing data
@@ -10,10 +10,10 @@ void DataUtils::WebClientReader::Run() {
     // parse data using Utils
     Utils mStringUtils_("[", "]", "null");
     // if string has data related to sensor measurement, process it further
-    if (mStringUtils_.hasData(pData, pLength))
+    if (mStringUtils_.HasData(pData, pLength))
     {
       // getData after stripping the delimiters
-      std::string strData =  mStringUtils_.getData(std::string(pData));
+      std::string strData =  mStringUtils_.GetData(std::string(pData));
       if (!strData.empty())
       {
         // parse data in JSON format
@@ -25,22 +25,22 @@ void DataUtils::WebClientReader::Run() {
 
           // process measurements, ground truth from string
           // Run Kalman Filter and get the predicted state
-          auto predictedState = this->processData(clientString);
+          auto predictedState = this->ProcessData(clientString);
 
           // If a state is predicted, calculate RMSE
           if (predictedState) {
-            auto RMSE = this->getApplication()->calculateRMSE();
+            auto RMSE = this->GetApplication()->CalculateRMSE();
 
             //Output: 'px_est','py_est','vx_est','vy_est','px_meas','py_meas','px_gt','py_gt','vx_gt','vy_gt'
-            this->writeResultsToFile(predictedState);
+            this->WriteResultsToFile(predictedState);
 
             // print out RMSE
             std::cout << "RMSE: " << RMSE << std::endl;
 
             // Write out json data to the client
             nlohmann::json msgJson;
-            msgJson["estimate_x"] = predictedState->getPositionX();
-            msgJson["estimate_y"] = predictedState->getPositionY();
+            msgJson["estimate_x"] = predictedState->GetPositionX();
+            msgJson["estimate_y"] = predictedState->GetPositionY();
             msgJson["rmse_x"] =  RMSE(0);
             msgJson["rmse_y"] =  RMSE(1);
             msgJson["rmse_vx"] = RMSE(2);

@@ -1,7 +1,7 @@
 #ifndef RADAR_MEASUREMENT_H
 #define RADAR_MEASUREMENT_H
-#include "Data/Measurement.h"
-#include "Data/State.h"
+#include "../Data/Measurement.h"
+#include "../Data/State.h"
 /** RadarMeasurement class inherits from Measurement class. It overloads
 * constructor to store rho, theta, rho_dot and timestamp at which measurement
 * was recorded.
@@ -41,7 +41,7 @@ public:
 	* the number of input dimensions in radar measurement
 	*/
 	static std::size_t GetInputDimensions() {
-		return Data::RadarMeasurement::mInputDimensions_;
+		return Data::RadarMeasurement::m_inputDimensions_;
 	}
 
 	/** getVectorizedData is a pure virtual function overriden by
@@ -49,7 +49,7 @@ public:
 	* This function transforms the measurement to Eigen::VectorXd
 	*/
 	virtual const Eigen::VectorXd GetVectorizedData() const override {
-		Eigen::VectorXd data = Eigen::VectorXd(RadarMeasurement::mInputDimensions_);
+		Eigen::VectorXd data = Eigen::VectorXd(RadarMeasurement::m_inputDimensions_);
 		data << m_rho_, m_theta_, m_rho_dot_;
 		return data;
 	}

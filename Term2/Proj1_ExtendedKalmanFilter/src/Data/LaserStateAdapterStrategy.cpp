@@ -1,4 +1,4 @@
-#include "Data/LaserStateAdapterStrategy.h"
+#include "../Data/LaserStateAdapterStrategy.h"
 /** Constructor 
 * @param pMeasurementDimensions indicates dimensions of measurements 
 * for laser
@@ -7,7 +7,7 @@
 */
 Data::LaserStateAdapterStrategy::LaserStateAdapterStrategy(
           const std::size_t pMeasurementDimensions):
-	         StateAdapterStrategy(pMeasurementDimensions) {
+	         Data::StateAdapterStrategy(pMeasurementDimensions) {
 	mR_ = Eigen::MatrixXd(pMeasurementDimensions, pMeasurementDimensions);
 
 	mR_ << 0.0225, 0,
@@ -19,7 +19,7 @@ Data::LaserStateAdapterStrategy::LaserStateAdapterStrategy(
 * @param pState the current predicted state
 * returns approximated position x, y using measurement function
 */
-Eigen::VectorXd Data::LaserStateAdapterStrategy::computeEstimatedState(
+Eigen::VectorXd Data::LaserStateAdapterStrategy::ComputeEstimatedState(
                                   const Eigen::VectorXd& pState){
 	Eigen::VectorXd Hx = mH_ * pState;
 	return Hx;
@@ -30,10 +30,10 @@ Eigen::VectorXd Data::LaserStateAdapterStrategy::computeEstimatedState(
 * returns Eigen::MatrixXd of dims m x n where m is dimensions of 
 * measurement
 */
-Eigen::MatrixXd Data::LaserStateAdapterStrategy::getMeasurementFunction(
+Eigen::MatrixXd Data::LaserStateAdapterStrategy::GetMeasurementFunction(
                                    const Eigen::VectorXd& pState){
-	mH_ = Eigen::MatrixXd(mMeasurementDimensions_, pState.rows());
-	for(size_t i=0;i < mMeasurementDimensions_ ;i++){
+	mH_ = Eigen::MatrixXd(m_measurement_dimensions_, pState.rows());
+	for(size_t i=0;i < m_measurement_dimensions_ ;i++){
 		mH_(i,i)=1;
 		for(size_t j=0; j<pState.rows(); j++){
 			if (i!=j){
@@ -47,6 +47,6 @@ Eigen::MatrixXd Data::LaserStateAdapterStrategy::getMeasurementFunction(
 /** getMeasurementCovariance returns the measurement covariance matrix
 * returns Eigen::MatrixXd of dims m x m where m is dimensions of measurement
 */
-const Eigen::MatrixXd Data::LaserStateAdapterStrategy::getMeasurementCovariance() const {
+const Eigen::MatrixXd Data::LaserStateAdapterStrategy::GetMeasurementCovariance() const {
 	return mR_;
 }

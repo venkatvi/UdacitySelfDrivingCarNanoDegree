@@ -1,7 +1,7 @@
 
 #ifndef RADARSTATEADAPTERSTRATEGY_H
 #define RADARSTATEADAPTERSTRATEGY_H
-#include "Data/StateAdapterStrategy.h"
+#include "../Data/StateAdapterStrategy.h"
 /** RadarStateAdapterStrategy class inherits from StateAdapterStrategy and
 * implements strategy for Radar measurements
 */

@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include "Eigen/Dense" // For VectorXd
+#include "../Eigen/Dense" // For VectorXd
 
 /** State class stores the properties of an estimate / ground truth storing
 * position x, position y, velocity x, velocity y

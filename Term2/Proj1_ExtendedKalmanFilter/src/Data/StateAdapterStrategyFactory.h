@@ -1,8 +1,8 @@
 #ifndef STATEADAPTERSTRATEGYFACTORY_H
 #define STATEADAPTERSTRATEGYFACTORY_H
-#include "Data/StateAdapterStrategy.h"
-#include "Data/RadarStateAdapterStrategy.h"
-#include "Data/LaserStateAdapterStrategy.h"
+#include "../Data/StateAdapterStrategy.h"
+#include "../Data/RadarStateAdapterStrategy.h"
+#include "../Data/LaserStateAdapterStrategy.h"
 /** StateAdapterStrategyFactory class provides a factory class
 * for choosing a concrete implementation of StateAdapterStrategy
 */
@@ -25,12 +25,12 @@ public:
   * The input dimensions is required to initialize covariance matrices of 
   * concrete instances.
   */
-  StateAdapterStrategy* GetStateAdapterStrategy(
+  Data::StateAdapterStrategy* GetStateAdapterStrategy(
     const std::size_t pMeasurementDimensions);
 private:
   std::string m_sensor_type_;
-  StateAdapterStrategy* m_laser_strategy_;
-  StateAdapterStrategy* m_radar_strategy_;
+  Data::StateAdapterStrategy* m_laser_strategy_;
+  Data::StateAdapterStrategy* m_radar_strategy_;
 };
 }
 #endif

@@ -1,8 +1,8 @@
 #ifndef JSONDATAREADER_H
 #define JSONDATAREADER_H
-#include "json.hpp"
+#include "../json.hpp"
 #include "uWS/uWS.h"
-#include "DataUtils/DataReader.h"
+#include "../DataUtils/DataReader.h"
 /** WebClientReader class inherits from DataReader
 * and implements methods for reading data from
 * WebSocket

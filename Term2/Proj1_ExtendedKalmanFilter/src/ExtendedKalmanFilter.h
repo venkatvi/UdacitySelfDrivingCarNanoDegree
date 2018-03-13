@@ -27,12 +27,12 @@ public:
 	* class, this method does not have laser / radar
 	* specific high coupling implementation.
 	*/
-	void ProcessMeasurement(Measurement*  pMeasurement);
+	void ProcessMeasurement(Data::Measurement*  pMeasurement);
 
 	/* getPredictedState method returns the current
 	* predicted state by Kalman Filter
 	*/
-	State GetPredictedState() const;
+	Data::State GetPredictedState() const;
 private:
 	/* computeDeltaT is a private member function
 	* which computes the difference from the last

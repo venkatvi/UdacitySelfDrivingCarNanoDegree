@@ -3,11 +3,11 @@
 #include <memory> //unique_ptr
 #include <sstream> //istringstream
 
-#include "Data/Measurement.h"
-#include "Data/State.h"
-#include "Eigen/Dense"
+#include "../Data/Measurement.h"
+#include "../Data/State.h"
+#include "../Eigen/Dense"
 //Enum class indicating the type of data - laser/radar/both
-#include "DataUtils/DataTypes.h"
+#include "../DataUtils/DataTypes.h"
 
 /** DataAdapter class adapts string data to measurement and ground truth objects.
 */

@@ -8,7 +8,7 @@ ExtendedKalmanFilter::ExtendedKalmanFilter():
   m_is_initialized_(false),
   m_previous_timestamp_(0) {
   // Get dimensions of a state
-  const size_t dim_state = State::GetInputDimensions();
+  const size_t dim_state = Data::State::GetInputDimensions();
 
   // Initialize State Covariance matrix
   P_ = Eigen::MatrixXd(dim_state, dim_state);
@@ -27,13 +27,13 @@ ExtendedKalmanFilter::ExtendedKalmanFilter():
   // Initialize State Noise / Process Covariance Matrix
   Q_ = Eigen::MatrixXd(dim_state, dim_state);
 }
-void ExtendedKalmanFilter::ProcessMeasurement(Measurement* pMeasurement) {
+void ExtendedKalmanFilter::ProcessMeasurement(Data::Measurement* pMeasurement) {
   if (!pMeasurement) {
     return;
   }
   if (!m_is_initialized_) {
     // get input dimensions of the state
-    const size_t dim_state = State::GetInputDimensions();
+    const size_t dim_state = Data::State::GetInputDimensions();
 
     // For first measurement, initialize state with input dimensions
     m_kalman_filter_.InitializeState(dim_state);
@@ -42,7 +42,7 @@ void ExtendedKalmanFilter::ProcessMeasurement(Measurement* pMeasurement) {
     m_kalman_filter_.Init(P_, F_, Q_);
 
     // Set initial state with current measurement
-    m_kalman_filter_.SetState(pMeasurement->getStateData());
+    m_kalman_filter_.SetState(pMeasurement->GetStateData());
 
 
     m_is_initialized_ = true;
@@ -89,9 +89,9 @@ void ExtendedKalmanFilter::ProcessMeasurement(Measurement* pMeasurement) {
   m_kalman_filter_.Update(z_, H_, Hx_, R_);
 
 }
-State ExtendedKalmanFilter::GetPredictedState() const {
+Data::State ExtendedKalmanFilter::GetPredictedState() const {
   auto predictedState = m_kalman_filter_.GetState();
-  State pState(predictedState(0),
+  Data::State pState(predictedState(0),
                predictedState(1),
                predictedState(2),
                predictedState(3));

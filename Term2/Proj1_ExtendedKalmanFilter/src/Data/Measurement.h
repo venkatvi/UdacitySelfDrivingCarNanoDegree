@@ -3,8 +3,8 @@
 #include <iostream>
 #include <memory>
 
-#include "Data/State.h"
-#include "Data/StateAdapterStrategy.h"
+#include "../Data/State.h"
+#include "../Data/StateAdapterStrategy.h"
 /** Measurement class provides a base class framework for polymorphic
 * implementation of laser and radar measurements
 */
@@ -27,7 +27,7 @@ public:
   */
   void SetStateAdapterStrategy(
     StateAdapterStrategy* pStrategy) {
-    m_state_adapter_strategy_.reset(pStrategy);
+    m_state_adapter_strategy_->reset(pStrategy);
   }
 
   /** getStateAdapterStrategy member function returns the member
@@ -37,7 +37,7 @@ public:
   * retained by Measurement class.
   */
   StateAdapterStrategy* GetStateAdapterStrategy() {
-    return m_state_adapter_strategy_.get();
+    return m_state_adapter_strategy_->get();
   }
 
   /** getVectorizedData is a pure virtual member function

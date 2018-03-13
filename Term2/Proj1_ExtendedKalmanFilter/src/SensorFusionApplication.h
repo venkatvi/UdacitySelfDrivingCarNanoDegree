@@ -20,7 +20,7 @@ public:
 	* @param pGroundTruth point to ground truth
 	* returns the predicted state by Kalman Filter
 	*/
-	const State* Run(Measurement* pCurrentMeasurement, const State* pGroundTruth);
+	const Data::State* Run(Data::Measurement* pCurrentMeasurement, const Data::State* pGroundTruth);
 
 	/** calculateRMSE method returns the RMSE given estimations and groundtruth
 	* This method returns Eigen::VectorXd of rmse values
@@ -31,10 +31,10 @@ private:
 	ExtendedKalmanFilter m_extended_kalman_filter_;
 
 	// vector of estimations
-	std::vector<State> m_estimations_;
+	std::vector<Data::State> m_estimations_;
 
 	//vector of ground truths
-	std::vector<State> m_ground_truth_;
+	std::vector<Data::State> m_ground_truth_;
 
 	// RMSE values of current estimations and ground truths
 	Eigen::VectorXd m_current_RMSE_;

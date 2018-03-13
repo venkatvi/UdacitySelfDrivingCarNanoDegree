@@ -1,16 +1,16 @@
 #ifndef DATAREADERFACTORY_H
 #define DATAREADERFACTORY_H
-#include "DataUtils/DataReader.h" // Polymorphic base class 
-#include "DataUtils/WebClientReader.h" // Web-client based data reader 
-#include "DataUtils/FileReader.h" // file based data reader
-#include "DataUtils/DataAdapter.h"
-#include "SensorFusionApplication.h"
+#include "../DataUtils/DataReader.h" // Polymorphic base class 
+#include "../DataUtils/WebClientReader.h" // Web-client based data reader 
+#include "../DataUtils/FileReader.h" // file based data reader
+#include "../DataUtils/DataAdapter.h"
+#include "../SensorFusionApplication.h"
 namespace DataUtils {
 class DataReaderFactory {
 public:
 	DataReaderFactory() {}
 	~DataReaderFactory() {}
-	
+
 	void SetSource(const std::string& pSource) {
 		m_data_source_ = pSource;
 	}

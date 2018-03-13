@@ -10,14 +10,14 @@ public:
     KalmanFilter(){};
     virtual ~KalmanFilter(){};
 
-    void SetState(const State& pState) {
-        x_ <<  pState.getPositionX(), pState.getPositionY(), pState.getVelocityX(),  pState.getVelocityY();
+    void SetState(const Data::State& pState) {
+        x_ <<  pState.GetPositionX(), pState.GetPositionY(), pState.GetVelocityX(),  pState.GetVelocityY();
     }
 
-    inline const Eigen::VectorXd& SetState() const {
+    inline const Eigen::VectorXd& GetState() const {
         return x_;
     }
-
+   
     /**
      * Init Initializes Kalman filter
      * @param P_in Initial state covariance

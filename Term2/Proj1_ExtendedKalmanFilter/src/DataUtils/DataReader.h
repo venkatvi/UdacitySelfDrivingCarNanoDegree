@@ -5,8 +5,8 @@
 #include <iostream>
 #include <fstream> // ofstream
 
-#include "DataUtils/DataAdapter.h"
-#include "SensorFusionApplication.h"
+#include "../DataUtils/DataAdapter.h"
+#include "../SensorFusionApplication.h"
 
 /** DataReader class hierarchy is a set of polymorphic classes for reading data
 * from different data sources - Simulator, data file
@@ -65,7 +65,7 @@ public:
   /** run method is a pure virtual member function which has concrete 
   * definitions in the concerte derived class implementations of this class.
   */
-  virtual void run() = 0;
+  virtual void Run() = 0;
 
 
   /** processData process string pData, parses measurements, ground truth 
@@ -75,13 +75,13 @@ public:
   * const State which contains the estimated state. 
   * The memory of the State is owned by KalmanFilter
   */
-  const Data::State* processData(const std::string& pData);
+  const Data::State* ProcessData(const std::string& pData);
 
   /** writeResultsToFile writes results to output file stored in 
   * m_output_file_name_ member
   * @param pState pointer to const State containing estimates of Kalman Filter
   */
-  void writeResultsToFile(const State* pState);
+  void WriteResultsToFile(const Data::State* pState);
 
 protected:
   // output file name
