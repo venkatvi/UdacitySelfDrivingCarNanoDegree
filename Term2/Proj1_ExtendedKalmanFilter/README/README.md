@@ -20,10 +20,10 @@ For a successful build, the following installation requirements must be met:
     -   Mac: same deal as make -  [install Xcode command line tools](https://developer.apple.com/xcode/features/)
     -   Windows: recommend using  [MinGW](http://www.mingw.org/)
  ## Build Instructions
-  cd Proj1_ExtendedKalmanFilter
-    cd build
-    cmake ../
-    make 
+  >- cd Proj1_ExtendedKalmanFilter
+  >- cd build
+  >- cmake ../
+  >- ßmake 
     
 
 ## Libraries and Source Code Dependencies
@@ -46,7 +46,7 @@ The code is styled using [Google's C++ style guide](https://google.github.io/sty
 - Additional experiments were done by modifying 
 >- Q process covariance matrix values
 >- R_laser measurement noise matrix for laser data
->-R_radar measurement noise matrix for radar data 
+>- R_radar measurement noise matrix for radar data 
 
 The results of all experiments are shared in a Jupyter notebook "**Extended Kalman Filter - Results & Discussion.ipynb**" that can be found under **Proj1_ExtendedKalmanFilter/README/Results**
 
