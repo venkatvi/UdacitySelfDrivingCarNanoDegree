@@ -23,7 +23,7 @@ For a successful build, the following installation requirements must be met:
   >- cd Proj1_ExtendedKalmanFilter
   >- cd build
   >- cmake ../
-  >- ßmake 
+  >- make 
     
 
 ## Libraries and Source Code Dependencies
