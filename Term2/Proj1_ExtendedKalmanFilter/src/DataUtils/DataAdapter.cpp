@@ -79,7 +79,7 @@ void DataUtils::DataAdapter::ParseMeasurementData() {
   // if data is a laser measurement, and command line input
   // requires laser data to be included for Kalman Filter computation,
   // process data.
-  if (sensorType.compare("L") == 0 && ProcessLaserData()) {
+   if (sensorType.compare("L") == 0 && ProcessLaserData()) {
     // Laser measurement data is of the format:
     // "L px py timestamp"
     float pX;
@@ -91,10 +91,6 @@ void DataUtils::DataAdapter::ParseMeasurementData() {
     m_data_stream_ >> pY;
     m_data_stream_ >> pTimestamp;
 
-    // Create a LaserMeasurement object pointer
-    // using px, py and timestamp as constructor arguments
-    pMeasurementPtr = new Data::LaserMeasurement(pTimestamp, pX, pY);
-
     // Use static method to get the number of input dimensions
     // for Laser Measurements. (This is used to avoid the use of
     // MAGIC NUMBERS in code)
@@ -103,11 +99,17 @@ void DataUtils::DataAdapter::ParseMeasurementData() {
     // Get polymorphic StateAdapterStrategy from StateAdapterStrategyFactory
     // using the measurementDimensions. The dimensions are required to set
     // the dimensionality of covariance matrices in Strategy classes.
+    auto stateAdapterStrategyPtr = pStateAdapterStrategyFactory.GetStateAdapterStrategy(
+                                     measurementDimensions);
+    std::unique_ptr<Data::StateAdapterStrategy> pStateAdapterStrategyUPtr(stateAdapterStrategyPtr);
 
-    // Set StateAdapterStrategy in Measurement pointer
-    pMeasurementPtr->SetStateAdapterStrategy(
-      pStateAdapterStrategyFactory.GetStateAdapterStrategy(
-        measurementDimensions));
+    // Create a LaserMeasurement object pointer
+    // using px, py and timestamp as constructor arguments
+    pMeasurementPtr = new Data::LaserMeasurement(
+      std::move(pStateAdapterStrategyUPtr),
+      pTimestamp,
+      pX,
+      pY);
 
     // Create a unique instance of the Measurement pointer using move semantics
     std::unique_ptr<Data::Measurement> pMeasurementUPtr(pMeasurementPtr);
@@ -131,14 +133,6 @@ void DataUtils::DataAdapter::ParseMeasurementData() {
     long long pTimestamp;
     m_data_stream_ >> pTimestamp;
 
-    // Create a RadarMeasurement object pointer
-    // using rho, theta, rho_dot and timestamp as constructor
-    // arguments
-    pMeasurementPtr = new Data::RadarMeasurement(pTimestamp,
-        pRho,
-        pTheta,
-        pRhoDot);
-
     // Get input dimensions of radar measurements using a
     // static member function
     measurementDimensions = Data::RadarMeasurement::GetInputDimensions();
@@ -146,11 +140,21 @@ void DataUtils::DataAdapter::ParseMeasurementData() {
     // Get polymorphic StateAdapterStrategy from StateAdapterStrategyFactory
     // using the measurementDimensions. The dimensions are required to set
     // the dimensionality of covariance matrices in Strategy classes.
+    auto stateAdapterStrategyPtr = pStateAdapterStrategyFactory.GetStateAdapterStrategy(
+                                     measurementDimensions);
+    std::unique_ptr<Data::StateAdapterStrategy> pStateAdapterStrategyUPtr(stateAdapterStrategyPtr);
 
-    // Set StateAdapterStrategy in Measurement pointer
-    pMeasurementPtr->SetStateAdapterStrategy(
-      pStateAdapterStrategyFactory.GetStateAdapterStrategy(
-        measurementDimensions));
+
+    // Create a RadarMeasurement object pointer
+    // using rho, theta, rho_dot and timestamp as constructor
+    // arguments
+    pMeasurementPtr = new Data::RadarMeasurement(
+      std::move(pStateAdapterStrategyUPtr),
+      pTimestamp,
+      pRho,
+      pTheta,
+      pRhoDot);
+
 
     // Create a unique instance of the Measurement pointer using move semantics
     std::unique_ptr<Data::Measurement> pMeasurementUPtr(pMeasurementPtr);
@@ -178,6 +182,8 @@ void DataUtils::DataAdapter::ParseGroundTruthData() {
     // Create a unique_ptr to State using move semantics
     // and store it as a member variable m_state_
     m_state_ = std::move(std::make_unique<Data::State>(pX, pY, vX, vY));
+  }else{
+    m_state_.reset(nullptr);
   }
 
 }

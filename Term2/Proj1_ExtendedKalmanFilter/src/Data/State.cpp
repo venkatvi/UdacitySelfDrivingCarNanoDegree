@@ -18,9 +18,9 @@ Eigen::VectorXd Data::State::Diff(const Data::State& other) const {
 * output stream
 */
 std::ostream & Data::operator<<(std::ostream& stream, const Data::State& pObject) {
-	stream << pObject.GetPositionX()<< ", ";
-	stream << pObject.GetPositionY() << ", ";
-	stream << pObject.GetVelocityX() << ", ";
-	stream << pObject.GetVelocityY() << ", ";
+	stream << pObject.GetPositionX()<< "\t";
+	stream << pObject.GetPositionY() << "\t";
+	stream << pObject.GetVelocityX() << "\t";
+	stream << pObject.GetVelocityY() << "\t";
 	return stream;
 }

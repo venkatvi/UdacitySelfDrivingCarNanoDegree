@@ -45,9 +45,11 @@ void DataUtils::WebClientReader::Run() {
             msgJson["rmse_y"] =  RMSE(1);
             msgJson["rmse_vx"] = RMSE(2);
             msgJson["rmse_vy"] = RMSE(3);
-            std::cout << "MSG: " << msgJson << std::endl;
-
+            
             auto msg = "42[\"estimate_marker\"," + msgJson.dump() + "]";
+            webServer.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
+          }else{
+            std::string msg = "42[\"manual\",{}]";
             webServer.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
           }
         }

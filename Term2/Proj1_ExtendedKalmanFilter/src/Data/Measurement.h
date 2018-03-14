@@ -18,26 +18,14 @@ public:
   }
 
   virtual State GetStateData() const = 0;
-
-  /** setStateAdapterStrategy member function sets the StateAdapterStrategy for
-  * the given measurement
-  * @param pStrategy pointer to StateAdapterStrategy
-  * The StateAdapterStrategy polymorphic hierarchy is used in an abstract factory 
-  * pattern with Measurement class hierarchy
-  */
-  void SetStateAdapterStrategy(
-    StateAdapterStrategy* pStrategy) {
-    m_state_adapter_strategy_->reset(pStrategy);
-  }
-
   /** getStateAdapterStrategy member function returns the member
   * m_state_adapter_strategy_ as a non-const pointer
   * This method is used by the application to further modify
-  * measurement covariance matrices. The ownership of the member is still 
+  * measurement covariance matrices. The ownership of the member is still
   * retained by Measurement class.
   */
   StateAdapterStrategy* GetStateAdapterStrategy() {
-    return m_state_adapter_strategy_->get();
+    return m_state_adapter_strategy_.get();
   }
 
   /** getVectorizedData is a pure virtual member function
@@ -54,7 +42,10 @@ protected:
   /** Constructor
   * protected constructor
   */
-  Measurement(long long pTimestamp): m_timestamp_(pTimestamp) {}
+  Measurement(std::unique_ptr<StateAdapterStrategy> pStrategy,
+              long long pTimestamp):
+    m_state_adapter_strategy_(std::move(pStrategy)),
+    m_timestamp_(pTimestamp) {}
 
   /** print method is a pure virtual function
   * that is used to print the details of measurement
@@ -75,7 +66,7 @@ protected:
 
 private:
   long long m_timestamp_;
-  std::unique_ptr<StateAdapterStrategy>* m_state_adapter_strategy_;
+  std::unique_ptr<StateAdapterStrategy> m_state_adapter_strategy_;
 
 };
 }

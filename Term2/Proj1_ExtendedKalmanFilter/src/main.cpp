@@ -32,7 +32,7 @@ int main(int argc, char** argv)
 
     // Initialize a DataReaderFactory with the source of data 
     DataUtils::DataReaderFactory pDataReaderFactory;
-    pDataReaderFactory.SetSource(source);
+    pDataReaderFactory.SetSource(pParser.GetSource());
 
     // Get the polymorphic instance of DataReader based on the data source
     auto pDataReader =

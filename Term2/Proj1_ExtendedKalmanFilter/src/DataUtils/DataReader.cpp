@@ -5,11 +5,12 @@ void DataUtils::DataReader::WriteResultsToFile(
 	auto currentGroundTruth = m_data_adapter_->GetGroundTruth();
 
 	// Output measurement type "L" or "R"
-	m_output_data_stream_ << currentMeasurement->GetMeasurementType() << ", ";
-	m_output_data_stream_ << *pState;
-	m_output_data_stream_ << *currentMeasurement;
-	m_output_data_stream_ << *currentGroundTruth;
-	m_output_data_stream_ << std::endl;
+	if (currentMeasurement && currentGroundTruth) {
+		m_output_data_stream_ << *pState;
+		m_output_data_stream_ << *currentMeasurement;
+		m_output_data_stream_ << *currentGroundTruth;
+		m_output_data_stream_ << std::endl;
+	}
 }
 const Data::State* DataUtils::DataReader::ProcessData(
     const std::string& pData) {

@@ -14,7 +14,8 @@ public:
 	InputParser(const std::string& defaultSource,
 	            const std::string& defaultOutput):
 		m_source_(defaultSource),
-		m_output_(defaultOutput) {}
+		m_output_(defaultOutput),
+		m_data_type_("both") {}
 	~InputParser() {}
 
 	/* parseArgs method takes in argc, argv an processes command line

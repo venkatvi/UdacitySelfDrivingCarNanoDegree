@@ -15,8 +15,12 @@ public:
 	* @param pTheta angle from x-axis at which vehicle is heading
 	* @param pRhodot rate of change of speed
 	*/
-	RadarMeasurement(long long pTimestamp, float pRho, float pTheta, float pRhoDot):
-		Measurement(pTimestamp),
+	RadarMeasurement(std::unique_ptr<StateAdapterStrategy> pStrategy,
+	                 long long pTimestamp,
+	                 float pRho,
+	                 float pTheta,
+	                 float pRhoDot):
+		Measurement(std::move(pStrategy), pTimestamp),
 		m_rho_(pRho),
 		m_theta_(pTheta),
 		m_rho_dot_(pRhoDot) {}
@@ -28,7 +32,7 @@ public:
 	* This function returns the measurement data transformed into
 	* State space
 	*/
-	virtual State GetStateData() const {
+	State GetStateData() const override {
 		float x = cos(m_theta_) * m_rho_;
 		float y = sin(m_theta_) * m_rho_;
 		float vx = cos(m_theta_) * m_rho_dot_;
@@ -48,7 +52,7 @@ public:
 	* concrete implementation
 	* This function transforms the measurement to Eigen::VectorXd
 	*/
-	virtual const Eigen::VectorXd GetVectorizedData() const override {
+	const Eigen::VectorXd GetVectorizedData() const override {
 		Eigen::VectorXd data = Eigen::VectorXd(RadarMeasurement::m_inputDimensions_);
 		data << m_rho_, m_theta_, m_rho_dot_;
 		return data;
@@ -57,10 +61,10 @@ public:
 	/** print is a pure virtual function overriden by RadarMeasurement
 	* to output the values of member variables
 	*/
-	virtual void Print(std::ostream& pStream) const  {
-		pStream << m_rho_ << ", ";
-		pStream << m_theta_ << ", ";
-		pStream << m_rho_dot_ << ", ";
+	void Print(std::ostream& pStream) const  override {
+		auto pState = GetStateData();
+		pStream << pState.GetPositionX() << "\t";
+		pStream << pState.GetPositionY() << "\t";
 	}
 
 	/** getMeasurementType is a pure virtual function overriden by
@@ -69,7 +73,7 @@ public:
 	* measurement type. The function is used while writing measurement
 	* information to output file
 	*/
-	virtual const std::string GetMeasurementType() const override {
+	const std::string GetMeasurementType() const override {
 		return "R";
 	}
 private:
