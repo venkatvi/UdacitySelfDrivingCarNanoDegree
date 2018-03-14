@@ -1,10 +1,5 @@
 #include "../Data/State.h"
 
-/** diff method comptues the difference of this object
-* with another state
-* @param other const State reference
-* returns the difference between current state and other state
-*/
 Eigen::VectorXd Data::State::Diff(const Data::State& other) const {
 	Eigen::VectorXd residual = Eigen::VectorXd(4);
 	residual << (m_position_x_ - other.GetPositionX()),
@@ -13,14 +8,12 @@ Eigen::VectorXd Data::State::Diff(const Data::State& other) const {
 	         (m_velocity_y_ - other.GetVelocityY());
 	return residual;
 }
-
-/* operator overload << to output member variables to
-* output stream
-*/
-std::ostream & Data::operator<<(std::ostream& stream, const Data::State& pObject) {
-	stream << pObject.GetPositionX()<< "\t";
-	stream << pObject.GetPositionY() << "\t";
-	stream << pObject.GetVelocityX() << "\t";
-	stream << pObject.GetVelocityY() << "\t";
-	return stream;
+namespace Data {
+	std::ostream & operator<<(std::ostream& stream, const Data::State& pObject) {
+		stream << pObject.GetPositionX()<< "\t";
+		stream << pObject.GetPositionY() << "\t";
+		stream << pObject.GetVelocityX() << "\t";
+		stream << pObject.GetVelocityY() << "\t";
+		return stream;
+	}
 }
