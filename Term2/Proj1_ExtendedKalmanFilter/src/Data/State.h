@@ -42,7 +42,7 @@ public:
 	*/
 	Eigen::VectorXd Diff(const State& other) const;
 
-	/** getInputDimensions is a static method that retuns the number of input 
+	/** getInputDimensions is a static method that retuns the number of input
 	* dimensions in a a state
 	*/
 	static size_t GetInputDimensions() { return State::mNumMembers_;}
@@ -65,5 +65,6 @@ private:
 	// of the state
 	static constexpr float mNumMembers_ = 4;
 };
+std::ostream& operator<< (std::ostream& pOStream, const State& pState);
 }
 #endif
