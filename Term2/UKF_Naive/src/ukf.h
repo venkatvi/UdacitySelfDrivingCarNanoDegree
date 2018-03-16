@@ -107,8 +107,8 @@ public:
    */
   void UpdateRadar(MeasurementPackage meas_package);
 
-  friend float Normalize(float ptheta);
+  friend double Normalize(double ptheta);
 };
-float Normalize(float ptheta);
+double Normalize(double ptheta);
 
 #endif /* UKF_H */

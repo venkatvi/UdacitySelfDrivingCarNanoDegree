@@ -26,7 +26,7 @@ UKF::UKF() {
   P_ = MatrixXd(5, 5);
 
   // Process noise standard deviation longitudinal acceleration in m/s^2
-  std_a_ = 0.5;
+  std_a_ = 1.5;
 
   // Process noise standard deviation yaw acceleration in rad/s^2
   std_yawdd_ = 0.5;
@@ -86,6 +86,11 @@ void UKF::ProcessMeasurement(MeasurementPackage measurement_pack) {
     x_ << 1, 1, 1, 1, 1;
 
     P_ = MatrixXd(5, 5);
+    P_ << 1, 0, 0, 0, 0,
+    0, 1, 0, 0, 0,
+    0, 0, 1, 0, 0,
+    0, 0, 0, 1, 0,
+    0, 0, 0, 0, 1;
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
       /**
       Convert radar from polar to cartesian coordinates and initialize state.
@@ -103,11 +108,7 @@ void UKF::ProcessMeasurement(MeasurementPackage measurement_pack) {
       float psi = 0;
       float psidot = 0;
       x_ << x, y, v, psi, psidot;
-      P_ << 1, 0, 0, 0, 0,
-      0, 1, 0, 0, 0,
-      0, 0, 1, 0, 0,
-      0, 0, 0, 1, 0,
-      0, 0, 0, 0, 1;
+
     }
     else if (measurement_pack.sensor_type_ == MeasurementPackage::LASER) {
       /**
@@ -115,17 +116,19 @@ void UKF::ProcessMeasurement(MeasurementPackage measurement_pack) {
       */
       float p_x = measurement_pack.raw_measurements_[0];
       float p_y = measurement_pack.raw_measurements_[1];
-      float v = 5;
+      float v = 0; // 5
       float psi = 0;//(p_x == 0 && p_y == 0) ? 0 : atan2(p_y, p_x);
       float psi_dot = 0;
 
       x_ << p_x, p_y, v, psi, psi_dot;
-      P_ <<  0.0225, 0, 0, 0, 0,
-      0, 0.0225, 0, 0, 0,
-      0, 0, 0.01, 0, 0,
-      0, 0, 0, 1, 0,
-      0, 0, 0, 0, 1;
-
+    }
+    if (fabs(x_(0)) < 0.0001) {
+      x_(0) = 0.0001;
+      P_(0, 0) = x_(0);
+    }
+    if (fabs(x_(1)) < 0.0001) {
+      x_(1) = 0.0001;
+      P_(1, 1) = x_(1);
     }
     previous_timestamp_ = measurement_pack.timestamp_;
 
@@ -143,6 +146,13 @@ void UKF::ProcessMeasurement(MeasurementPackage measurement_pack) {
   float dt = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0; //dt - expressed in seconds
   previous_timestamp_ = measurement_pack.timestamp_;
 
+  // Predict state vector x and state covariance matrix P, watch out for large dt values
+  /*while (dt > 0.1)
+  {
+    Prediction(0.05);
+    dt -= 0.05;
+  }*/
+  std::cout << "DT: " << dt << std::endl;
   Prediction(dt);
   /*****************************************************************************
    *  Update
@@ -192,7 +202,7 @@ void UKF::Prediction(double dt) {
     XAugSig_.col(i + 1) = x_aug + sqrt(lambda_ + n_aug_) * PSqrt.col(i);
     XAugSig_.col(i + 1 + n_x_) = x_aug - sqrt(lambda_ + n_aug_) * PSqrt.col(i);
   }
-  
+
   // Step 2: Generate SigmaPoint Predictions
   /// Generate 5x15 prediction from 7x15
   //Eigen::MatrixXd XSigPred_ = Eigen::MatrixXd(n_x_, n_aug_sigma_points_);
@@ -242,7 +252,6 @@ void UKF::Prediction(double dt) {
   x_.fill(0.0);
   for (int i = 0; i < n_aug_sigma_points_; i++) {
     x_ = x_ + weights_(i) * Xsig_pred_.col(i);
-    //x_(3) = Normalize(x_(3));
   }
 
   // Step 4: Predict covariance
@@ -253,6 +262,7 @@ void UKF::Prediction(double dt) {
 
     P_ = P_ + weights_(i) * x_diff * x_diff.transpose();
   }
+  std::cout << "Prediction: " << std::endl << "x_:" << std::endl << x_ << std::endl <<  "P_:" << P_ << std::endl;
 }
 
 
@@ -292,7 +302,7 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
 
   // Step 3.1 Add R to S;
   S = S + R;
-
+  std::cout << "S: " << std::endl << S << std::endl;
   // Step 4: Create cross-correlation matrix between x and z
   Eigen::MatrixXd T = Eigen::MatrixXd(n_x_, n_z_laser_);
   T.fill(0.0);
@@ -303,14 +313,14 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
 
     T = T + weights_(i) * x_diff * z_diff.transpose();
   }
-
+  std::cout << "T: " << std::endl << T << std::endl;
   // Step 5: Compute K
   Eigen::MatrixXd K = T * S.inverse();
-
+  std::cout << "K: " << std::endl << K << std::endl;
   // Step 6 : Compute residual
   Eigen::VectorXd z  = meas_package.raw_measurements_;
   Eigen::VectorXd y = z - z_pred;
-
+  std::cout << "y: " << std::endl << y << std::endl;
   x_ = x_ + K * y;
   P_ = P_ - K * S * K.transpose();
 }
@@ -327,6 +337,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
 
   // Step 1: Compute Sigma POints in Measurement Space
   Eigen::MatrixXd ZSig = Eigen::MatrixXd(n_z_radar_, n_aug_sigma_points_);
+  ZSig.fill(0);
   for (int i = 0; i < n_aug_sigma_points_; i++) {
     double p_x = Xsig_pred_(0, i);
     double p_y = Xsig_pred_(1, i);
@@ -337,18 +348,31 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
     double theta = (p_y == 0 && p_x == 0) ? 0 : atan2(p_y, p_x);
     double rho_dot = (rho == 0) ? 0 : (p_x * cos(psi) * v + p_y * sin(psi) * v) / rho;
 
-    ZSig(0, i) = rho;
-    ZSig(1, i) = theta;
-    ZSig(2, i) = rho_dot;
-  }
+    if (rho < 0.0001) {
+      std::cout << "x: " << p_x << " y: " << p_y << std::endl; 
+    }
+    /*if (fabs(p_x) < 0.0001)
+      ZSig(1, i) = M_PI / 2;     // Assume object is pointing straight up
+    else
+      ZSig(1, i) = theta;
+
+    if (rho < 0.0001)
+      ZSig(2, i) = 0.0001;  // With zero rho assume rho dot is zero as well
+    else
+      ZSig(2, i) = rho_dot;*/
+    ZSig(0, i)=rho;
+    ZSig(1, i)=theta;
+    ZSig(2, i)=rho_dot;
+   }
+  std::cout << "ZSig: " << std::endl << ZSig << std::endl;
+
   // Step 2: Predict Measurement Mean
   Eigen::VectorXd z_pred = Eigen::VectorXd(n_z_radar_);
   z_pred.fill(0);
   for (int i = 0; i < n_aug_sigma_points_; i++) {
     z_pred = z_pred + weights_(i) * ZSig.col(i);
-    //  z_pred(1) = Normalize(z_pred(1));
   }
-
+  std::cout << "z_pred:" << std::endl << z_pred << std::endl;
   // Step 3: Predict Measurement Covariance
   Eigen::MatrixXd S = Eigen::MatrixXd(n_z_radar_, n_z_radar_);
   S.fill(0.0);
@@ -358,7 +382,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
 
     S = S + weights_(i) * z_diff * z_diff.transpose();
   }
-
+  std::cout << "S: " << std::endl << S << std::endl;
   // Step 3.1 Add R to S;
   S = S + R;
 
@@ -374,7 +398,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
 
     T = T + weights_(i) * x_diff * z_diff.transpose();
   }
-
+  std::cout << "T: " << std::endl << T << std::endl;
   // Step 5: Compute K
   Eigen::MatrixXd K = T * S.inverse();
 
@@ -382,15 +406,22 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
   Eigen::VectorXd z  = meas_package.raw_measurements_;
   Eigen::VectorXd y = z - z_pred;
   y(1) = Normalize(y(1));
-
+  std::cout << "y: " << std::endl << y << std::endl;
   x_ = x_ + K * y;
   P_ = P_ - K * S * K.transpose();
 }
-float Normalize(float pTheta) {
+double Normalize(double angle) {
+  while (angle> M_PI) angle-=2.*M_PI;
+  while (angle<-M_PI) angle+=2.*M_PI;
+  return angle;
   /*if (pTheta > M_PI) {
     pTheta -= 2. * M_PI;
   } else if (pTheta < -M_PI) {
     pTheta += 2. * M_PI;
   }*/
-  return atan2(sin(pTheta), cos(pTheta));
+  //return atan2(sin(pTheta), cos(pTheta));
+  /*angle = fmod(angle + M_PI, 2 * M_PI);
+  if (angle < 0)
+    angle += 2 * M_PI;
+  return angle - M_PI;*/
 }
