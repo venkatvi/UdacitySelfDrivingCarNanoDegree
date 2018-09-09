@@ -35,7 +35,7 @@ public:
 	}
 private:
 	// UnscentedKalmanFilter
-	UnscentedKalmanFilter m_extended_kalman_filter_;
+	UnscentedKalmanFilter m_unscented_kalman_filter_;
 
 	// vector of estimations
 	std::vector<Data::State> m_estimations_;

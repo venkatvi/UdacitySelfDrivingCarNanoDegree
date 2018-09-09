@@ -14,8 +14,8 @@ UnscentedKalmanFilter::UnscentedKalmanFilter():
 	const size_t dim_state = Data::State::GetInputDimensions();
 
 	// Initialize noise values
-	m_std_a_ = 1.5;
-	m_std_yawdd_ = 0.5;
+	m_std_a_ = 30; //1.5;
+	m_std_yawdd_ = 30; //0.5;
 
 	m_state_dimensions = dim_state;
 	m_aug_state_dimensions = dim_state + 2;
@@ -188,8 +188,7 @@ void UnscentedKalmanFilter::Update(Data::Measurement* pMeasurement) {
 	auto m_measurement_dimensions = strategy->GetDimensions();
 
 	auto zMean = strategy->GetPredictedMeasurementMean();
-	std::cout << "ZMean: " << std::endl << zMean << std::endl;
-
+	
 	auto zCovariance = strategy->GetPredictedMeasurementCovariance();
 
 	auto xzCovariance = strategy->GetPredictedCrossCorrelation();

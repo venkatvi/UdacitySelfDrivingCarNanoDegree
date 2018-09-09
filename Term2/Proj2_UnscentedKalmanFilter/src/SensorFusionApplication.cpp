@@ -10,15 +10,15 @@ const Data::State* SensorFusionApplication::Run(
   m_ground_truth_.push_back(*pGroundTruth);
 
   // Process meaurement using UnscentedKalmanFilter implementation 
-  m_extended_kalman_filter_.ProcessMeasurement(pCurrentMeasurement);
+  m_unscented_kalman_filter_.ProcessMeasurement(pCurrentMeasurement);
 
   // Get predicted state from UKF
-  Data::State predictedState = m_extended_kalman_filter_.GetPredictedState();
+  Data::State predictedState = m_unscented_kalman_filter_.GetPredictedState();
 
   // Push estimations back into vector of estimations 
   m_estimations_.push_back(predictedState);
   
-  m_NIS_.push_back(m_extended_kalman_filter_.GetCurrentNIS());
+  m_NIS_.push_back(m_unscented_kalman_filter_.GetCurrentNIS());
   
   return &m_estimations_[m_estimations_.size() - 1];
 }
