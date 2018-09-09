@@ -50,5 +50,5 @@ The code is styled using [Google's C++ style guide](https://google.github.io/sty
 >- R_laser measurement noise matrix for laser data
 >- R_radar measurement noise matrix for radar data 
 
-The results of all experiments are shared in a Jupyter notebook "**Unscented Kalman Filter - Results & Discussion.ipynb**" that can be found under **Proj2_UnscentedKalmanFilter/README/Results**
+The results of all experiments are shared in a Jupyter notebook "**UKF_Results_Discussion.ipynb**" that can be found under **Proj2_UnscentedKalmanFilter/README/Results**
 
