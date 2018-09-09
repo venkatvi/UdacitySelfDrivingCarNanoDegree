@@ -118,6 +118,8 @@ private:
 	// Weights of sigma points used for transformation
 	Eigen::VectorXd m_weights_;
 
+	// P matrix
+	Eigen::MatrixXd m_P_aug_; 
 
 	// Noise parameters
 	// 1. Motion noise parameters

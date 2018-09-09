@@ -22,7 +22,11 @@ UnscentedKalmanFilter::UnscentedKalmanFilter():
 	// 
 	m_lambda = 3 - m_aug_state_dimensions;
 	m_aug_sigma_points = (m_aug_state_dimensions * 2) + 1;
-	//m_P_ = Eigen::MatrixXd(m_state_dimensions, m_state_dimensions);
+	
+	// Initialize m_P_aug_
+	m_P_aug_ = Eigen::MatrixXd(m_aug_state_dimensions, m_aug_state_dimensions);
+	m_P_aug_.fill(0.0);
+	
 	//Initialize P
 	m_weights_ = Eigen::VectorXd(m_aug_sigma_points);
 	double weight_0 = m_lambda / (m_lambda + m_aug_state_dimensions);
@@ -94,18 +98,15 @@ Eigen::MatrixXd UnscentedKalmanFilter::GenerateAugmentedSigmaPoints(const Eigen:
 	x_aug.fill(0);
 	x_aug.head(x_.size()) = x_;
 
-	// Initialize P_aug
-	Eigen::MatrixXd P_aug = Eigen::MatrixXd(m_aug_state_dimensions, m_aug_state_dimensions);
-	P_aug.fill(0.0);
-	P_aug.topLeftCorner(x_.size(), x_.size()) = P_;
-	P_aug(5, 5) = m_std_a_ * m_std_a_;
-	P_aug(6, 6) = m_std_yawdd_ * m_std_yawdd_;
+	m_P_aug_.topLeftCorner(x_.size(), x_.size()) = P_;
+	m_P_aug_(5, 5) = m_std_a_ * m_std_a_;
+	m_P_aug_(6, 6) = m_std_yawdd_ * m_std_yawdd_;
 
 	// Define augmented matrix and initialize with 0s
 	Eigen::MatrixXd pAugmentedSigmaPoints = Eigen::MatrixXd(m_aug_state_dimensions, m_aug_sigma_points);
 	pAugmentedSigmaPoints.fill(0.0);
 
-	FillSigmaPointMatrix(x_aug, P_aug, pAugmentedSigmaPoints);
+	FillSigmaPointMatrix(x_aug, m_P_aug_, pAugmentedSigmaPoints);
 	return pAugmentedSigmaPoints;
 }
 // Step 3: Sigma points prediction

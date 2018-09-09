@@ -20,14 +20,14 @@ Eigen::MatrixXd Data::RadarStateAdapterStrategy::TransformXSigmaPointsToZSpace(
 
   // transform sigma points predicted to measurement space
   for (int i = 0 ; i < m_sigma_points; i++ ) {
-    double p_x = pPredictedXSigmaPoints(0, i);
-    double p_y = pPredictedXSigmaPoints(1, i);
-    double v = pPredictedXSigmaPoints(2, i);
-    double psi = pPredictedXSigmaPoints(3, i);
+    const double p_x = pPredictedXSigmaPoints(0, i);
+    const double p_y = pPredictedXSigmaPoints(1, i);
+    const double v = pPredictedXSigmaPoints(2, i);
+    const double psi = pPredictedXSigmaPoints(3, i);
 
-    double rho = sqrt(p_x * p_x + p_y * p_y);
-    double theta = (p_y == 0 && p_x == 0) ? 0 : atan2(p_y, p_x);
-    double rho_dot = (rho == 0) ? 0 : (p_x * cos(psi) * v + p_y * sin(psi) * v) / rho;
+    const double rho = sqrt(p_x * p_x + p_y * p_y);
+    const double theta = (p_y == 0 && p_x == 0) ? 0 : atan2(p_y, p_x);
+    const double rho_dot = (rho == 0) ? 0 : (p_x * cos(psi) * v + p_y * sin(psi) * v) / rho;
 
     // measurement model for radar
     pZSigPredicted(0, i) = rho; //sqrt(p_x * p_x + p_y * p_y);
