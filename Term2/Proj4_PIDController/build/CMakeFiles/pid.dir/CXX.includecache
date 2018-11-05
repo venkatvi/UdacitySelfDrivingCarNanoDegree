@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/vaidehivenkatesan/Documents/UdacitySelfDrivingCarNanoDegree/Term2/Proj4_PIDController/src/InputParser.cpp
+InputParser.h
+/Users/vaidehivenkatesan/Documents/UdacitySelfDrivingCarNanoDegree/Term2/Proj4_PIDController/src/InputParser.h
+iostream
+-
+ctype.h
+-
+stdlib.h
+-
+unistd.h
+-
+
+/Users/vaidehivenkatesan/Documents/UdacitySelfDrivingCarNanoDegree/Term2/Proj4_PIDController/src/InputParser.h
+string
+-
+
