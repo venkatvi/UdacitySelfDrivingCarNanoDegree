@@ -8,8 +8,12 @@
 > ./pid
 
 Twiddle algorithm can be enabled for PID controller for steer and throttle by using the command line arguments:
->./pid -s <error tolerance for steer PID controller> -t <error tolerance for throttle PID controller>
-e.g. ./pid -s 0.0000001 -t 0.00000001 
+>./pid -s <error tolerance for steer PID controller> -t <error tolerance for throttle PID controller> 
+>e.g. ./pid -s 0.0000001 -t 0.00000001 
+
+The PID controller for throttle value can be excluded using -e parameter 
+>./pid -e 
+
 
 ## Implementation 
 The PID procedure implementated for steering angle and throttle follow the lectures. In addition to base algorithm implementing PID controller, the implementation also includes a twiddler which can tune in parameters for every 200 steps. 
