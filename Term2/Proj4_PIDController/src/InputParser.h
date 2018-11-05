@@ -10,7 +10,7 @@ public:
 	* @param defaultSource  uses to set m_source_
 	* @param defaultOutput uses to set m_output_
 	*/
-	InputParser() {}
+	InputParser():m_implement_throttle_pid_(true) {}
 	~InputParser() {}
 
 	/* parseArgs method takes in argc, argv an processes command line
@@ -29,6 +29,9 @@ public:
 	const double GetThrottleParams() const{
 	  return m_throttle_twiddle_err_tol_;
 	}
+	bool ImplementPIDForThrottle() const {
+		return m_implement_throttle_pid_;
+	}
 private:
 
 	/** showUsage method is help function which outputs man information
@@ -41,6 +44,8 @@ private:
 
 	// twiddle parameter for throttle
 	double m_throttle_twiddle_err_tol_;
+
+	bool m_implement_throttle_pid_;
 
 	bool m_is_parse_successful_;
 };

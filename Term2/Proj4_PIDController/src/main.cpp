@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
   PID throttle_pid(throttleConfig);
   throttle_pid.InitParameters();
 
-  h.onMessage([&steer_pid, &throttle_pid](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
+  h.onMessage([&steer_pid, &throttle_pid, &pParser](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
     // The 4 signifies a websocket message
     // The 2 signifies a websocket event
@@ -68,10 +68,15 @@ int main(int argc, char* argv[])
           steer_pid.UpdateError(cte);
           const double steer_value = steer_pid.TotalError();//init_Kp * p_error + init_Kd * d_error + init_Ki * i_error;
           
-          throttle_pid.UpdateError(fabs(cte));
-          double throttle_value = throttle_pid.TotalError();
-          throttle_value = abs(0.75-abs(throttle_value));
-          
+          double throttle_value = 0.0;
+          if (pParser.ImplementPIDForThrottle()){
+            throttle_pid.UpdateError(fabs(cte));
+            throttle_value = throttle_pid.TotalError();
+            throttle_value = abs(0.75-abs(throttle_value));
+          }else{
+            throttle_value = 0.3; 
+          }
+
           std::cout << "CTE: " << cte << "\tSteer: " << steer_value << "\tThrottle: " << throttle_value << std::endl;
 
           json msgJson;
