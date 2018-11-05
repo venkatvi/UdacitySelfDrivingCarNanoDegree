@@ -14,6 +14,7 @@ Twiddle algorithm can be enabled for PID controller for steer and throttle by us
 The PID controller for throttle value can be excluded using -e parameter 
 >./pid -e 
 
+A help page is also added to the command line version of the executable. 
 
 ## Implementation 
 The PID procedure implementated for steering angle and throttle follow the lectures. In addition to base algorithm implementing PID controller, the implementation also includes a twiddler which can tune in parameters for every 200 steps. 
