@@ -21,7 +21,7 @@ For Steering Angle:
 - Adding a small I component helps in reducing the swerving around the center as it accumulates the error over the last n steps 
 - In order to avoid vehicle toppling over turns / curbs, an differential component was also added to make sure the vehicle is able to adjust the error created to the rate of change of steering angle value around turns. 
 
-An initial value of P = 0.13, I = 0.0002, D = 3.0 was chosen (by trial and error approach). Twiddle algorithm was implemented to further tune parameters. 
+Starting from the values specifeid in tutorial video (P = 0.5, D = 0.5), an initial value of P = 0.13, I = 0.0002, D = 3.0 was chosen (by trial and error approach). Twiddle algorithm was implemented to further tune parameters. 
 The first 100 steps are considering "warm up" where the parameters are observed. Then the twiddle algorithm tunes the parameters once in every 500 steps. A default speed of 30 mph was used to observe the simulation implemented with PID controller for steering. 
 
 
