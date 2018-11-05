@@ -40,4 +40,4 @@ The vehicle successfully laps around the track.
 [Simulation Video with PID implemented for steering angle only](./Results/SteerPID_480p.mov)
 
 
-Simulation with PID implemented for steering angle and throttle 
+[Simulation with PID implemented for steering angle and throttle](./Results/Steer_Throttle_PID_480p.mov)
