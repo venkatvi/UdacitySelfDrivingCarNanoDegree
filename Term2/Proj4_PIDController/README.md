@@ -37,7 +37,7 @@ For throttle, final values after using twiddle algorithm are: P = 0.7, D = 0.4
 ## Simulation 
 The vehicle successfully laps around the track.
 
-[Simulation Video with PID implemented for steering angle only](./Results/SteerPID_720p.mov)
+[Simulation Video with PID implemented for steering angle only](../Results/SteerPID_720p.mov)
 
 
 Simulation with PID implemented for steering angle and throttle 
